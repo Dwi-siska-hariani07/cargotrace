@@ -1,0 +1,337 @@
+{
+  "info": {
+    "_postman_id": "cargotrace-api-v1",
+    "name": "CargoTrace REST API v1.0",
+    "description": "Postman API Collection for CargoTrace - Global Shipment Visibility & Tracking Platform (Web Programming 2 UAS)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Testing Logistics\",\n  \"email\": \"test@cargotrace.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\",\n  \"role\": \"customer\",\n  \"company\": \"Testing Ltd\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login (Operator / Admin / Customer)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.token) {",
+                  "    pm.environment.set('bearerToken', jsonData.data.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"operator@cargotrace.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "login"]
+            }
+          }
+        },
+        {
+          "name": "Get Authenticated User Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{bearerToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/user",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "user"]
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{bearerToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "logout"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Shipments",
+      "item": [
+        {
+          "name": "List Shipments (Paginated & Filterable)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{bearerToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/shipments?page=1&per_page=10&status=IN_TRANSIT",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "shipments"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "per_page", "value": "10" },
+                { "key": "status", "value": "IN_TRANSIT" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Shipment Detail by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{bearerToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/shipments/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "shipments", "1"]
+            }
+          }
+        },
+        {
+          "name": "Create Shipment (Operator/Admin Only)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{bearerToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customer_id\": 3,\n  \"carrier_id\": 1,\n  \"origin_id\": 1,\n  \"destination_id\": 3,\n  \"transport_type\": \"SEA\",\n  \"cargo_type\": \"Automotive Spare Parts\",\n  \"total_weight_kg\": 6200.50,\n  \"total_volume_cbm\": 35.00,\n  \"expected_departure\": \"2026-11-10 08:00:00\",\n  \"expected_arrival\": \"2026-11-25 18:00:00\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/shipments",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "shipments"]
+            }
+          }
+        },
+        {
+          "name": "Update Shipment Status (State Machine)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{bearerToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"current_status\": \"IN_TRANSIT\",\n  \"status_reason\": \"Vessel underway towards transit anchorage.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/shipments/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "shipments", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete Shipment (Admin Only - Soft Delete)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{bearerToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/shipments/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "shipments", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Tracking Events",
+      "item": [
+        {
+          "name": "Get Tracking Timeline",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{bearerToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/shipments/1/tracking",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "shipments", "1", "tracking"]
+            }
+          }
+        },
+        {
+          "name": "Add Tracking Checkpoint Event",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{bearerToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"event_status\": \"IN_TRANSIT\",\n  \"location_name\": \"Malacca Strait Checkpoint\",\n  \"latitude\": 2.1960,\n  \"longitude\": 102.2405,\n  \"description\": \"Passing waypoint buoy under safe maritime speed.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/shipments/1/tracking",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "shipments", "1", "tracking"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Master Data (Carriers & Locations)",
+      "item": [
+        {
+          "name": "List Carriers",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{bearerToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/carriers",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "carriers"]
+            }
+          }
+        },
+        {
+          "name": "List Locations",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{bearerToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/locations",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "locations"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Exception & Disruption Management",
+      "item": [
+        {
+          "name": "List Exceptions for Shipment",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{bearerToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/shipments/1/exceptions",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "shipments", "1", "exceptions"]
+            }
+          }
+        },
+        {
+          "name": "Report Disruption Exception",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{bearerToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"exception_type\": \"PORT_CONGESTION\",\n  \"severity\": \"MEDIUM\",\n  \"description\": \"Berthing queue delayed by 18 hours due to port crane maintenance.\",\n  \"delay_hours_impact\": 18\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/shipments/1/exceptions",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "shipments", "1", "exceptions"]
+            }
+          }
+        },
+        {
+          "name": "Resolve Disruption Exception",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{bearerToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"resolution_notes\": \"Crane maintenance completed; vessel assigned to berth 4B.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/exceptions/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "exceptions", "1"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "bearerToken",
+      "value": ""
+    }
+  ]
+}
