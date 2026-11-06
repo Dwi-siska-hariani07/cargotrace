@@ -20,7 +20,7 @@
                     {{ str_replace('_', ' ', $shipment->current_status) }}
                 </span>
             </div>
-            <p class="text-slate-500 text-sm mt-1">
+            <p class="text-slate-500 text-xs sm:text-sm mt-1">
                 Carrier: <strong class="text-slate-700">{{ $shipment->carrier->name ?? 'N/A' }}</strong> ({{ $shipment->transport_type }}) • Cargo: <strong class="text-slate-700">{{ $shipment->cargo_type }}</strong>
             </p>
         </div>
@@ -28,9 +28,9 @@
         <div class="flex items-center gap-2">
             <span class="text-xs text-slate-400">Mode:</span>
             <span class="px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-200 text-slate-700">
-                @if($shipment->transport_type === 'SEA') 🚢 Sea Freight
-                @elseif($shipment->transport_type === 'AIR') ✈️ Air Cargo
-                @else 🚛 Land Transport @endif
+                @if($shipment->transport_type === 'SEA') 🚢 Global Sea Freight
+                @elseif($shipment->transport_type === 'AIR') ✈️ International Air Cargo
+                @else 🚛 Overland Logistics @endif
             </span>
         </div>
     </div>
@@ -53,26 +53,40 @@
     </div>
     @endif
 
-    <!-- Route Cards & Progress Bar -->
+    <!-- World Route Bar with Multi-Timezone & Live Weather Badges -->
     <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-            <!-- Origin -->
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl shadow-sm">
+            <!-- Origin Hub -->
+            <div class="flex items-start gap-4">
+                <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl shadow-sm shrink-0">
                     <i class="ph ph-anchor"></i>
                 </div>
                 <div>
-                    <span class="text-xs text-slate-400 uppercase font-semibold">Origin</span>
-                    <h4 class="font-bold text-slate-800 text-base">{{ $shipment->origin->name }}</h4>
+                    <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Origin Hub</span>
+                    <h4 class="font-bold text-slate-900 text-sm sm:text-base">{{ $shipment->origin->name }}</h4>
                     <p class="text-xs text-slate-500">{{ $shipment->origin->city }}, {{ $shipment->origin->country }}</p>
-                    <p class="text-[11px] text-slate-400 mt-1">Departed: {{ $shipment->expected_departure->format('d M Y, H:i') }}</p>
+                    
+                    <!-- Live Time at Origin -->
+                    <div class="mt-2 flex flex-wrap items-center gap-2 text-[11px]">
+                        <span class="px-2 py-0.5 rounded bg-slate-100 font-mono text-slate-700 flex items-center gap-1">
+                            <i class="ph ph-clock text-xs text-slate-400"></i>
+                            <span class="live-tz-clock" data-tz="{{ $shipment->origin->timezone }}">--:--:--</span>
+                            <span class="text-[9px] text-slate-400">{{ $shipment->origin->timezone }}</span>
+                        </span>
+                        @if($originWeather && $originWeather['available'])
+                        <span class="px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-semibold flex items-center gap-1">
+                            <i class="ph ph-sun text-xs text-amber-500"></i>
+                            {{ $originWeather['temperature_c'] }}°C ({{ $originWeather['condition'] }})
+                        </span>
+                        @endif
+                    </div>
                 </div>
             </div>
 
             <!-- Current Transit Position -->
-            <div class="text-center px-4 py-2 bg-slate-50 rounded-xl border border-slate-100">
-                <span class="text-xs text-slate-400 uppercase font-semibold">Current Location</span>
-                <p class="font-bold text-slate-800 text-sm mt-0.5">
+            <div class="text-center px-4 py-3 bg-slate-50 rounded-2xl border border-slate-100">
+                <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Current Ocean / Air Coordinate</span>
+                <p class="font-bold text-slate-900 text-sm mt-0.5">
                     {{ $shipment->current_location_name ?? 'In Transit' }}
                 </p>
                 <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden my-2">
@@ -83,106 +97,134 @@
                         @else w-1/6 @endif">
                     </div>
                 </div>
-                <span class="text-[11px] text-slate-500">
-                    Status: <strong class="text-blue-600">{{ str_replace('_', ' ', $shipment->current_status) }}</strong>
-                </span>
+                <div class="flex items-center justify-between text-[11px] text-slate-500 font-mono">
+                    <span>{{ str_replace('_', ' ', $shipment->current_status) }}</span>
+                    @if($weather && $weather['available'])
+                    <span class="text-blue-600 font-semibold">{{ $weather['temperature_c'] }}°C • Wind {{ $weather['wind_speed_kmh'] }} km/h</span>
+                    @endif
+                </div>
             </div>
 
-            <!-- Destination -->
-            <div class="flex items-center gap-4 md:justify-end">
+            <!-- Destination Hub -->
+            <div class="flex items-start gap-4 md:justify-end">
                 <div class="md:text-right">
-                    <span class="text-xs text-slate-400 uppercase font-semibold">Destination</span>
-                    <h4 class="font-bold text-slate-800 text-base">{{ $shipment->destination->name }}</h4>
+                    <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Destination Hub</span>
+                    <h4 class="font-bold text-slate-900 text-sm sm:text-base">{{ $shipment->destination->name }}</h4>
                     <p class="text-xs text-slate-500">{{ $shipment->destination->city }}, {{ $shipment->destination->country }}</p>
-                    <p class="text-[11px] text-slate-400 mt-1">
-                        ETA: <strong class="{{ $shipment->is_delayed ? 'text-amber-600 font-bold' : 'text-slate-600' }}">{{ $shipment->estimated_arrival->format('d M Y, H:i') }}</strong>
-                    </p>
+                    
+                    <!-- Live Time at Destination -->
+                    <div class="mt-2 flex flex-wrap items-center md:justify-end gap-2 text-[11px]">
+                        @if($destWeather && $destWeather['available'])
+                        <span class="px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-semibold flex items-center gap-1">
+                            <i class="ph ph-cloud text-xs text-blue-500"></i>
+                            {{ $destWeather['temperature_c'] }}°C ({{ $destWeather['condition'] }})
+                        </span>
+                        @endif
+                        <span class="px-2 py-0.5 rounded bg-slate-100 font-mono text-slate-700 flex items-center gap-1">
+                            <i class="ph ph-clock text-xs text-slate-400"></i>
+                            <span class="live-tz-clock" data-tz="{{ $shipment->destination->timezone }}">--:--:--</span>
+                            <span class="text-[9px] text-slate-400">{{ $shipment->destination->timezone }}</span>
+                        </span>
+                    </div>
                 </div>
-                <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl shadow-sm">
+                <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl shadow-sm shrink-0">
                     <i class="ph ph-flag-checkered"></i>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Map & Weather Grid -->
+    <!-- Map & 3-Hub Atmospheric Weather Matrix -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Leaflet Map Container -->
+        <!-- Interactive Leaflet Map Container -->
         <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
             <div class="p-4 border-b border-slate-100 flex items-center justify-between">
                 <div class="flex items-center gap-2">
                     <i class="ph ph-map-trifold text-blue-600 text-lg"></i>
-                    <h3 class="font-bold text-slate-800 text-sm">Interactive Route & Location Map</h3>
+                    <h3 class="font-bold text-slate-800 text-sm">Global Maritime GIS Tracking Map</h3>
                 </div>
-                <span class="text-[11px] text-slate-400">Leaflet.js • OpenStreetMap</span>
+                <span class="text-[11px] text-slate-400 font-mono">Real-Time Coordinates Plotting</span>
             </div>
-            <div id="shipmentMap" class="w-full h-96 bg-slate-100"></div>
+            <div id="shipmentMap" class="w-full h-[420px] bg-slate-100"></div>
         </div>
 
-        <!-- Weather & Details Widget -->
-        <div class="space-y-6">
-            <!-- Weather Card -->
-            <div class="bg-gradient-to-br from-blue-900 to-slate-900 text-white p-6 rounded-2xl shadow-sm">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="text-xs uppercase tracking-wider text-blue-300 font-semibold flex items-center gap-1.5">
-                        <i class="ph ph-cloud-sun text-base"></i> Atmospheric Conditions
+        <!-- Atmospheric Weather Comparison Matrix -->
+        <div class="space-y-4">
+            <div class="bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white p-5 rounded-2xl shadow-sm">
+                <div class="flex items-center justify-between mb-3 border-b border-blue-900/60 pb-2">
+                    <span class="text-xs uppercase tracking-wider text-blue-300 font-bold flex items-center gap-1.5">
+                        <i class="ph ph-broadcast text-emerald-400 animate-pulse text-base"></i> Live Multi-Port Weather (API)
                     </span>
-                    <span class="text-[10px] px-2 py-0.5 rounded bg-blue-800/80 text-blue-200">Live API</span>
+                    <span class="text-[10px] px-2 py-0.5 rounded bg-blue-800 text-blue-200 font-mono">Open-Meteo</span>
                 </div>
 
-                @if($weather && $weather['available'])
-                <div class="flex items-center justify-between">
-                    <div>
-                        <div class="text-3xl font-extrabold">{{ $weather['temperature_c'] }}°C</div>
-                        <div class="text-sm text-blue-200 font-medium mt-0.5">{{ $weather['condition'] }}</div>
+                <!-- 1. Origin Weather -->
+                <div class="mb-3 p-3 rounded-xl bg-white/5 border border-white/10">
+                    <div class="flex items-center justify-between text-xs text-blue-200 mb-1">
+                        <span class="font-bold text-white">🛫 {{ $shipment->origin->city }}</span>
+                        <span>Origin</span>
                     </div>
-                    <div class="w-12 h-12 rounded-xl bg-blue-800/50 flex items-center justify-center text-2xl text-blue-300">
-                        <i class="ph ph-wind"></i>
+                    @if($originWeather && $originWeather['available'])
+                    <div class="flex items-center justify-between">
+                        <span class="text-xl font-bold">{{ $originWeather['temperature_c'] }}°C</span>
+                        <span class="text-xs text-blue-300">{{ $originWeather['condition'] }}</span>
+                        <span class="text-[11px] text-slate-400">Wind: {{ $originWeather['wind_speed_kmh'] }} km/h</span>
                     </div>
+                    @else
+                    <span class="text-xs text-slate-400">Weather data offline</span>
+                    @endif
                 </div>
 
-                <div class="mt-4 pt-4 border-t border-blue-800/60 grid grid-cols-2 gap-2 text-xs text-blue-200">
-                    <div>Wind: <strong class="text-white">{{ $weather['wind_speed_kmh'] }} km/h</strong></div>
-                    <div>Humidity: <strong class="text-white">{{ $weather['humidity_pct'] }}%</strong></div>
+                <!-- 2. Mid-Transit Coordinate Weather -->
+                <div class="mb-3 p-3 rounded-xl bg-blue-600/20 border border-blue-500/30">
+                    <div class="flex items-center justify-between text-xs text-blue-200 mb-1">
+                        <span class="font-bold text-white">🚢 At Sea Position</span>
+                        <span class="text-blue-300">Mid-Voyage</span>
+                    </div>
+                    @if($weather && $weather['available'])
+                    <div class="flex items-center justify-between">
+                        <span class="text-xl font-bold text-amber-300">{{ $weather['temperature_c'] }}°C</span>
+                        <span class="text-xs text-white">{{ $weather['condition'] }}</span>
+                        <span class="text-[11px] text-blue-200">Wind: {{ $weather['wind_speed_kmh'] }} km/h</span>
+                    </div>
+                    @else
+                    <span class="text-xs text-slate-400">Vessel weather offline</span>
+                    @endif
                 </div>
-                <div class="text-[10px] text-blue-400/80 mt-2">
-                    Source: {{ $weather['source'] }}
+
+                <!-- 3. Destination Weather -->
+                <div class="p-3 rounded-xl bg-white/5 border border-white/10">
+                    <div class="flex items-center justify-between text-xs text-blue-200 mb-1">
+                        <span class="font-bold text-white">🛬 {{ $shipment->destination->city }}</span>
+                        <span>Destination</span>
+                    </div>
+                    @if($destWeather && $destWeather['available'])
+                    <div class="flex items-center justify-between">
+                        <span class="text-xl font-bold">{{ $destWeather['temperature_c'] }}°C</span>
+                        <span class="text-xs text-blue-300">{{ $destWeather['condition'] }}</span>
+                        <span class="text-[11px] text-slate-400">Wind: {{ $destWeather['wind_speed_kmh'] }} km/h</span>
+                    </div>
+                    @else
+                    <span class="text-xs text-slate-400">Weather data offline</span>
+                    @endif
                 </div>
-                @else
-                <div class="text-sm text-blue-200">
-                    Weather data unavailable for the current coordinates or station offline.
-                </div>
-                @endif
             </div>
 
-            <!-- Shipment Cargo Details -->
+            <!-- Cargo Spec Card -->
             <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm text-xs space-y-3">
-                <h4 class="font-bold text-slate-800 text-sm border-b border-slate-100 pb-2">Cargo Metrics</h4>
+                <h4 class="font-bold text-slate-800 text-sm border-b border-slate-100 pb-2">Manifest Details</h4>
                 <div class="flex justify-between">
-                    <span class="text-slate-500">Total Weight:</span>
-                    <strong class="text-slate-800">{{ number_format($shipment->total_weight_kg, 2) }} kg</strong>
+                    <span class="text-slate-500">Weight:</span>
+                    <strong class="text-slate-800 font-mono">{{ number_format($shipment->total_weight_kg, 2) }} kg</strong>
                 </div>
                 <div class="flex justify-between">
-                    <span class="text-slate-500">Volume (CBM):</span>
-                    <strong class="text-slate-800">{{ $shipment->total_volume_cbm ?? 'N/A' }} m³</strong>
+                    <span class="text-slate-500">Volume:</span>
+                    <strong class="text-slate-800 font-mono">{{ $shipment->total_volume_cbm ?? 'N/A' }} m³</strong>
                 </div>
                 <div class="flex justify-between">
-                    <span class="text-slate-500">Cargo Description:</span>
+                    <span class="text-slate-500">Commodity:</span>
                     <strong class="text-slate-800">{{ $shipment->cargo_type }}</strong>
                 </div>
-                @if($shipment->items->count() > 0)
-                <div class="pt-2 border-t border-slate-100">
-                    <span class="text-slate-500 block mb-1">Manifest Items:</span>
-                    <ul class="space-y-1">
-                        @foreach($shipment->items as $item)
-                        <li class="bg-slate-50 p-2 rounded border border-slate-100 flex justify-between">
-                            <span>{{ $item->item_name }} (x{{ $item->quantity }})</span>
-                            <span class="font-mono text-slate-500">{{ $item->weight_kg }} kg</span>
-                        </li>
-                        @endforeach
-                    </ul>
-                </div>
-                @endif
             </div>
         </div>
     </div>
@@ -214,7 +256,7 @@
                                 {{ str_replace('_', ' ', $event->event_status) }}
                             </span>
                         </div>
-                        <span class="text-xs font-mono text-slate-400">{{ $event->event_time->format('d M Y, H:i') }}</span>
+                        <span class="text-xs font-mono text-slate-400">{{ $event->event_time->format('d M Y, H:i') }} UTC</span>
                     </div>
                     <p class="text-xs text-slate-600 leading-relaxed">{{ $event->description }}</p>
                 </div>
@@ -230,7 +272,30 @@
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Prepare Leaflet map
+        // Ticking live clocks for local port timezones
+        function updateTzClocks() {
+            const now = new Date();
+            document.querySelectorAll('.live-tz-clock').forEach(el => {
+                const tz = el.getAttribute('data-tz');
+                if (tz) {
+                    try {
+                        el.textContent = new Intl.DateTimeFormat('en-GB', {
+                            timeZone: tz,
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                            hour12: false
+                        }).format(now);
+                    } catch (e) {
+                        el.textContent = '--:--:--';
+                    }
+                }
+            });
+        }
+        updateTzClocks();
+        setInterval(updateTzClocks, 1000);
+
+        // Leaflet Global Map
         const originLat = {{ $shipment->origin->latitude }};
         const originLng = {{ $shipment->origin->longitude }};
         const destLat = {{ $shipment->destination->latitude }};
@@ -238,28 +303,28 @@
         const currentLat = {{ $shipment->current_latitude ?? $shipment->origin->latitude }};
         const currentLng = {{ $shipment->current_longitude ?? $shipment->origin->longitude }};
 
-        const map = L.map('shipmentMap').setView([currentLat, currentLng], 4);
+        const map = L.map('shipmentMap').setView([currentLat, currentLng], 3);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
 
-        // Origin marker
+        // Custom origin icon
         L.marker([originLat, originLng]).addTo(map)
-            .bindPopup('<b>Origin:</b> {{ $shipment->origin->name }}<br>{{ $shipment->origin->city }}');
+            .bindPopup('<b>🛫 Origin:</b> {{ $shipment->origin->name }}<br>{{ $shipment->origin->city }}, {{ $shipment->origin->country }}');
 
-        // Destination marker
+        // Custom destination icon
         L.marker([destLat, destLng]).addTo(map)
-            .bindPopup('<b>Destination:</b> {{ $shipment->destination->name }}<br>{{ $shipment->destination->city }}');
+            .bindPopup('<b>🛬 Destination:</b> {{ $shipment->destination->name }}<br>{{ $shipment->destination->city }}, {{ $shipment->destination->country }}');
 
-        // Current Location marker (Custom Circle Highlight)
+        // Vessel pulsating circle marker
         const currentMarker = L.circleMarker([currentLat, currentLng], {
             color: '{{ $shipment->is_delayed ? "#f59e0b" : "#2563eb" }}',
             fillColor: '{{ $shipment->is_delayed ? "#f59e0b" : "#3b82f6" }}',
             fillOpacity: 0.9,
-            radius: 8
+            radius: 9
         }).addTo(map)
-        .bindPopup('<b>Current Position:</b> {{ $shipment->current_location_name ?? "In Transit" }}<br>Status: {{ $shipment->current_status }}')
+        .bindPopup('<b>🚢 Live Position:</b> {{ $shipment->current_location_name ?? "In Transit" }}<br>Status: {{ $shipment->current_status }}<br>Carrier: {{ $shipment->carrier->name }}')
         .openPopup();
 
         // Connect path with Polyline
@@ -274,16 +339,13 @@
         ];
 
         L.polyline(pathCoords, {
-            color: '#3b82f6',
-            weight: 3,
+            color: '#2563eb',
+            weight: 3.5,
             dashArray: '6, 8',
-            opacity: 0.7
+            opacity: 0.8
         }).addTo(map);
 
-        // Fit map bounds
-        const bounds = L.latLngBounds(pathCoords);
-        map.fitBounds(bounds, { padding: [50, 50] });
+        map.fitBounds(L.latLngBounds(pathCoords), { padding: [50, 50] });
     });
 </script>
 @endpush
-

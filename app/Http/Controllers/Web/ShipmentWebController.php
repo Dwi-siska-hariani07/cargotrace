@@ -166,15 +166,18 @@ class ShipmentWebController extends Controller
             abort(403, 'Unauthorized access to this shipment.');
         }
 
-        // Live Weather at current location if coordinates exist
+        // Live Weather at current coordinates and ports
         $weather = null;
         if ($shipment->current_latitude && $shipment->current_longitude) {
             $weather = $this->weatherService->getWeather($shipment->current_latitude, $shipment->current_longitude);
         }
 
+        $originWeather = $this->weatherService->getWeather($shipment->origin->latitude, $shipment->origin->longitude);
+        $destWeather = $this->weatherService->getWeather($shipment->destination->latitude, $shipment->destination->longitude);
+
         $allLocations = Location::all();
 
-        return view('shipments.show', compact('shipment', 'weather', 'allLocations'));
+        return view('shipments.show', compact('shipment', 'weather', 'originWeather', 'destWeather', 'allLocations'));
     }
 
     public function publicTrack(Request $request)
@@ -202,7 +205,10 @@ class ShipmentWebController extends Controller
             $weather = $this->weatherService->getWeather($shipment->current_latitude, $shipment->current_longitude);
         }
 
-        return view('public.track', compact('shipment', 'weather'));
+        $originWeather = $this->weatherService->getWeather($shipment->origin->latitude, $shipment->origin->longitude);
+        $destWeather = $this->weatherService->getWeather($shipment->destination->latitude, $shipment->destination->longitude);
+
+        return view('public.track', compact('shipment', 'weather', 'originWeather', 'destWeather'));
     }
 
     public function destroy($id)

@@ -24,6 +24,22 @@ class Location extends Model
         'longitude' => 'float',
     ];
 
+    public function getTimezoneAttribute(): string
+    {
+        return match (strtoupper($this->code)) {
+            'IDJKT', 'IDCGK' => 'Asia/Jakarta',
+            'SGSIN', 'SGSIN-AIR' => 'Asia/Singapore',
+            'NLRTM' => 'Europe/Amsterdam',
+            'DEHAM' => 'Europe/Berlin',
+            'USLAX' => 'America/Los_Angeles',
+            'USNYC' => 'America/New_York',
+            'AUSYD' => 'Australia/Sydney',
+            'AEDXB' => 'Asia/Dubai',
+            'CNSHA' => 'Asia/Shanghai',
+            default => 'UTC',
+        };
+    }
+
     public function outboundShipments()
     {
         return $this->hasMany(Shipment::class, 'origin_id');
