@@ -111,51 +111,6 @@
         </div>
     </nav>
 
-    <!-- Global World Clock Ticker -->
-    <div class="bg-slate-950 border-b border-slate-800 text-[11px] text-slate-300 py-1.5 px-4 overflow-x-auto shadow-inner">
-        <div class="max-w-7xl mx-auto flex items-center justify-between gap-6 whitespace-nowrap">
-            <div class="flex items-center gap-2 text-slate-400 font-semibold uppercase text-[10px] tracking-wider">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span>Active World Clocks:</span>
-            </div>
-            <div class="flex items-center gap-5 font-mono">
-                <div class="flex items-center gap-1.5">
-                    <span>🇮🇩 Jakarta</span>
-                    <strong id="clock-jkt" class="text-white">--:--:--</strong>
-                    <span class="text-[9px] text-slate-500">WIB</span>
-                </div>
-                <div class="flex items-center gap-1.5">
-                    <span>🇸🇬 Singapore</span>
-                    <strong id="clock-sin" class="text-white">--:--:--</strong>
-                    <span class="text-[9px] text-slate-500">SGT</span>
-                </div>
-                <div class="flex items-center gap-1.5">
-                    <span>🇦🇪 Dubai</span>
-                    <strong id="clock-dxb" class="text-white">--:--:--</strong>
-                    <span class="text-[9px] text-slate-500">GST</span>
-                </div>
-                <div class="flex items-center gap-1.5">
-                    <span>🇳🇱 Rotterdam</span>
-                    <strong id="clock-rtm" class="text-blue-400 font-bold">--:--:--</strong>
-                    <span class="text-[9px] text-slate-500">CET</span>
-                </div>
-                <div class="flex items-center gap-1.5">
-                    <span>🇺🇸 New York</span>
-                    <strong id="clock-nyc" class="text-white">--:--:--</strong>
-                    <span class="text-[9px] text-slate-500">EST</span>
-                </div>
-                <div class="flex items-center gap-1.5">
-                    <span>🇦🇺 Sydney</span>
-                    <strong id="clock-syd" class="text-white">--:--:--</strong>
-                    <span class="text-[9px] text-slate-500">AEDT</span>
-                </div>
-            </div>
-            <div class="text-[10px] text-slate-500 hidden md:block font-mono">
-                UTC Real-Time Sync
-            </div>
-        </div>
-    </div>
-
     <!-- Flash Messages -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 w-full">
         @if(session('success'))
@@ -205,35 +160,6 @@
             </div>
         </div>
     </footer>
-
-    <script>
-        function updateWorldClocks() {
-            const now = new Date();
-            const zones = {
-                'clock-jkt': 'Asia/Jakarta',
-                'clock-sin': 'Asia/Singapore',
-                'clock-dxb': 'Asia/Dubai',
-                'clock-rtm': 'Europe/Amsterdam',
-                'clock-nyc': 'America/New_York',
-                'clock-syd': 'Australia/Sydney',
-            };
-
-            for (const [id, timeZone] of Object.entries(zones)) {
-                const el = document.getElementById(id);
-                if (el) {
-                    el.textContent = new Intl.DateTimeFormat('en-GB', {
-                        timeZone,
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit',
-                        hour12: false
-                    }).format(now);
-                }
-            }
-        }
-        updateWorldClocks();
-        setInterval(updateWorldClocks, 1000);
-    </script>
 
     @stack('scripts')
 </body>
