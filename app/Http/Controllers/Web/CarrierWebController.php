@@ -35,3 +35,4 @@ class CarrierWebController extends Controller
         return back()->with('success', 'Carrier added successfully.');
     }
 }
+

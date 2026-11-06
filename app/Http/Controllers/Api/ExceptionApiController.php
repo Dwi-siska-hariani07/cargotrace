@@ -95,3 +95,4 @@ class ExceptionApiController extends Controller
         ]);
     }
 }
+

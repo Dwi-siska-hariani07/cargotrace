@@ -83,3 +83,4 @@ class TrackingApiController extends Controller
         ], 201);
     }
 }
+

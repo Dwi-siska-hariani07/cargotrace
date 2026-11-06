@@ -37,3 +37,4 @@ class LocationWebController extends Controller
         return back()->with('success', 'Location created successfully.');
     }
 }
+

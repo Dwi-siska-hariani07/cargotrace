@@ -20,3 +20,4 @@ class AuditLogWebController extends Controller
         return view('audit_logs.index', compact('logs'));
     }
 }
+

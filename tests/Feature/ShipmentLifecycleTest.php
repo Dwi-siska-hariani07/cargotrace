@@ -47,3 +47,4 @@ class ShipmentLifecycleTest extends TestCase
         $this->shipmentService->transitionStatus($shipment, 'CREATED', $operator);
     }
 }
+

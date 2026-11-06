@@ -67,3 +67,4 @@ class ExceptionWebController extends Controller
         }
     }
 }
+

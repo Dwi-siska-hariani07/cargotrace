@@ -40,3 +40,4 @@ class CarrierApiController extends Controller
         ], 201);
     }
 }
+

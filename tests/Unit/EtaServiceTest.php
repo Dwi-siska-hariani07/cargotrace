@@ -77,3 +77,4 @@ class EtaServiceTest extends TestCase
         $this->assertEquals('HIGH', $shipment->delay_severity);
     }
 }
+

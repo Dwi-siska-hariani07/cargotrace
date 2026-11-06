@@ -218,3 +218,4 @@ class ShipmentWebController extends Controller
         return redirect()->route('shipments.index')->with('success', 'Shipment soft-deleted successfully.');
     }
 }
+

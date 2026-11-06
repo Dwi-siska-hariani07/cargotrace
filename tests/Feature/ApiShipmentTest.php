@@ -65,3 +65,4 @@ class ApiShipmentTest extends TestCase
             ->assertJsonPath('data.shipment_number', $ownShipment->shipment_number);
     }
 }
+

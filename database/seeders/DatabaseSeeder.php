@@ -164,6 +164,36 @@ class DatabaseSeeder extends Seeder
             'longitude' => 103.9915000,
         ]);
 
+        $locDxb = Location::create([
+            'code' => 'AEDXB',
+            'name' => 'Port of Jebel Ali (Dubai)',
+            'type' => 'SEAPORT',
+            'city' => 'Dubai',
+            'country' => 'United Arab Emirates',
+            'latitude' => 25.0113,
+            'longitude' => 55.0617,
+        ]);
+
+        $locSha = Location::create([
+            'code' => 'CNSHA',
+            'name' => 'Port of Shanghai',
+            'type' => 'SEAPORT',
+            'city' => 'Shanghai',
+            'country' => 'China',
+            'latitude' => 31.2304,
+            'longitude' => 121.4737,
+        ]);
+
+        $locNyc = Location::create([
+            'code' => 'USNYC',
+            'name' => 'Port of New York & New Jersey',
+            'type' => 'SEAPORT',
+            'city' => 'New York',
+            'country' => 'United States',
+            'latitude' => 40.6698,
+            'longitude' => -74.1485,
+        ]);
+
         // 4. Create Shipments
 
         // Shipment 1: Southeast Asia -> Europe (Delayed by customs hold)
