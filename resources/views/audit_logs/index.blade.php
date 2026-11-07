@@ -4,16 +4,21 @@
 <div class="space-y-6">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">System Audit Trail</h1>
-            <p class="text-xs sm:text-sm text-slate-500 mt-1">Immutable security log of operations, status updates and user actions</p>
+            <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-wider bg-ocean-100 text-ocean-900 border border-ocean-200">
+                    Security & Compliance
+                </span>
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1">System Audit Trail</h1>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1">Immutable security log of operations, status lifecycle transitions and user actions</p>
         </div>
     </div>
 
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse text-xs">
                 <thead>
-                    <tr class="bg-slate-50 border-b border-slate-200 text-slate-400 uppercase font-semibold">
+                    <tr class="bg-slate-50/80 border-b border-slate-200 text-slate-400 uppercase font-semibold">
                         <th class="py-3 px-4">Timestamp</th>
                         <th class="py-3 px-4">User / Actor</th>
                         <th class="py-3 px-4">Action</th>
@@ -24,26 +29,26 @@
                 </thead>
                 <tbody class="divide-y divide-slate-100">
                     @forelse($logs as $log)
-                    <tr class="hover:bg-slate-50/80 transition font-mono">
-                        <td class="py-3 px-4 text-slate-500">
+                    <tr class="hover:bg-ocean-50/30 transition font-mono">
+                        <td class="py-3.5 px-4 text-slate-500">
                             {{ $log->created_at->format('d M Y, H:i:s') }}
                         </td>
-                        <td class="py-3 px-4 font-sans font-medium text-slate-800">
+                        <td class="py-3.5 px-4 font-sans font-medium text-slate-800">
                             {{ $log->user->name ?? 'System Seeder' }}
                             <span class="block text-[10px] text-slate-400 font-sans">{{ $log->user->email ?? 'cli' }}</span>
                         </td>
-                        <td class="py-3 px-4 font-bold text-blue-700">
+                        <td class="py-3.5 px-4 font-bold text-ocean-800">
                             {{ $log->action }}
                         </td>
-                        <td class="py-3 px-4 font-sans text-slate-600">
+                        <td class="py-3.5 px-4 font-sans text-slate-600">
                             {{ $log->entity_type }} #{{ $log->entity_id }}
                         </td>
-                        <td class="py-3 px-4 text-[11px] text-slate-600 max-w-xs truncate">
+                        <td class="py-3.5 px-4 text-[11px] text-slate-600 max-w-xs truncate">
                             @if($log->new_values)
-                                <code class="text-slate-700 bg-slate-100 px-1 py-0.5 rounded">{{ json_encode($log->new_values) }}</code>
+                                <code class="text-ocean-950 bg-ocean-50 border border-ocean-200/60 px-1.5 py-0.5 rounded">{{ json_encode($log->new_values) }}</code>
                             @endif
                         </td>
-                        <td class="py-3 px-4 text-slate-400">
+                        <td class="py-3.5 px-4 text-slate-400">
                             {{ $log->ip_address ?? '127.0.0.1' }}
                         </td>
                     </tr>
@@ -64,4 +69,3 @@
     </div>
 </div>
 @endsection
-

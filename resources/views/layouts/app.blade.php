@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ config('app.name', 'CargoTrace') }} — Global Shipment Visibility & Tracking</title>
+    <title>{{ config('app.name', 'CargoTrace') }} — Oceanic & Global Cargo Visibility</title>
     
+    <!-- Custom SVG Favicon: Oceanic Compass / Anchor -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%23042f2e'/><path d='M16 6 L19 14 L27 16 L19 18 L16 26 L13 18 L5 16 L13 14 Z' fill='%23f59e0b'/><circle cx='16' cy='16' r='3' fill='%230f766e'/></svg>">
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -12,14 +15,39 @@
             theme: {
                 extend: {
                     colors: {
+                        ocean: {
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            200: '#99f6e4',
+                            300: '#5eead4',
+                            400: '#2dd4bf',
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                            700: '#0f766e',
+                            800: '#115e59',
+                            900: '#134e4a',
+                            950: '#042f2e',
+                        },
+                        gold: {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            200: '#fde68a',
+                            300: '#fcd34d',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                            800: '#92400e',
+                            900: '#78350f',
+                        },
                         brand: {
-                            50: '#eff6ff',
-                            100: '#dbeafe',
-                            500: '#3b82f6',
-                            600: '#2563eb',
-                            700: '#1d4ed8',
-                            800: '#1e40af',
-                            900: '#1e3a8a',
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                            700: '#0f766e',
+                            800: '#115e59',
+                            900: '#042f2e',
                         }
                     }
                 }
@@ -37,39 +65,42 @@
     <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
-<body class="h-full flex flex-col font-sans text-slate-800 antialiased">
-    <!-- Navbar -->
-    <nav class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50 shadow-md">
+<body class="h-full flex flex-col font-sans text-slate-800 antialiased bg-slate-50">
+    <!-- Navbar: Oceanic Teal & Nautical Gold Theme -->
+    <nav class="bg-[#042f2e] border-b border-ocean-800/70 sticky top-0 z-50 shadow-md">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <!-- Brand -->
+                <!-- Brand & Main Nav -->
                 <div class="flex items-center gap-8">
-                    <a href="{{ auth()->check() ? route('dashboard') : route('home') }}" class="flex items-center gap-2">
-                        <div class="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-xl shadow">
-                            <i class="ph ph-navigation-arrow"></i>
+                    <a href="{{ auth()->check() ? route('dashboard') : route('home') }}" class="flex items-center gap-3 group">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-ocean-800 to-[#021d1d] border border-gold-500/40 flex items-center justify-center text-gold-400 font-bold text-xl shadow-inner group-hover:border-gold-400 transition">
+                            <i class="ph ph-compass text-2xl text-gold-400"></i>
                         </div>
                         <div class="flex flex-col">
-                            <span class="text-white font-bold text-lg tracking-wide leading-none">Cargo<span class="text-blue-400">Trace</span></span>
-                            <span class="text-slate-400 text-[10px] tracking-wider uppercase">Shipment Visibility</span>
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-white font-extrabold text-lg tracking-wide leading-none">Cargo<span class="text-gold-400">Trace</span></span>
+                                <span class="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-gold-500/20 text-gold-300 border border-gold-500/30">OCEANIC</span>
+                            </div>
+                            <span class="text-ocean-300 text-[10px] tracking-wider uppercase font-medium">Global Multimodal Visibility</span>
                         </div>
                     </a>
 
                     @auth
-                    <div class="hidden md:flex items-center gap-1">
-                        <a href="{{ route('dashboard') }}" class="px-3 py-2 rounded-md text-sm font-medium {{ request()->routeIs('dashboard') ? 'bg-slate-800 text-blue-400' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                    <div class="hidden md:flex items-center gap-1.5">
+                        <a href="{{ route('dashboard') }}" class="px-3 py-2 rounded-xl text-sm font-semibold transition {{ request()->routeIs('dashboard') ? 'bg-ocean-900 text-gold-400 border border-ocean-700/60 shadow-sm' : 'text-ocean-100/80 hover:bg-ocean-900/60 hover:text-white' }}">
                             Dashboard
                         </a>
-                        <a href="{{ route('shipments.index') }}" class="px-3 py-2 rounded-md text-sm font-medium {{ request()->routeIs('shipments.*') ? 'bg-slate-800 text-blue-400' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                        <a href="{{ route('shipments.index') }}" class="px-3 py-2 rounded-xl text-sm font-semibold transition {{ request()->routeIs('shipments.*') ? 'bg-ocean-900 text-gold-400 border border-ocean-700/60 shadow-sm' : 'text-ocean-100/80 hover:bg-ocean-900/60 hover:text-white' }}">
                             Shipments
                         </a>
                         @if(auth()->user()->isAdmin())
-                        <a href="{{ route('carriers.index') }}" class="px-3 py-2 rounded-md text-sm font-medium {{ request()->routeIs('carriers.*') ? 'bg-slate-800 text-blue-400' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                        <a href="{{ route('carriers.index') }}" class="px-3 py-2 rounded-xl text-sm font-semibold transition {{ request()->routeIs('carriers.*') ? 'bg-ocean-900 text-gold-400 border border-ocean-700/60 shadow-sm' : 'text-ocean-100/80 hover:bg-ocean-900/60 hover:text-white' }}">
                             Carriers
                         </a>
-                        <a href="{{ route('locations.index') }}" class="px-3 py-2 rounded-md text-sm font-medium {{ request()->routeIs('locations.*') ? 'bg-slate-800 text-blue-400' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                        <a href="{{ route('locations.index') }}" class="px-3 py-2 rounded-xl text-sm font-semibold transition {{ request()->routeIs('locations.*') ? 'bg-ocean-900 text-gold-400 border border-ocean-700/60 shadow-sm' : 'text-ocean-100/80 hover:bg-ocean-900/60 hover:text-white' }}">
                             Ports & Hubs
                         </a>
-                        <a href="{{ route('audit_logs.index') }}" class="px-3 py-2 rounded-md text-sm font-medium {{ request()->routeIs('audit_logs.*') ? 'bg-slate-800 text-blue-400' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                        <a href="{{ route('audit_logs.index') }}" class="px-3 py-2 rounded-xl text-sm font-semibold transition {{ request()->routeIs('audit_logs.*') ? 'bg-ocean-900 text-gold-400 border border-ocean-700/60 shadow-sm' : 'text-ocean-100/80 hover:bg-ocean-900/60 hover:text-white' }}">
                             Audit Logs
                         </a>
                         @endif
@@ -79,31 +110,32 @@
 
                 <!-- Right Actions -->
                 <div class="flex items-center gap-4">
-                    <a href="{{ route('home') }}" class="text-slate-400 hover:text-white text-sm flex items-center gap-1 mr-2">
-                        <i class="ph ph-magnifying-glass"></i> Public Track
+                    <a href="{{ route('home') }}" class="text-ocean-200 hover:text-gold-300 text-sm font-medium flex items-center gap-1.5 transition">
+                        <i class="ph ph-magnifying-glass text-gold-400"></i> Public Track
                     </a>
 
                     @auth
                     <div class="flex items-center gap-3">
                         <div class="hidden sm:flex flex-col text-right">
                             <span class="text-white text-sm font-medium leading-none">{{ auth()->user()->name }}</span>
-                            <span class="text-xs uppercase font-semibold mt-1 px-2 py-0.5 rounded-full inline-block
-                                @if(auth()->user()->isAdmin()) bg-purple-900/60 text-purple-300 border border-purple-700
-                                @elseif(auth()->user()->isOperator()) bg-emerald-900/60 text-emerald-300 border border-emerald-700
-                                @else bg-blue-900/60 text-blue-300 border border-blue-700 @endif">
+                            <span class="text-[10px] uppercase font-bold mt-1 px-2 py-0.5 rounded-full inline-block
+                                @if(auth()->user()->isAdmin()) bg-gold-500/20 text-gold-300 border border-gold-500/40
+                                @elseif(auth()->user()->isOperator()) bg-emerald-500/20 text-emerald-300 border border-emerald-500/40
+                                @else bg-ocean-500/20 text-ocean-300 border border-ocean-500/40 @endif">
                                 {{ auth()->user()->role }}
                             </span>
                         </div>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" title="Logout" class="w-9 h-9 rounded-lg bg-slate-800 text-slate-300 hover:bg-rose-900/50 hover:text-rose-300 flex items-center justify-center transition">
+                            <button type="submit" title="Logout" class="w-9 h-9 rounded-xl bg-ocean-900 border border-ocean-700 text-ocean-200 hover:bg-rose-950/60 hover:border-rose-700 hover:text-rose-300 flex items-center justify-center transition shadow-xs">
                                 <i class="ph ph-sign-out text-lg"></i>
                             </button>
                         </form>
                     </div>
                     @else
-                    <a href="{{ route('login') }}" class="px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-lg shadow transition">
-                        Sign In
+                    <a href="{{ route('login') }}" class="px-4 py-2 text-sm font-bold text-slate-950 bg-gradient-to-r from-gold-400 to-gold-500 hover:from-gold-500 hover:to-gold-600 rounded-xl shadow-md transition flex items-center gap-1.5">
+                        <i class="ph ph-sign-in font-bold"></i>
+                        <span>Sign In</span>
                     </a>
                     @endauth
                 </div>
@@ -114,23 +146,23 @@
     <!-- Flash Messages -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 w-full">
         @if(session('success'))
-        <div class="p-4 mb-4 text-sm text-emerald-800 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center gap-2">
-            <i class="ph ph-check-circle text-lg text-emerald-600"></i>
+        <div class="p-4 mb-4 text-sm text-emerald-900 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center gap-3 shadow-xs">
+            <i class="ph ph-check-circle text-xl text-emerald-600 shrink-0"></i>
             <span>{{ session('success') }}</span>
         </div>
         @endif
 
         @if(session('error'))
-        <div class="p-4 mb-4 text-sm text-rose-800 rounded-lg bg-rose-50 border border-rose-200 flex items-center gap-2">
-            <i class="ph ph-warning-circle text-lg text-rose-600"></i>
+        <div class="p-4 mb-4 text-sm text-rose-900 rounded-2xl bg-rose-50 border border-rose-200 flex items-center gap-3 shadow-xs">
+            <i class="ph ph-warning-circle text-xl text-rose-600 shrink-0"></i>
             <span>{{ session('error') }}</span>
         </div>
         @endif
 
         @if($errors->any())
-        <div class="p-4 mb-4 text-sm text-rose-800 rounded-lg bg-rose-50 border border-rose-200">
+        <div class="p-4 mb-4 text-sm text-rose-900 rounded-2xl bg-rose-50 border border-rose-200 shadow-xs">
             <div class="font-semibold mb-1 flex items-center gap-2">
-                <i class="ph ph-x-circle text-lg text-rose-600"></i>
+                <i class="ph ph-x-circle text-xl text-rose-600"></i>
                 <span>Please correct the errors below:</span>
             </div>
             <ul class="list-disc list-inside ml-2 space-y-1">
@@ -149,14 +181,19 @@
 
     <!-- Footer -->
     <footer class="bg-white border-t border-slate-200 py-6 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2">
-            <div>
-                <strong>CargoTrace</strong> — Global Shipment Visibility & Tracking Platform (Web Programming 2 UAS)
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+                <div class="w-5 h-5 rounded-md bg-ocean-950 flex items-center justify-center text-gold-400 font-bold text-xs">
+                    <i class="ph ph-anchor text-gold-400"></i>
+                </div>
+                <span><strong>CargoTrace Oceanic</strong> — Global Logistics & Ocean-Air Shipment Visibility Platform (Web Programming 2)</span>
             </div>
-            <div class="flex items-center gap-4 text-slate-400">
-                <span>Built with Laravel 11 & Leaflet.js</span>
+            <div class="flex items-center gap-3 text-slate-400">
+                <span>Deterministic State Machine</span>
                 <span>•</span>
-                <span>REST API Enabled</span>
+                <span>Open-Meteo GIS Integration</span>
+                <span>•</span>
+                <span>REST API</span>
             </div>
         </div>
     </footer>
@@ -164,4 +201,3 @@
     @stack('scripts')
 </body>
 </html>
-
