@@ -243,6 +243,12 @@
             attribution: '&copy; Esri, Maxar, Earthstar Geographics'
         });
 
+        const labelsOverlay = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+            maxZoom: 19,
+            zIndex: 10,
+            attribution: '&copy; Esri Boundaries & Places'
+        });
+
         const darkRadarLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
             maxZoom: 19,
             attribution: '&copy; CARTO &copy; OpenStreetMap'
@@ -251,15 +257,26 @@
         const map = L.map('overviewMap', {
             center: [15.0, 100.0],
             zoom: 3,
-            layers: [satelliteLayer]
+            layers: [satelliteLayer, labelsOverlay]
         });
 
         const baseMaps = {
-            "🛰️ Citra Satelit Bumi (ArcGIS)": satelliteLayer,
+            "🛰️ Citra Satelit + Nama Wilayah": satelliteLayer,
             "🌙 Radar Laut Malam (Dark)": darkRadarLayer,
             "🗺️ Peta Standar Maritim (OSM)": osmLayer
         };
-        L.control.layers(baseMaps, null, { position: 'topright' }).addTo(map);
+        const overlays = {
+            "🏷️ Label Negara, Kota & Batas": labelsOverlay
+        };
+        L.control.layers(baseMaps, overlays, { position: 'topright' }).addTo(map);
+
+        map.on('baselayerchange', function (e) {
+            if (e.layer === osmLayer) {
+                if (map.hasLayer(labelsOverlay)) map.removeLayer(labelsOverlay);
+            } else {
+                if (!map.hasLayer(labelsOverlay)) labelsOverlay.addTo(map);
+            }
+        });
 
         if (mapShipments.length > 0) {
             const markers = [];
@@ -271,6 +288,7 @@
                     weight: 2,
                     radius: 8
                 }).addTo(map)
+                .bindTooltip(`${s.shipment_number}`, { direction: 'top' })
                 .bindPopup(`<b>${s.shipment_number}</b><br>Armada: ${s.carrier}<br>Status: ${s.current_status}`);
                 markers.push([s.latitude, s.longitude]);
             });

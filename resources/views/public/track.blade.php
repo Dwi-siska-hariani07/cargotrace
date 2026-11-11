@@ -229,7 +229,7 @@
                 <span class="flex items-center gap-1.5">
                     <span class="w-3 h-0.5 bg-ocean-600 inline-block border-t border-dashed"></span> <strong>Garis Putus-Putus Teal:</strong> Jalur Pelayaran / Koridor Udara
                 </span>
-                <span class="text-slate-400">Gunakan kontrol di kanan atas peta untuk mengganti ke Citra Satelit</span>
+                <span class="text-slate-400">Gunakan tombol kanan atas peta untuk mengatur Lapisan Peta &amp; Label Wilayah</span>
             </div>
         </div>
 
@@ -405,32 +405,59 @@
             attribution: '&copy; Esri, Maxar, Earthstar Geographics'
         });
 
+        const labelsOverlay = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+            maxZoom: 19,
+            zIndex: 10,
+            attribution: '&copy; Esri Boundaries & Places'
+        });
+
         const darkRadarLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
             maxZoom: 19,
             attribution: '&copy; CARTO &copy; OpenStreetMap'
         });
 
-        // Initialize Map with Satellite Layer as default for high-end look
+        // Initialize Map with Satellite Layer + Country/Region Labels as default
         const map = L.map('shipmentMap', {
             center: [currentLat, currentLng],
             zoom: 3,
-            layers: [satelliteLayer]
+            layers: [satelliteLayer, labelsOverlay]
         });
 
         // Layer Switcher Control
         const baseMaps = {
-            "🛰️ Citra Satelit Bumi (ArcGIS)": satelliteLayer,
+            "🛰️ Citra Satelit + Nama Wilayah": satelliteLayer,
             "🌙 Radar Laut Malam (Dark)": darkRadarLayer,
             "🗺️ Peta Navigasi Standar (OSM)": osmLayer
         };
-        L.control.layers(baseMaps, null, { position: 'topright' }).addTo(map);
+        const overlays = {
+            "🏷️ Label Negara, Kota & Batas": labelsOverlay
+        };
+        L.control.layers(baseMaps, overlays, { position: 'topright' }).addTo(map);
+
+        map.on('baselayerchange', function (e) {
+            if (e.layer === osmLayer) {
+                if (map.hasLayer(labelsOverlay)) map.removeLayer(labelsOverlay);
+            } else {
+                if (!map.hasLayer(labelsOverlay)) labelsOverlay.addTo(map);
+            }
+        });
 
         // Origin Marker (Departure Port)
         L.marker([originLat, originLng]).addTo(map)
+            .bindTooltip('🛫 Asal: {{ $shipment->origin->city }} ({{ $shipment->origin->code }})', {
+                permanent: true,
+                direction: 'top',
+                offset: [0, -32]
+            })
             .bindPopup('<b>🛫 Titik Asal:</b> {{ $shipment->origin->name }}<br>{{ $shipment->origin->city }}, {{ $shipment->origin->country }}');
 
         // Destination Marker (Arrival Port)
         L.marker([destLat, destLng]).addTo(map)
+            .bindTooltip('🛬 Tujuan: {{ $shipment->destination->city }} ({{ $shipment->destination->code }})', {
+                permanent: true,
+                direction: 'bottom',
+                offset: [0, 6]
+            })
             .bindPopup('<b>🛬 Titik Tujuan:</b> {{ $shipment->destination->name }}<br>{{ $shipment->destination->city }}, {{ $shipment->destination->country }}');
 
         // Vessel Current Position Marker with Gold/Teal pulse

@@ -587,7 +587,7 @@
 
             const days = Math.floor(distance / (1000 * 60 * 60 * 24));
             const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60)) / (1000 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
             el.innerHTML = `${days} Hari ${hours} Jam ${minutes} Menit ${seconds} Detik`;
@@ -614,6 +614,12 @@
             attribution: '&copy; Esri, Maxar, Earthstar Geographics'
         });
 
+        const labelsOverlay = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+            maxZoom: 19,
+            zIndex: 10,
+            attribution: '&copy; Esri Boundaries & Places'
+        });
+
         const darkRadarLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
             maxZoom: 19,
             attribution: '&copy; CARTO &copy; OpenStreetMap'
@@ -622,20 +628,41 @@
         const map = L.map('shipmentMap', {
             center: [currentLat, currentLng],
             zoom: 4,
-            layers: [satelliteLayer]
+            layers: [satelliteLayer, labelsOverlay]
         });
 
         const baseMaps = {
-            "🛰️ Citra Satelit Bumi (ArcGIS)": satelliteLayer,
+            "🛰️ Citra Satelit + Nama Wilayah": satelliteLayer,
             "🌙 Radar Laut Malam (Dark)": darkRadarLayer,
             "🗺️ Peta Navigasi Standar (OSM)": osmLayer
         };
-        L.control.layers(baseMaps, null, { position: 'topright' }).addTo(map);
+        const overlays = {
+            "🏷️ Label Negara, Kota & Batas": labelsOverlay
+        };
+        L.control.layers(baseMaps, overlays, { position: 'topright' }).addTo(map);
+
+        map.on('baselayerchange', function (e) {
+            if (e.layer === osmLayer) {
+                if (map.hasLayer(labelsOverlay)) map.removeLayer(labelsOverlay);
+            } else {
+                if (!map.hasLayer(labelsOverlay)) labelsOverlay.addTo(map);
+            }
+        });
 
         L.marker([originLat, originLng]).addTo(map)
+            .bindTooltip('🛫 Asal: {{ $shipment->origin->city }} ({{ $shipment->origin->code }})', {
+                permanent: true,
+                direction: 'top',
+                offset: [0, -32]
+            })
             .bindPopup('<b>🛫 Origin:</b> {{ $shipment->origin->name }}<br>{{ $shipment->origin->city }}, {{ $shipment->origin->country }}');
 
         L.marker([destLat, destLng]).addTo(map)
+            .bindTooltip('🛬 Tujuan: {{ $shipment->destination->city }} ({{ $shipment->destination->code }})', {
+                permanent: true,
+                direction: 'bottom',
+                offset: [0, 6]
+            })
             .bindPopup('<b>🛬 Destination:</b> {{ $shipment->destination->name }}<br>{{ $shipment->destination->city }}, {{ $shipment->destination->country }}');
 
         L.circleMarker([currentLat, currentLng], {
