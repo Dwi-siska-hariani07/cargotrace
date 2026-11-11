@@ -8,17 +8,17 @@
         <div id="hero-carousel" class="relative min-h-[480px] sm:min-h-[520px] w-full flex flex-col justify-between overflow-hidden">
             <!-- Background Photography Slides -->
             <div class="absolute inset-0 z-0">
-                <div class="hero-slide absolute inset-0 transition-opacity duration-700 ease-in-out opacity-100">
+                <div class="hero-slide absolute inset-0 transition-opacity duration-500 ease-in-out opacity-100">
                     <img src="{{ asset('images/banner-ocean.jpg') }}" alt="Global Ocean Container Ship" class="w-full h-full object-cover object-center">
-                    <div class="absolute inset-0 bg-gradient-to-r from-[#021d1d]/92 via-[#042f2e]/75 to-[#042f2e]/30"></div>
+                    <div class="absolute inset-0 bg-gradient-to-r from-[#021d1d]/95 via-[#042f2e]/80 to-[#042f2e]/35"></div>
                 </div>
-                <div class="hero-slide absolute inset-0 transition-opacity duration-700 ease-in-out opacity-0 pointer-events-none">
+                <div class="hero-slide absolute inset-0 transition-opacity duration-500 ease-in-out opacity-0 pointer-events-none">
                     <img src="{{ asset('images/banner-aircargo.jpg') }}" alt="Priority Air Cargo Freighter" class="w-full h-full object-cover object-center">
-                    <div class="absolute inset-0 bg-gradient-to-r from-[#021d1d]/92 via-[#042f2e]/75 to-[#042f2e]/30"></div>
+                    <div class="absolute inset-0 bg-gradient-to-r from-[#021d1d]/95 via-[#042f2e]/80 to-[#042f2e]/35"></div>
                 </div>
-                <div class="hero-slide absolute inset-0 transition-opacity duration-700 ease-in-out opacity-0 pointer-events-none">
+                <div class="hero-slide absolute inset-0 transition-opacity duration-500 ease-in-out opacity-0 pointer-events-none">
                     <img src="{{ asset('images/banner-port.jpg') }}" alt="International Seaport Terminal" class="w-full h-full object-cover object-center">
-                    <div class="absolute inset-0 bg-gradient-to-r from-[#021d1d]/92 via-[#042f2e]/75 to-[#042f2e]/30"></div>
+                    <div class="absolute inset-0 bg-gradient-to-r from-[#021d1d]/95 via-[#042f2e]/80 to-[#042f2e]/35"></div>
                 </div>
             </div>
 
@@ -38,7 +38,7 @@
 
             <!-- Stacked Responsive Slide Headlines -->
             <div class="relative z-10 px-6 sm:px-12 py-4 grid grid-cols-1 grid-rows-1 max-w-3xl">
-                <div class="hero-caption col-start-1 row-start-1 transition-opacity duration-700 ease-in-out opacity-100 flex flex-col justify-center">
+                <div class="hero-caption col-start-1 row-start-1 transition-opacity duration-300 ease-out opacity-100 visible flex flex-col justify-center">
                     <span class="inline-flex items-center gap-2 self-start px-3.5 py-1.5 rounded-full bg-gold-500/20 border border-gold-400/40 text-gold-300 text-[11px] font-bold uppercase tracking-widest mb-4 backdrop-blur-xs">
                         <span class="w-2 h-2 rounded-full bg-gold-400 animate-pulse"></span>
                         {{ __('ui.home.slide1_badge') }}
@@ -51,7 +51,7 @@
                     </p>
                 </div>
 
-                <div class="hero-caption col-start-1 row-start-1 transition-opacity duration-700 ease-in-out opacity-0 pointer-events-none flex flex-col justify-center">
+                <div class="hero-caption col-start-1 row-start-1 opacity-0 invisible pointer-events-none flex flex-col justify-center">
                     <span class="inline-flex items-center gap-2 self-start px-3.5 py-1.5 rounded-full bg-ocean-400/20 border border-ocean-300/40 text-ocean-100 text-[11px] font-bold uppercase tracking-widest mb-4 backdrop-blur-xs">
                         <i class="ph ph-airplane-tilt text-sm text-gold-400"></i>
                         {{ __('ui.home.slide2_badge') }}
@@ -64,7 +64,7 @@
                     </p>
                 </div>
 
-                <div class="hero-caption col-start-1 row-start-1 transition-opacity duration-700 ease-in-out opacity-0 pointer-events-none flex flex-col justify-center">
+                <div class="hero-caption col-start-1 row-start-1 opacity-0 invisible pointer-events-none flex flex-col justify-center">
                     <span class="inline-flex items-center gap-2 self-start px-3.5 py-1.5 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-200 text-[11px] font-bold uppercase tracking-widest mb-4 backdrop-blur-xs">
                         <i class="ph ph-anchor text-sm text-gold-400"></i>
                         {{ __('ui.home.slide3_badge') }}
@@ -257,7 +257,7 @@
                             default => 'ph-boat',
                         };
                     @endphp
-                    <article class="group bg-white rounded-3xl border border-slate-200/90 shadow-sm hover:shadow-xl hover:border-ocean-300 transition duration-300 overflow-hidden flex flex-col">
+                    <article class="group bg-white rounded-3xl border border-ocean-200/75 shadow-sm shadow-ocean-950/5 hover:shadow-xl hover:border-ocean-400 transition duration-300 overflow-hidden flex flex-col">
                         <div class="relative aspect-[16/10] overflow-hidden bg-slate-900">
                             <img src="{{ $thumb }}" alt="{{ $shipment->shipment_number }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
                             <div class="absolute inset-0 bg-gradient-to-t from-[#021d1d]/85 via-black/15 to-transparent"></div>
@@ -390,7 +390,7 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-2xs hover:shadow-lg transition group">
+            <div class="bg-white rounded-3xl border border-ocean-200/75 overflow-hidden shadow-sm shadow-ocean-950/5 hover:shadow-lg hover:border-ocean-300 transition group">
                 <div class="h-44 overflow-hidden relative">
                     <img src="{{ asset('images/card-sea.jpg') }}" alt="Ocean Container Freight" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
                     <div class="absolute inset-0 bg-gradient-to-t from-[#021d1d]/70 to-transparent"></div>
@@ -406,7 +406,7 @@
                 </div>
             </div>
 
-            <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-2xs hover:shadow-lg transition group">
+            <div class="bg-white rounded-3xl border border-ocean-200/75 overflow-hidden shadow-sm shadow-ocean-950/5 hover:shadow-lg hover:border-ocean-300 transition group">
                 <div class="h-44 overflow-hidden relative">
                     <img src="{{ asset('images/card-air.jpg') }}" alt="Air Cargo Operations" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
                     <div class="absolute inset-0 bg-gradient-to-t from-[#021d1d]/70 to-transparent"></div>
@@ -422,7 +422,7 @@
                 </div>
             </div>
 
-            <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-2xs hover:shadow-lg transition group">
+            <div class="bg-white rounded-3xl border border-ocean-200/75 overflow-hidden shadow-sm shadow-ocean-950/5 hover:shadow-lg hover:border-ocean-300 transition group">
                 <div class="h-44 overflow-hidden relative">
                     <img src="{{ asset('images/card-customs.jpg') }}" alt="Customs Clearance Hub" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
                     <div class="absolute inset-0 bg-gradient-to-t from-[#021d1d]/70 to-transparent"></div>
@@ -442,7 +442,7 @@
 
     <!-- 5. Connected International Port & Airport Hubs -->
     @if(isset($globalPorts) && $globalPorts->count() > 0)
-    <section class="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-2xs">
+    <section class="bg-white rounded-3xl border border-ocean-200/75 p-6 sm:p-8 shadow-sm shadow-ocean-950/5">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
             <div>
                 <span class="text-xs font-bold uppercase tracking-wider text-ocean-700">{{ __('ui.home.ports_kicker') }}</span>
@@ -498,8 +498,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         captions.forEach((caption, i) => {
             const active = i === current;
+            caption.classList.toggle('transition-opacity', active);
+            caption.classList.toggle('duration-300', active);
+            caption.classList.toggle('ease-out', active);
             caption.classList.toggle('opacity-100', active);
+            caption.classList.toggle('visible', active);
             caption.classList.toggle('opacity-0', !active);
+            caption.classList.toggle('invisible', !active);
             caption.classList.toggle('pointer-events-none', !active);
         });
 
