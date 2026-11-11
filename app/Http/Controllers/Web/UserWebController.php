@@ -99,3 +99,4 @@ class UserWebController extends Controller
         return back()->with('success', "Role {$targetUser->name} diperbarui dari {$oldRole} ke {$targetUser->role}.");
     }
 }
+

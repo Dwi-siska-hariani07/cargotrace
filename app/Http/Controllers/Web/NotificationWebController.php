@@ -55,3 +55,4 @@ class NotificationWebController extends Controller
         return back()->with('success', 'Semua notifikasi telah ditandai sudah dibaca.');
     }
 }
+
