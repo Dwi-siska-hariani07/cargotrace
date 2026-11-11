@@ -14,28 +14,28 @@
                     <i class="ph ph-compass"></i>
                 </div>
                 <span class="inline-block px-3 py-1 rounded-full bg-gold-500/20 border border-gold-400/40 text-gold-300 text-[10px] font-bold uppercase tracking-widest mb-3">
-                    Enterprise Operations Portal
+                    {{ __('ui.auth.portal_badge') }}
                 </span>
                 <h2 class="text-2xl font-extrabold leading-snug tracking-tight">
-                    Kendalikan Visibilitas <span class="text-gold-400">Rantai Pasok Global</span>
+                    {{ __('ui.auth.showcase_title_pre') }} <span class="text-gold-400">{{ __('ui.auth.showcase_title_hl') }}</span>
                 </h2>
                 <p class="text-xs text-slate-200 leading-relaxed mt-3">
-                    Akses peta pelacakan satelit, kelola jadwal keberangkatan armada, verifikasi status bea cukai, dan pantau notifikasi pelanggan dalam satu sistem.
+                    {{ __('ui.auth.showcase_desc') }}
                 </p>
             </div>
 
             <div class="relative z-10 space-y-2.5 border-t border-white/15 pt-5 text-xs">
                 <div class="flex items-center gap-2.5 text-slate-200">
                     <i class="ph ph-check-circle text-gold-400 text-base shrink-0"></i>
-                    <span>Monitoring rute laut &amp; udara real-time</span>
+                    <span>{{ __('ui.auth.bullet1') }}</span>
                 </div>
                 <div class="flex items-center gap-2.5 text-slate-200">
                     <i class="ph ph-check-circle text-gold-400 text-base shrink-0"></i>
-                    <span>Pembaruan posisi pelabuhan &amp; cuaca aktif</span>
+                    <span>{{ __('ui.auth.bullet2') }}</span>
                 </div>
                 <div class="flex items-center gap-2.5 text-slate-200">
                     <i class="ph ph-check-circle text-gold-400 text-base shrink-0"></i>
-                    <span>Hak akses khusus Admin, Operator &amp; Customer</span>
+                    <span>{{ __('ui.auth.bullet3') }}</span>
                 </div>
             </div>
         </div>
@@ -46,27 +46,27 @@
                 <div class="md:hidden w-14 h-14 rounded-2xl bg-gradient-to-br from-ocean-800 to-[#021d1d] border border-gold-500/40 text-gold-400 flex items-center justify-center text-3xl mx-auto shadow-md mb-3">
                     <i class="ph ph-compass"></i>
                 </div>
-                <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Masuk ke CargoTrace</h1>
-                <p class="text-xs text-slate-500 mt-1">Platform Pemantauan Kargo &amp; Logistik Maritim Global</p>
+                <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">{{ __('ui.auth.login_title') }}</h1>
+                <p class="text-xs text-slate-500 mt-1">{{ __('ui.auth.login_subtitle') }}</p>
             </div>
 
             <!-- Quick One-Click Demo Buttons -->
             <div class="mb-6 p-4 bg-ocean-50/60 rounded-2xl border border-ocean-100">
                 <span class="text-[11px] font-extrabold text-ocean-950 uppercase tracking-wider block mb-2.5 text-center">
-                    ⚡ Akses Cepat Demo (Klik untuk Isi Akun)
+                    ⚡ {{ __('ui.auth.quick_demo') }}
                 </span>
                 <div class="grid grid-cols-3 gap-2">
                     <button type="button" onclick="fillCredentials('admin@cargotrace.com', 'password123')"
                             class="px-2 py-2 bg-white hover:bg-gold-50 text-gold-900 border border-gold-300 rounded-xl text-xs font-bold shadow-2xs transition text-center">
-                        👑 Admin
+                        👑 {{ __('ui.auth.role_admin') }}
                     </button>
                     <button type="button" onclick="fillCredentials('operator@cargotrace.com', 'password123')"
                             class="px-2 py-2 bg-white hover:bg-emerald-50 text-emerald-800 border border-emerald-300 rounded-xl text-xs font-bold shadow-2xs transition text-center">
-                        🛠️ Operator
+                        🛠️ {{ __('ui.auth.role_operator') }}
                     </button>
                     <button type="button" onclick="fillCredentials('customer@cargotrace.com', 'password123')"
                             class="px-2 py-2 bg-white hover:bg-ocean-100 text-ocean-900 border border-ocean-300 rounded-xl text-xs font-bold shadow-2xs transition text-center">
-                        📦 Customer
+                        📦 {{ __('ui.auth.role_customer') }}
                     </button>
                 </div>
             </div>
@@ -75,13 +75,13 @@
             <form method="POST" action="{{ route('login') }}" class="space-y-4">
                 @csrf
                 <div>
-                    <label for="email" class="block text-xs font-bold uppercase text-slate-600 mb-1">Alamat Email</label>
+                    <label for="email" class="block text-xs font-bold uppercase text-slate-600 mb-1">{{ __('ui.auth.email_label') }}</label>
                     <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus
                            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-ocean-500 transition">
                 </div>
 
                 <div>
-                    <label for="password" class="block text-xs font-bold uppercase text-slate-600 mb-1">Password</label>
+                    <label for="password" class="block text-xs font-bold uppercase text-slate-600 mb-1">{{ __('ui.auth.password_label') }}</label>
                     <input id="password" type="password" name="password" required
                            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-ocean-500 transition">
                 </div>
@@ -89,19 +89,19 @@
                 <div class="flex items-center justify-between text-xs text-slate-500">
                     <label class="flex items-center gap-2 cursor-pointer">
                         <input type="checkbox" name="remember" class="rounded text-ocean-700 border-slate-300 focus:ring-ocean-500">
-                        <span>Ingat Saya</span>
+                        <span>{{ __('ui.auth.remember_me') }}</span>
                     </label>
                 </div>
 
                 <button type="submit" class="w-full py-3 bg-gradient-to-r from-ocean-700 to-ocean-900 hover:from-ocean-800 hover:to-[#021d1d] text-white font-bold text-sm rounded-xl shadow-md transition flex items-center justify-center gap-2">
-                    <span>Masuk Sekarang</span>
+                    <span>{{ __('ui.auth.login_btn') }}</span>
                     <i class="ph ph-arrow-right font-bold text-gold-400"></i>
                 </button>
             </form>
 
             <div class="mt-6 text-center md:text-left text-xs text-slate-500">
-                Belum memiliki akun?
-                <a href="{{ route('register') }}" class="text-ocean-700 font-bold hover:underline">Daftar Akun Baru</a>
+                {{ __('ui.auth.no_account') }}
+                <a href="{{ route('register') }}" class="text-ocean-700 font-bold hover:underline">{{ __('ui.auth.register_link') }}</a>
             </div>
         </div>
     </div>

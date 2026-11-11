@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-slate-50">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-slate-50">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ config('app.name', 'CargoTrace') }} — Oceanic & Global Cargo Visibility</title>
+    <title>{{ config('app.name', 'CargoTrace') }} — {{ __('ui.meta.title') }}</title>
     
     <!-- Custom SVG Favicon: Oceanic Compass / Anchor -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%23042f2e'/><path d='M16 6 L19 14 L27 16 L19 18 L16 26 L13 18 L5 16 L13 14 Z' fill='%23f59e0b'/><circle cx='16' cy='16' r='3' fill='%230f766e'/></svg>">
@@ -90,30 +90,30 @@
                                 <span class="text-white font-extrabold text-lg tracking-wide leading-none">Cargo<span class="text-gold-400">Trace</span></span>
                                 <span class="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-gold-500/20 text-gold-300 border border-gold-500/30">OCEANIC</span>
                             </div>
-                            <span class="text-ocean-300 text-[10px] tracking-wider uppercase font-medium">Global Multimodal Visibility</span>
+                            <span class="text-ocean-300 text-[10px] tracking-wider uppercase font-medium">{{ __('ui.nav.tagline') }}</span>
                         </div>
                     </a>
 
                     @auth
                     <div class="hidden md:flex items-center gap-1.5">
                         <a href="{{ route('dashboard') }}" class="px-3 py-2 rounded-xl text-sm font-semibold transition {{ request()->routeIs('dashboard') ? 'bg-ocean-900 text-gold-400 border border-ocean-700/60 shadow-sm' : 'text-ocean-100/80 hover:bg-ocean-900/60 hover:text-white' }}">
-                            Dashboard
+                            {{ __('ui.nav.dashboard') }}
                         </a>
                         <a href="{{ route('shipments.index') }}" class="px-3 py-2 rounded-xl text-sm font-semibold transition {{ request()->routeIs('shipments.*') ? 'bg-ocean-900 text-gold-400 border border-ocean-700/60 shadow-sm' : 'text-ocean-100/80 hover:bg-ocean-900/60 hover:text-white' }}">
-                            Shipments
+                            {{ __('ui.nav.shipments') }}
                         </a>
                         @if(auth()->user()->isAdmin())
                         <a href="{{ route('carriers.index') }}" class="px-3 py-2 rounded-xl text-sm font-semibold transition {{ request()->routeIs('carriers.*') ? 'bg-ocean-900 text-gold-400 border border-ocean-700/60 shadow-sm' : 'text-ocean-100/80 hover:bg-ocean-900/60 hover:text-white' }}">
-                            Carriers
+                            {{ __('ui.nav.carriers') }}
                         </a>
                         <a href="{{ route('locations.index') }}" class="px-3 py-2 rounded-xl text-sm font-semibold transition {{ request()->routeIs('locations.*') ? 'bg-ocean-900 text-gold-400 border border-ocean-700/60 shadow-sm' : 'text-ocean-100/80 hover:bg-ocean-900/60 hover:text-white' }}">
-                            Ports & Hubs
+                            {{ __('ui.nav.locations') }}
                         </a>
                         <a href="{{ route('users.index') }}" class="px-3 py-2 rounded-xl text-sm font-semibold transition {{ request()->routeIs('users.*') ? 'bg-ocean-900 text-gold-400 border border-ocean-700/60 shadow-sm' : 'text-ocean-100/80 hover:bg-ocean-900/60 hover:text-white' }}">
-                            Users
+                            {{ __('ui.nav.users') }}
                         </a>
                         <a href="{{ route('audit_logs.index') }}" class="px-3 py-2 rounded-xl text-sm font-semibold transition {{ request()->routeIs('audit_logs.*') ? 'bg-ocean-900 text-gold-400 border border-ocean-700/60 shadow-sm' : 'text-ocean-100/80 hover:bg-ocean-900/60 hover:text-white' }}">
-                            Audit Logs
+                            {{ __('ui.nav.audit_logs') }}
                         </a>
                         @endif
                     </div>
@@ -121,16 +121,28 @@
                 </div>
 
                 <!-- Right Actions -->
-                <div class="flex items-center gap-3 sm:gap-4">
+                <div class="flex items-center gap-2 sm:gap-3.5">
+                    <!-- Bilingual Language Switcher (ID / EN) -->
+                    <div class="inline-flex items-center p-0.5 rounded-xl bg-ocean-900/90 border border-ocean-700/80 text-[11px] font-bold shadow-xs" role="group" aria-label="Language Switcher">
+                        <a href="{{ route('locale.switch', 'id') }}"
+                           class="px-2 py-1 rounded-lg transition {{ app()->getLocale() === 'id' ? 'bg-gold-500 text-slate-950 shadow-2xs' : 'text-ocean-200 hover:text-white' }}">
+                            🇮🇩 ID
+                        </a>
+                        <a href="{{ route('locale.switch', 'en') }}"
+                           class="px-2 py-1 rounded-lg transition {{ app()->getLocale() === 'en' ? 'bg-gold-500 text-slate-950 shadow-2xs' : 'text-ocean-200 hover:text-white' }}">
+                            🇬🇧 EN
+                        </a>
+                    </div>
+
                     <a href="{{ route('home') }}" class="text-ocean-200 hover:text-gold-300 text-sm font-medium flex items-center gap-1.5 transition">
-                        <i class="ph ph-magnifying-glass text-gold-400"></i> <span class="hidden sm:inline">Lacak Publik</span>
+                        <i class="ph ph-magnifying-glass text-gold-400"></i> <span class="hidden sm:inline">{{ __('ui.nav.public_track') }}</span>
                     </a>
 
                     @auth
                     @php
                         $unreadNotifCount = auth()->user()->notifications()->where('is_read', false)->count();
                     @endphp
-                    <a href="{{ route('notifications.index') }}" title="Pusat Notifikasi" class="relative w-9 h-9 rounded-xl bg-ocean-900 border {{ request()->routeIs('notifications.*') ? 'border-gold-400 text-gold-400' : 'border-ocean-700 text-ocean-200 hover:text-gold-300' }} flex items-center justify-center transition shadow-xs">
+                    <a href="{{ route('notifications.index') }}" title="{{ __('ui.nav.notification_center') }}" class="relative w-9 h-9 rounded-xl bg-ocean-900 border {{ request()->routeIs('notifications.*') ? 'border-gold-400 text-gold-400' : 'border-ocean-700 text-ocean-200 hover:text-gold-300' }} flex items-center justify-center transition shadow-xs">
                         <i class="ph ph-bell text-lg"></i>
                         @if($unreadNotifCount > 0)
                         <span class="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-gold-500 text-slate-950 font-extrabold text-[10px] flex items-center justify-center shadow ring-2 ring-[#042f2e]">
@@ -151,7 +163,7 @@
                         </div>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" title="Logout" class="w-9 h-9 rounded-xl bg-ocean-900 border border-ocean-700 text-ocean-200 hover:bg-rose-950/60 hover:border-rose-700 hover:text-rose-300 flex items-center justify-center transition shadow-xs">
+                            <button type="submit" title="{{ __('ui.nav.logout') }}" class="w-9 h-9 rounded-xl bg-ocean-900 border border-ocean-700 text-ocean-200 hover:bg-rose-950/60 hover:border-rose-700 hover:text-rose-300 flex items-center justify-center transition shadow-xs">
                                 <i class="ph ph-sign-out text-lg"></i>
                             </button>
                         </form>
@@ -159,7 +171,7 @@
                     @else
                     <a href="{{ route('login') }}" class="px-4 py-2 text-sm font-bold text-slate-950 bg-gradient-to-r from-gold-400 to-gold-500 hover:from-gold-500 hover:to-gold-600 rounded-xl shadow-md transition flex items-center gap-1.5">
                         <i class="ph ph-sign-in font-bold"></i>
-                        <span>Sign In</span>
+                        <span>{{ __('ui.nav.sign_in') }}</span>
                     </a>
                     @endauth
                 </div>
@@ -169,26 +181,26 @@
             <!-- Mobile Scrollable Navigation -->
             <div class="md:hidden flex items-center gap-1.5 pb-3 pt-1 overflow-x-auto no-scrollbar border-t border-ocean-800/60">
                 <a href="{{ route('dashboard') }}" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap {{ request()->routeIs('dashboard') ? 'bg-ocean-900 text-gold-400 border border-ocean-700/60' : 'text-ocean-100/80' }}">
-                    Dashboard
+                    {{ __('ui.nav.dashboard') }}
                 </a>
                 <a href="{{ route('shipments.index') }}" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap {{ request()->routeIs('shipments.*') ? 'bg-ocean-900 text-gold-400 border border-ocean-700/60' : 'text-ocean-100/80' }}">
-                    Shipments
+                    {{ __('ui.nav.shipments') }}
                 </a>
                 <a href="{{ route('notifications.index') }}" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap {{ request()->routeIs('notifications.*') ? 'bg-ocean-900 text-gold-400 border border-ocean-700/60' : 'text-ocean-100/80' }}">
-                    Notifikasi
+                    {{ __('ui.nav.notifications') }}
                 </a>
                 @if(auth()->user()->isAdmin())
                 <a href="{{ route('carriers.index') }}" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap {{ request()->routeIs('carriers.*') ? 'bg-ocean-900 text-gold-400 border border-ocean-700/60' : 'text-ocean-100/80' }}">
-                    Carriers
+                    {{ __('ui.nav.carriers') }}
                 </a>
                 <a href="{{ route('locations.index') }}" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap {{ request()->routeIs('locations.*') ? 'bg-ocean-900 text-gold-400 border border-ocean-700/60' : 'text-ocean-100/80' }}">
-                    Ports & Hubs
+                    {{ __('ui.nav.locations') }}
                 </a>
                 <a href="{{ route('users.index') }}" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap {{ request()->routeIs('users.*') ? 'bg-ocean-900 text-gold-400 border border-ocean-700/60' : 'text-ocean-100/80' }}">
-                    Users
+                    {{ __('ui.nav.users') }}
                 </a>
                 <a href="{{ route('audit_logs.index') }}" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap {{ request()->routeIs('audit_logs.*') ? 'bg-ocean-900 text-gold-400 border border-ocean-700/60' : 'text-ocean-100/80' }}">
-                    Audit Logs
+                    {{ __('ui.nav.audit_logs') }}
                 </a>
                 @endif
             </div>
@@ -216,7 +228,7 @@
         <div class="p-4 mb-4 text-sm text-rose-900 rounded-2xl bg-rose-50 border border-rose-200 shadow-xs">
             <div class="font-semibold mb-1 flex items-center gap-2">
                 <i class="ph ph-x-circle text-xl text-rose-600"></i>
-                <span>Please correct the errors below:</span>
+                <span>{{ __('ui.nav.validation_errors') }}</span>
             </div>
             <ul class="list-disc list-inside ml-2 space-y-1">
                 @foreach($errors->all() as $err)
@@ -244,12 +256,12 @@
                         <span class="text-white font-extrabold text-base tracking-wide">Cargo<span class="text-gold-400">Trace</span></span>
                     </div>
                     <p class="text-xs text-ocean-200/80 leading-relaxed max-w-sm">
-                        Platform manajemen pengiriman & pelacakan kargo lintas samudra dan udara secara real-time. Dilengkapi pemetaan satelit, monitoring cuaca maritim, dan laporan operasional terpusat.
+                        {{ __('ui.footer.desc') }}
                     </p>
                 </div>
 
                 <div>
-                    <h4 class="text-white font-bold text-xs uppercase tracking-wider mb-3">Koridor Pelabuhan & Hub Utama</h4>
+                    <h4 class="text-white font-bold text-xs uppercase tracking-wider mb-3">{{ __('ui.footer.corridors_title') }}</h4>
                     <div class="grid grid-cols-2 gap-1.5 text-xs text-ocean-200/80">
                         <span>🇮🇩 Jakarta (IDJKT)</span>
                         <span>🇳🇱 Rotterdam (NLRTM)</span>
@@ -261,22 +273,22 @@
                 </div>
 
                 <div>
-                    <h4 class="text-white font-bold text-xs uppercase tracking-wider mb-3">Akses Cepat Sistem</h4>
+                    <h4 class="text-white font-bold text-xs uppercase tracking-wider mb-3">{{ __('ui.footer.quick_access_title') }}</h4>
                     <ul class="space-y-1.5 text-xs">
-                        <li><a href="{{ route('home') }}" class="hover:text-gold-300 transition flex items-center gap-1.5"><i class="ph ph-magnifying-glass"></i> Lacak Nomor Resi / Kontainer</a></li>
-                        <li><a href="{{ route('public.track', ['number' => 'CRG-2026-8802']) }}" class="hover:text-gold-300 transition flex items-center gap-1.5"><i class="ph ph-boat"></i> Pantau Armada Kapal Aktif</a></li>
+                        <li><a href="{{ route('home') }}" class="hover:text-gold-300 transition flex items-center gap-1.5"><i class="ph ph-magnifying-glass"></i> {{ __('ui.footer.link_track') }}</a></li>
+                        <li><a href="{{ route('public.track', ['number' => 'CRG-2026-8802']) }}" class="hover:text-gold-300 transition flex items-center gap-1.5"><i class="ph ph-boat"></i> {{ __('ui.footer.link_vessel') }}</a></li>
                         @auth
-                        <li><a href="{{ route('dashboard') }}" class="hover:text-gold-300 transition flex items-center gap-1.5"><i class="ph ph-squares-four"></i> Buka Dashboard Operasional</a></li>
+                        <li><a href="{{ route('dashboard') }}" class="hover:text-gold-300 transition flex items-center gap-1.5"><i class="ph ph-squares-four"></i> {{ __('ui.footer.link_dashboard') }}</a></li>
                         @else
-                        <li><a href="{{ route('login') }}" class="hover:text-gold-300 transition flex items-center gap-1.5"><i class="ph ph-sign-in"></i> Portal Login Staff & Customer</a></li>
+                        <li><a href="{{ route('login') }}" class="hover:text-gold-300 transition flex items-center gap-1.5"><i class="ph ph-sign-in"></i> {{ __('ui.footer.link_login') }}</a></li>
                         @endauth
                     </ul>
                 </div>
             </div>
 
             <div class="pt-5 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-ocean-300/70">
-                <span>&copy; {{ date('Y') }} <strong>CargoTrace Global Logistics</strong>. All rights reserved.</span>
-                <span>Satellite GIS Mapping • Real-Time Open-Meteo Marine Weather • ISO 6346 Tracking</span>
+                <span>&copy; {{ date('Y') }} <strong>CargoTrace Global Logistics</strong>. {{ __('ui.footer.rights') }}</span>
+                <span>{{ __('ui.footer.tech_bar') }}</span>
             </div>
         </div>
     </footer>

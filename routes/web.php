@@ -12,6 +12,14 @@ use App\Http\Controllers\Web\AuditLogWebController;
 use App\Http\Controllers\Web\NotificationWebController;
 use App\Http\Controllers\Web\UserWebController;
 
+// Locale Switcher (Indonesian / English)
+Route::get('/locale/{locale}', function (string $locale) {
+    if (in_array($locale, ['id', 'en'], true)) {
+        session(['locale' => $locale]);
+    }
+    return back();
+})->name('locale.switch');
+
 // Public Landing & Quick Tracking
 Route::get('/', [ShipmentWebController::class, 'publicHome'])->name('home');
 

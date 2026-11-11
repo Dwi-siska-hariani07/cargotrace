@@ -7,16 +7,16 @@
         <div>
             <div class="flex items-center gap-2">
                 <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-wider bg-ocean-100 text-ocean-900 border border-ocean-200">
-                    Pusat Pemberitahuan
+                    {{ __('ui.notifications.badge') }}
                 </span>
                 @if($unreadCount > 0)
                 <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-gold-500 text-slate-950">
-                    {{ $unreadCount }} Baru
+                    {{ __('ui.notifications.new_count', ['count' => $unreadCount]) }}
                 </span>
                 @endif
             </div>
-            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1">Notifikasi & Peringatan Pengiriman</h1>
-            <p class="text-xs sm:text-sm text-slate-500 mt-1">Pantau perubahan status kargo, jadwal kedatangan, dan laporan gangguan operasional</p>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1">{{ __('ui.notifications.title') }}</h1>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1">{{ __('ui.notifications.subtitle') }}</p>
         </div>
 
         @if($unreadCount > 0)
@@ -24,7 +24,7 @@
             @csrf
             <button type="submit" class="px-4 py-2.5 bg-ocean-700 hover:bg-ocean-800 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-sm transition flex items-center gap-2">
                 <i class="ph ph-checks text-base text-gold-300"></i>
-                <span>Tandai Semua Dibaca</span>
+                <span>{{ __('ui.notifications.mark_all_btn') }}</span>
             </button>
         </form>
         @endif
@@ -55,7 +55,7 @@
                         </span>
                         @if(!$notif->is_read)
                         <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-gold-200 text-gold-950 border border-gold-300">
-                            BELUM DIBACA
+                            {{ __('ui.notifications.unread_badge') }}
                         </span>
                         @endif
                         <span class="text-[11px] font-mono text-slate-400">
@@ -72,7 +72,7 @@
                 @if($notif->shipment)
                 <a href="{{ route('shipments.show', $notif->shipment->id) }}" class="px-3.5 py-2 rounded-xl bg-white hover:bg-ocean-100 text-ocean-800 border border-ocean-200 text-xs font-bold transition flex items-center gap-1.5">
                     <i class="ph ph-map-pin-line"></i>
-                    <span>Lihat Kapal</span>
+                    <span>{{ __('ui.notifications.view_vessel_btn') }}</span>
                 </a>
                 @endif
 
@@ -80,7 +80,7 @@
                 <form method="POST" action="{{ route('notifications.read', $notif->id) }}">
                     @csrf
                     <button type="submit" class="px-3.5 py-2 rounded-xl bg-ocean-700 hover:bg-ocean-800 text-white text-xs font-bold transition">
-                        Tandai Dibaca
+                        {{ __('ui.notifications.mark_read_btn') }}
                     </button>
                 </form>
                 @endif
@@ -91,8 +91,8 @@
             <div class="w-14 h-14 rounded-2xl bg-ocean-50 text-ocean-600 flex items-center justify-center text-3xl mx-auto mb-3">
                 <i class="ph ph-bell-slash"></i>
             </div>
-            <h3 class="font-bold text-slate-800 text-base">Belum Ada Notifikasi</h3>
-            <p class="text-xs text-slate-500 mt-1">Pemberitahuan otomatis akan muncul saat ada perubahan status pengiriman atau laporan gangguan.</p>
+            <h3 class="font-bold text-slate-800 text-base">{{ __('ui.notifications.empty_title') }}</h3>
+            <p class="text-xs text-slate-500 mt-1">{{ __('ui.notifications.empty_desc') }}</p>
         </div>
         @endforelse
     </div>
@@ -104,4 +104,3 @@
     @endif
 </div>
 @endsection
-

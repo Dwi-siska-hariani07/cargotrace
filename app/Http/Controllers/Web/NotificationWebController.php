@@ -39,7 +39,7 @@ class NotificationWebController extends Controller
             ]);
         }
 
-        return back()->with('success', 'Notifikasi telah ditandai sudah dibaca.');
+        return back()->with('success', __('ui.flash.notif_read'));
     }
 
     public function markAllRead()
@@ -52,7 +52,7 @@ class NotificationWebController extends Controller
                 'read_at' => now(),
             ]);
 
-        return back()->with('success', 'Semua notifikasi telah ditandai sudah dibaca.');
+        return back()->with('success', __('ui.flash.notif_all_read'));
     }
 }
 

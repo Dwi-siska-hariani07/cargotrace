@@ -27,11 +27,11 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials, $request->filled('remember'))) {
             $request->session()->regenerate();
-            return redirect()->intended(route('dashboard'))->with('success', 'Welcome back, ' . Auth::user()->name . '!');
+            return redirect()->intended(route('dashboard'))->with('success', __('ui.flash.welcome_back', ['name' => Auth::user()->name]));
         }
 
         return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
+            'email' => __('ui.flash.invalid_credentials'),
         ])->onlyInput('email');
     }
 
@@ -65,7 +65,7 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('dashboard')->with('success', 'Account registered successfully!');
+        return redirect()->route('dashboard')->with('success', __('ui.flash.account_registered'));
     }
 
     public function logout(Request $request)
@@ -74,7 +74,7 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login')->with('success', 'Logged out successfully.');
+        return redirect()->route('login')->with('success', __('ui.flash.logged_out'));
     }
 }
 

@@ -40,9 +40,9 @@ class TrackingWebController extends Controller
 
         try {
             $this->trackingService->addEvent($shipment, $validated, $user);
-            return back()->with('success', 'Tracking checkpoint logged successfully.');
+            return back()->with('success', __('ui.flash.tracking_logged'));
         } catch (\Exception $e) {
-            return back()->with('error', 'Error logging event: ' . $e->getMessage());
+            return back()->with('error', __('ui.flash.tracking_err', ['msg' => $e->getMessage()]));
         }
     }
 }

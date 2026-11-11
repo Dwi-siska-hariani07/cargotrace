@@ -190,10 +190,10 @@ class ShipmentWebController extends Controller
             DB::commit();
 
             return redirect()->route('shipments.show', $shipment->id)
-                ->with('success', "Shipment {$shipment->shipment_number} created successfully.");
+                ->with('success', __('ui.flash.shipment_created', ['number' => $shipment->shipment_number]));
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withInput()->with('error', 'Error creating shipment: ' . $e->getMessage());
+            return back()->withInput()->with('error', __('ui.flash.shipment_create_err', ['msg' => $e->getMessage()]));
         }
     }
 
@@ -233,7 +233,7 @@ class ShipmentWebController extends Controller
     {
         $number = trim($request->input('number', ''));
         if (empty($number)) {
-            return redirect()->route('home')->with('error', 'Please enter a valid shipment tracking number.');
+            return redirect()->route('home')->with('error', __('ui.flash.enter_number'));
         }
 
         $shipment = Shipment::with([
@@ -246,7 +246,7 @@ class ShipmentWebController extends Controller
         ])->where('shipment_number', $number)->first();
 
         if (!$shipment) {
-            return redirect()->route('home')->with('error', "No shipment found matching tracking number '{$number}'.");
+            return redirect()->route('home')->with('error', __('ui.flash.not_found', ['number' => $number]));
         }
 
         $weather = null;
@@ -270,7 +270,7 @@ class ShipmentWebController extends Controller
         $shipment = Shipment::findOrFail($id);
         $shipment->delete();
 
-        return redirect()->route('shipments.index')->with('success', 'Shipment soft-deleted successfully.');
+        return redirect()->route('shipments.index')->with('success', __('ui.flash.shipment_deleted'));
     }
 }
 

@@ -6,11 +6,11 @@
         <div>
             <div class="flex items-center gap-2">
                 <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-wider bg-ocean-100 text-ocean-900 border border-ocean-200">
-                    Carrier Partners
+                    {{ __('ui.carriers.badge') }}
                 </span>
             </div>
-            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1">Logistics & Shipping Carriers</h1>
-            <p class="text-xs sm:text-sm text-slate-500 mt-1">Manage global shipping lines, airlines and multimodal freight partners</p>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1">{{ __('ui.carriers.title') }}</h1>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1">{{ __('ui.carriers.subtitle') }}</p>
         </div>
     </div>
 
@@ -18,17 +18,17 @@
         <!-- Carriers Table -->
         <div class="lg:col-span-2 bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
             <div class="p-4 border-b border-slate-100 bg-slate-50/50">
-                <h3 class="font-bold text-slate-800 text-sm">Active Registered Carriers</h3>
+                <h3 class="font-bold text-slate-800 text-sm">{{ __('ui.carriers.list_title') }}</h3>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse text-xs">
                     <thead>
                         <tr class="bg-slate-50/80 border-b border-slate-200 text-slate-400 uppercase font-semibold">
-                            <th class="py-3 px-4">Code</th>
-                            <th class="py-3 px-4">Carrier Name</th>
-                            <th class="py-3 px-4">Mode</th>
-                            <th class="py-3 px-4">Contact</th>
-                            <th class="py-3 px-4">Shipments</th>
+                            <th class="py-3 px-4">{{ __('ui.carriers.col_code') }}</th>
+                            <th class="py-3 px-4">{{ __('ui.carriers.col_name') }}</th>
+                            <th class="py-3 px-4">{{ __('ui.carriers.col_mode') }}</th>
+                            <th class="py-3 px-4">{{ __('ui.carriers.col_contact') }}</th>
+                            <th class="py-3 px-4">{{ __('ui.carriers.col_shipments') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
@@ -60,22 +60,22 @@
         <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
             <h3 class="font-bold text-slate-800 text-sm mb-4 flex items-center gap-2">
                 <i class="ph ph-plus-circle text-ocean-700"></i>
-                <span>Add New Logistics Carrier</span>
+                <span>{{ __('ui.carriers.add_title') }}</span>
             </h3>
             <form method="POST" action="{{ route('carriers.store') }}" class="space-y-3">
                 @csrf
                 <div>
-                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Carrier Code *</label>
+                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">{{ __('ui.carriers.code_label') }}</label>
                     <input type="text" name="code" placeholder="e.g. HAPAG" required
                            class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 font-mono focus:outline-none focus:border-ocean-500">
                 </div>
                 <div>
-                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Carrier Name *</label>
+                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">{{ __('ui.carriers.name_label') }}</label>
                     <input type="text" name="name" placeholder="e.g. Hapag-Lloyd AG" required
                            class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:border-ocean-500">
                 </div>
                 <div>
-                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Transport Mode *</label>
+                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">{{ __('ui.carriers.mode_label') }}</label>
                     <select name="type" required class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-ocean-500">
                         <option value="SEA">SEA (Maritime Shipping)</option>
                         <option value="AIR">AIR (Air Freight)</option>
@@ -84,17 +84,17 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Contact Email</label>
+                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">{{ __('ui.carriers.email_label') }}</label>
                     <input type="email" name="contact_email" placeholder="operations@carrier.com"
                            class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:border-ocean-500">
                 </div>
                 <div>
-                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Contact Phone</label>
+                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">{{ __('ui.carriers.phone_label') }}</label>
                     <input type="text" name="contact_phone" placeholder="+1 800 000 000"
                            class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:border-ocean-500">
                 </div>
                 <button type="submit" class="w-full py-2.5 bg-ocean-700 hover:bg-ocean-800 text-white font-bold text-xs uppercase rounded-xl transition shadow-2xs">
-                    Save Carrier Partner
+                    {{ __('ui.carriers.save_btn') }}
                 </button>
             </form>
         </div>

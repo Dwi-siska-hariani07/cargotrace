@@ -6,11 +6,11 @@
         <div>
             <div class="flex items-center gap-2">
                 <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-wider bg-ocean-100 text-ocean-900 border border-ocean-200">
-                    Security & Compliance
+                    {{ __('ui.audit_logs.badge') }}
                 </span>
             </div>
-            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1">System Audit Trail</h1>
-            <p class="text-xs sm:text-sm text-slate-500 mt-1">Immutable security log of operations, status lifecycle transitions and user actions</p>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1">{{ __('ui.audit_logs.title') }}</h1>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1">{{ __('ui.audit_logs.subtitle') }}</p>
         </div>
     </div>
 
@@ -19,12 +19,12 @@
             <table class="w-full text-left border-collapse text-xs">
                 <thead>
                     <tr class="bg-slate-50/80 border-b border-slate-200 text-slate-400 uppercase font-semibold">
-                        <th class="py-3 px-4">Timestamp</th>
-                        <th class="py-3 px-4">User / Actor</th>
-                        <th class="py-3 px-4">Action</th>
-                        <th class="py-3 px-4">Target Entity</th>
-                        <th class="py-3 px-4">Changes / Details</th>
-                        <th class="py-3 px-4">IP Address</th>
+                        <th class="py-3 px-4">{{ __('ui.audit_logs.col_time') }}</th>
+                        <th class="py-3 px-4">{{ __('ui.audit_logs.col_user') }}</th>
+                        <th class="py-3 px-4">{{ __('ui.audit_logs.col_action') }}</th>
+                        <th class="py-3 px-4">{{ __('ui.audit_logs.col_entity') }}</th>
+                        <th class="py-3 px-4">{{ __('ui.audit_logs.col_details') }}</th>
+                        <th class="py-3 px-4">{{ __('ui.audit_logs.col_ip') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
@@ -54,7 +54,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="py-8 text-center text-slate-400">No audit logs recorded.</td>
+                        <td colspan="6" class="py-8 text-center text-slate-400">{{ __('ui.audit_logs.empty') }}</td>
                     </tr>
                     @endforelse
                 </tbody>

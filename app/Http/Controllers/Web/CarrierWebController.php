@@ -32,7 +32,7 @@ class CarrierWebController extends Controller
 
         Carrier::create($validated);
 
-        return back()->with('success', 'Carrier added successfully.');
+        return back()->with('success', __('ui.flash.carrier_added'));
     }
 }
 

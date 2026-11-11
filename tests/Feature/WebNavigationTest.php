@@ -107,5 +107,39 @@ class WebNavigationTest extends TestCase
         $this->actingAs($customer)->post("/notifications/{$notif->id}/read")->assertRedirect();
         $this->assertTrue($notif->fresh()->is_read);
     }
+
+    public function test_language_dictionaries_have_matching_keys(): void
+    {
+        $id = require base_path('lang/id/ui.php');
+        $en = require base_path('lang/en/ui.php');
+
+        $flatten = function (array $items, string $prefix = '') use (&$flatten): array {
+            $keys = [];
+            foreach ($items as $k => $v) {
+                $full = $prefix !== '' ? "{$prefix}.{$k}" : $k;
+                if (is_array($v)) {
+                    $keys = array_merge($keys, $flatten($v, $full));
+                } else {
+                    $keys[] = $full;
+                }
+            }
+            return $keys;
+        };
+
+        $idKeys = $flatten($id);
+        $enKeys = $flatten($en);
+
+        $this->assertEmpty(array_diff($idKeys, $enKeys), 'Missing EN keys for ID keys');
+        $this->assertEmpty(array_diff($enKeys, $idKeys), 'Missing ID keys for EN keys');
+    }
+
+    public function test_locale_switching_changes_rendered_language(): void
+    {
+        $this->get('/locale/en')->assertRedirect();
+        $this->get('/')->assertStatus(200)->assertSee('Track Global Vessels');
+
+        $this->get('/locale/id')->assertRedirect();
+        $this->get('/')->assertStatus(200)->assertSee('Pantau Pergerakan Kapal');
+    }
 }
 

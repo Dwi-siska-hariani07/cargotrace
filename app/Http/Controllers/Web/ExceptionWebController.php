@@ -40,9 +40,12 @@ class ExceptionWebController extends Controller
 
         try {
             $this->exceptionService->reportException($shipment, $validated, $user);
-            return back()->with('success', "Disruption [{$validated['exception_type']}] reported successfully.");
+            return back()->with('success', __('ui.flash.exception_reported', [
+                'type' => $validated['exception_type'],
+                'hours' => $validated['delay_hours_impact'] ?? 0,
+            ]));
         } catch (\Exception $e) {
-            return back()->with('error', 'Error reporting exception: ' . $e->getMessage());
+            return back()->with('error', __('ui.flash.exception_err', ['msg' => $e->getMessage()]));
         }
     }
 
@@ -61,9 +64,9 @@ class ExceptionWebController extends Controller
 
         try {
             $this->exceptionService->resolveException($exception, $validated, $user);
-            return back()->with('success', "Exception [{$exception->exception_type}] marked as RESOLVED.");
+            return back()->with('success', __('ui.flash.exception_resolved', ['type' => $exception->exception_type]));
         } catch (\Exception $e) {
-            return back()->with('error', 'Error resolving exception: ' . $e->getMessage());
+            return back()->with('error', __('ui.flash.exception_resolve_err', ['msg' => $e->getMessage()]));
         }
     }
 }

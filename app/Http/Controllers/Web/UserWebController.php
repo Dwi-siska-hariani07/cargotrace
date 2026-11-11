@@ -61,7 +61,10 @@ class UserWebController extends Controller
             'user_agent' => $request->userAgent() ?? 'Web',
         ]);
 
-        return back()->with('success', "Akun {$newUser->name} ({$newUser->role}) berhasil ditambahkan.");
+        return back()->with('success', __('ui.flash.user_created', [
+            'name' => $newUser->name,
+            'role' => $newUser->role,
+        ]));
     }
 
     public function updateRole(Request $request, $id)
@@ -78,7 +81,7 @@ class UserWebController extends Controller
         ]);
 
         if ($targetUser->id === $actor->id && $validated['role'] !== 'admin') {
-            return back()->with('error', 'Anda tidak dapat menurunkan role akun Anda sendiri saat sedang login.');
+            return back()->with('error', __('ui.flash.self_demote_err'));
         }
 
         $oldRole = $targetUser->role;
@@ -96,7 +99,10 @@ class UserWebController extends Controller
             'user_agent' => $request->userAgent() ?? 'Web',
         ]);
 
-        return back()->with('success', "Role {$targetUser->name} diperbarui dari {$oldRole} ke {$targetUser->role}.");
+        return back()->with('success', __('ui.flash.role_updated', [
+            'name' => $targetUser->name,
+            'role' => $targetUser->role,
+        ]));
     }
 }
 

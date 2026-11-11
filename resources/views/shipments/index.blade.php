@@ -7,17 +7,17 @@
         <div>
             <div class="flex items-center gap-2">
                 <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-wider bg-ocean-100 text-ocean-900 border border-ocean-200">
-                    Vessel & Freight Registry
+                    {{ __('ui.shipments.badge') }}
                 </span>
             </div>
-            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1">Shipment Registry</h1>
-            <p class="text-xs sm:text-sm text-slate-500 mt-1">Manage and track multimodal cargo shipments across global networks</p>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1">{{ __('ui.shipments.title') }}</h1>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1">{{ __('ui.shipments.subtitle') }}</p>
         </div>
 
         @if(!auth()->user()->isCustomer())
         <a href="{{ route('shipments.create') }}" class="px-4 py-2.5 bg-ocean-700 hover:bg-ocean-800 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-sm transition flex items-center gap-2">
             <i class="ph ph-plus-circle text-lg text-gold-300"></i>
-            <span>Register New Shipment</span>
+            <span>{{ __('ui.shipments.new_btn') }}</span>
         </a>
         @endif
     </div>
@@ -26,15 +26,15 @@
     <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-2xs">
         <form method="GET" action="{{ route('shipments.index') }}" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
             <div>
-                <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Pencarian Nomor / Kargo</label>
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Nomor Resi atau Barang..." 
+                <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">{{ __('ui.shipments.filter_search') }}</label>
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('ui.shipments.filter_search_ph') }}"
                        class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:border-ocean-500">
             </div>
 
             <div>
-                <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Filter Status</label>
+                <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">{{ __('ui.shipments.filter_status') }}</label>
                 <select name="status" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-ocean-500">
-                    <option value="">Semua Status</option>
+                    <option value="">{{ __('ui.shipments.all_statuses') }}</option>
                     <option value="CREATED" {{ request('status') === 'CREATED' ? 'selected' : '' }}>CREATED</option>
                     <option value="BOOKED" {{ request('status') === 'BOOKED' ? 'selected' : '' }}>BOOKED</option>
                     <option value="PICKED_UP" {{ request('status') === 'PICKED_UP' ? 'selected' : '' }}>PICKED UP</option>
@@ -45,9 +45,9 @@
             </div>
 
             <div>
-                <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Armada / Carrier</label>
+                <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">{{ __('ui.shipments.filter_carrier') }}</label>
                 <select name="carrier_id" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-ocean-500">
-                    <option value="">Semua Carrier</option>
+                    <option value="">{{ __('ui.shipments.all_carriers') }}</option>
                     @foreach($carriers as $c)
                     <option value="{{ $c->id }}" {{ request('carrier_id') == $c->id ? 'selected' : '' }}>{{ $c->name }}</option>
                     @endforeach
@@ -56,10 +56,10 @@
 
             <div class="flex items-end gap-2">
                 <button type="submit" class="flex-1 py-2 bg-ocean-800 hover:bg-ocean-900 text-white rounded-xl text-xs font-bold transition shadow-2xs">
-                    Terapkan
+                    {{ __('ui.shipments.apply_btn') }}
                 </button>
                 <a href="{{ route('shipments.index') }}" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition">
-                    Reset
+                    {{ __('ui.shipments.reset_btn') }}
                 </a>
             </div>
         </form>
@@ -71,13 +71,13 @@
             <table class="w-full text-left border-collapse text-xs">
                 <thead>
                     <tr class="bg-slate-50/80 border-b border-slate-200 text-slate-400 uppercase font-semibold">
-                        <th class="py-3.5 px-4">Shipment #</th>
-                        <th class="py-3.5 px-4">Customer</th>
-                        <th class="py-3.5 px-4">Carrier & Mode</th>
-                        <th class="py-3.5 px-4">Origin &rarr; Destination</th>
-                        <th class="py-3.5 px-4">Status & Health</th>
-                        <th class="py-3.5 px-4">Estimated Arrival</th>
-                        <th class="py-3.5 px-4 text-right">Actions</th>
+                        <th class="py-3.5 px-4">{{ __('ui.shipments.col_number') }}</th>
+                        <th class="py-3.5 px-4">{{ __('ui.shipments.col_customer') }}</th>
+                        <th class="py-3.5 px-4">{{ __('ui.shipments.col_carrier') }}</th>
+                        <th class="py-3.5 px-4">{{ __('ui.shipments.col_route') }}</th>
+                        <th class="py-3.5 px-4">{{ __('ui.shipments.col_status') }}</th>
+                        <th class="py-3.5 px-4">{{ __('ui.shipments.col_eta') }}</th>
+                        <th class="py-3.5 px-4 text-right">{{ __('ui.shipments.col_actions') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
@@ -92,9 +92,7 @@
                         </td>
                         <td class="py-3.5 px-4 text-slate-600">
                             <span class="font-bold text-ocean-900">{{ $s->carrier->name ?? 'N/A' }}</span>
-                            <span class="text-[10px] block text-slate-400">
-                                @if($s->transport_type === 'SEA') 🚢 Sea Freight @elseif($s->transport_type === 'AIR') ✈️ Air Cargo @else 🚛 Land Freight @endif
-                            </span>
+                            <span class="text-[10px] block text-slate-400">{{ $s->transport_type }}</span>
                         </td>
                         <td class="py-3.5 px-4 text-slate-600">
                             <div class="font-medium text-slate-800">{{ $s->origin->name }}</div>
@@ -110,7 +108,7 @@
                             </span>
                             @if($s->is_delayed)
                             <span class="block mt-1 text-[9px] font-bold text-gold-900 bg-gold-100 border border-gold-300 px-1.5 py-0.5 rounded w-max">
-                                Delayed (+{{ $s->delay_hours }}h)
+                                {{ __('ui.shipments.delayed_hours', ['hours' => $s->delay_hours]) }}
                             </span>
                             @endif
                         </td>
@@ -120,10 +118,10 @@
                         <td class="py-3.5 px-4 text-right">
                             <div class="flex items-center justify-end gap-2">
                                 <a href="{{ route('shipments.show', $s->id) }}" class="px-3 py-1.5 rounded-xl bg-ocean-50 text-ocean-800 hover:bg-ocean-100 border border-ocean-200/60 font-bold transition text-xs">
-                                    Detail
+                                    {{ __('ui.shipments.detail_btn') }}
                                 </a>
                                 @if(auth()->user()->isAdmin())
-                                <form method="POST" action="{{ route('shipments.destroy', $s->id) }}" onsubmit="return confirm('Hapus shipment ini?');" class="inline">
+                                <form method="POST" action="{{ route('shipments.destroy', $s->id) }}" data-confirm="{{ __('ui.shipments.delete_confirm') }}" onsubmit="return confirm(this.getAttribute('data-confirm'));" class="inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg transition" title="Delete">
@@ -136,7 +134,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="py-8 text-center text-slate-400">Tidak ada shipment yang sesuai filter.</td>
+                        <td colspan="7" class="py-8 text-center text-slate-400">{{ __('ui.shipments.empty') }}</td>
                     </tr>
                     @endforelse
                 </tbody>

@@ -12,7 +12,7 @@
                 <div class="flex items-center gap-3">
                     <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight font-mono flex items-center gap-2">
                         <span>{{ $shipment->shipment_number }}</span>
-                        <button onclick="navigator.clipboard.writeText('{{ $shipment->shipment_number }}'); alert('Nomor resi/kargo disalin!');" title="Salin Nomor Resi" class="text-xs text-slate-400 hover:text-ocean-600 transition p-1">
+                        <button type="button" onclick="copyTrackingNum(this)" data-num="{{ $shipment->shipment_number }}" data-msg="{{ __('ui.track.copy_alert') }}" title="{{ __('ui.track.copy_title') }}" class="text-xs text-slate-400 hover:text-ocean-600 transition p-1">
                             <i class="ph ph-copy text-lg"></i>
                         </button>
                     </h1>
@@ -25,7 +25,7 @@
                     </span>
                 </div>
                 <p class="text-slate-500 text-xs mt-1">
-                    Customer: <strong class="text-slate-800">{{ $shipment->customer->name ?? 'N/A' }}</strong> ({{ $shipment->customer->company }}) • Carrier: <strong class="text-ocean-800 font-bold">{{ $shipment->carrier->name }}</strong>
+                    {{ __('ui.shipments.col_customer') }}: <strong class="text-slate-800">{{ $shipment->customer->name ?? 'N/A' }}</strong> ({{ $shipment->customer->company }}) • {{ __('ui.track.carrier_label') }} <strong class="text-ocean-800 font-bold">{{ $shipment->carrier->name }}</strong>
                 </p>
             </div>
         </div>
@@ -34,7 +34,7 @@
             <a href="{{ route('public.track', ['number' => $shipment->shipment_number]) }}" target="_blank"
                class="px-3.5 py-2 bg-gradient-to-r from-ocean-50 to-ocean-100 hover:from-ocean-100 hover:to-ocean-200 text-ocean-900 border border-ocean-200/80 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-2xs">
                 <i class="ph ph-arrow-square-out text-base text-ocean-700"></i>
-                <span>Public Tracking View</span>
+                <span>{{ __('ui.shipments.public_view_btn') }}</span>
             </a>
         </div>
     </div>
@@ -45,19 +45,19 @@
         <i class="ph ph-warning-circle text-2xl text-gold-600 mt-0.5 shrink-0"></i>
         <div class="flex-1">
             <div class="flex items-center gap-2">
-                <h3 class="font-bold text-sm">Shipment Delayed (+{{ $shipment->delay_hours }} Hours)</h3>
+                <h3 class="font-bold text-sm">{{ __('ui.shipments.show_delay_title', ['hours' => $shipment->delay_hours]) }}</h3>
                 <span class="px-2 py-0.5 text-[10px] font-bold uppercase rounded bg-gold-200 text-gold-900 border border-gold-300">
-                    Severity: {{ $shipment->delay_severity }}
+                    {{ __('ui.track.severity_label') }} {{ $shipment->delay_severity }}
                 </span>
             </div>
             <p class="text-xs text-gold-800 mt-1">
-                {{ $shipment->delay_reason ?? 'Estimated transit duration exceeds scheduled arrival time.' }}
+                {{ $shipment->delay_reason ?? __('ui.track.delay_default') }}
             </p>
         </div>
     </div>
     @endif
 
-    <!-- LIVE JOURNEY TIME, MID-ROUTE POSITION & ETA COUNTDOWN BOARD (Oceanic Teal & Gold) -->
+    <!-- LIVE JOURNEY TIME, MID-ROUTE POSITION & ETA COUNTDOWN BOARD -->
     <div class="bg-gradient-to-br from-[#042f2e] via-[#093f3d] to-[#042f2e] text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-ocean-700/60 relative overflow-hidden">
         <div class="absolute -right-20 -top-20 w-80 h-80 bg-ocean-500/10 rounded-full blur-3xl pointer-events-none"></div>
         <div class="absolute -left-20 -bottom-20 w-80 h-80 bg-gold-500/10 rounded-full blur-3xl pointer-events-none"></div>
@@ -67,17 +67,17 @@
             <div>
                 <div class="flex items-center gap-2">
                     <span class="w-2.5 h-2.5 rounded-full bg-gold-400 animate-ping"></span>
-                    <span class="text-xs uppercase tracking-widest text-gold-400 font-bold">Vessel & Flight Live Telemetry</span>
+                    <span class="text-xs uppercase tracking-widest text-gold-400 font-bold">{{ __('ui.shipments.telemetry_badge') }}</span>
                 </div>
                 <h2 class="text-xl sm:text-2xl font-black tracking-tight mt-1 flex items-center gap-2">
                     <i class="ph ph-compass text-gold-400"></i>
-                    <span>Papan Pantau Perjalanan Kargo & Waktu Aktif Dunia</span>
+                    <span>{{ __('ui.track.board_title') }}</span>
                 </h2>
             </div>
             <div class="flex items-center gap-3 bg-white/10 px-4 py-2.5 rounded-2xl border border-white/15 backdrop-blur-md shadow-inner">
                 <i class="ph ph-clock text-2xl text-gold-400"></i>
                 <div>
-                    <span class="text-[10px] uppercase font-bold text-ocean-200 block leading-tight">Waktu Kamu Melihat Sekarang:</span>
+                    <span class="text-[10px] uppercase font-bold text-ocean-200 block leading-tight">{{ __('ui.track.your_time') }}</span>
                     <span id="user-current-clock" class="text-sm font-mono font-bold text-white">--:--:-- WIB</span>
                 </div>
             </div>
@@ -85,35 +85,34 @@
 
         <!-- 3-Phase Journey Cards -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6 relative z-10">
-            <!-- 1. Departure (Titik Awal Berangkat) -->
+            <!-- 1. Departure -->
             <div class="bg-white/5 border border-white/10 hover:border-ocean-400/40 transition rounded-2xl p-5 backdrop-blur-sm relative overflow-hidden flex flex-col justify-between">
                 <div>
                     <div class="flex items-center justify-between text-xs text-ocean-300 font-bold mb-2">
-                        <span class="flex items-center gap-1.5"><i class="ph ph-anchor text-base text-gold-400"></i> 1. TITIK ASAL BERANGKAT</span>
-                        <span class="px-2 py-0.5 rounded bg-ocean-500/20 text-ocean-200 border border-ocean-500/30 text-[10px]">DEPARTED</span>
+                        <span class="flex items-center gap-1.5"><i class="ph ph-anchor text-base text-gold-400"></i> {{ __('ui.track.phase1_title') }}</span>
+                        <span class="px-2 py-0.5 rounded bg-ocean-500/20 text-ocean-200 border border-ocean-500/30 text-[10px]">{{ __('ui.track.phase1_badge') }}</span>
                     </div>
                     <h3 class="text-lg font-bold text-white">{{ $shipment->origin->name }}</h3>
                     <p class="text-xs text-ocean-200">{{ $shipment->origin->city }}, {{ $shipment->origin->country }}</p>
 
                     <div class="mt-4 pt-3 border-t border-white/10 space-y-2 text-xs">
                         <div class="flex justify-between">
-                            <span class="text-ocean-200/80">Jadwal Berangkat:</span>
+                            <span class="text-ocean-200/80">{{ __('ui.track.scheduled_dep') }}</span>
                             <span class="font-mono text-white font-semibold">{{ $shipment->expected_departure->format('d M Y, H:i') }}</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <span class="text-ocean-200/80">Jam di Pelabuhan Asal Sekarang:</span>
+                            <span class="text-ocean-200/80">{{ __('ui.track.origin_clock') }}</span>
                             <span class="font-mono text-gold-300 font-bold live-port-clock" data-tz="{{ $shipment->origin->timezone }}">--:--:--</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Weather at origin -->
                 @if($originWeather && $originWeather['available'])
                 <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs bg-black/20 p-2.5 rounded-xl border border-white/5">
                     <div class="flex items-center gap-2">
                         <i class="ph ph-sun text-gold-400 text-lg"></i>
                         <div>
-                            <span class="text-[10px] text-ocean-200 block leading-tight">Cuaca di Pelabuhan Asal:</span>
+                            <span class="text-[10px] text-ocean-200 block leading-tight">{{ __('ui.track.origin_weather') }}</span>
                             <span class="font-semibold text-white">{{ $originWeather['condition'] }}</span>
                         </div>
                     </div>
@@ -122,37 +121,36 @@
                 @endif
             </div>
 
-            <!-- 2. Mid-Transit Coordinate (Posisi Kapal di Tengah Jalan) -->
+            <!-- 2. Mid-Transit Coordinate -->
             <div class="bg-gradient-to-b from-ocean-900/60 to-ocean-950/80 border-2 border-gold-500/50 rounded-2xl p-5 backdrop-blur-sm relative overflow-hidden flex flex-col justify-between shadow-xl">
                 <div class="absolute top-0 right-0 w-28 h-28 bg-gold-500/10 rounded-full blur-2xl"></div>
                 <div>
                     <div class="flex items-center justify-between text-xs text-gold-400 font-bold mb-2">
-                        <span class="flex items-center gap-1.5"><i class="ph ph-boat text-base"></i> 2. DI PERTENGAHAN JALAN</span>
-                        <span class="px-2 py-0.5 rounded bg-gold-500/20 text-gold-300 border border-gold-500/30 text-[10px] animate-pulse">ACTIVE AT SEA</span>
+                        <span class="flex items-center gap-1.5"><i class="ph ph-boat text-base"></i> {{ __('ui.track.phase2_title') }}</span>
+                        <span class="px-2 py-0.5 rounded bg-gold-500/20 text-gold-300 border border-gold-500/30 text-[10px] animate-pulse">{{ __('ui.track.phase2_badge') }}</span>
                     </div>
                     <h3 class="text-lg font-bold text-white">{{ $shipment->current_location_name ?? 'In Transit Ocean Route' }}</h3>
-                    <p class="text-xs text-ocean-200">Koordinat: {{ number_format($shipment->current_latitude, 4) }}, {{ number_format($shipment->current_longitude, 4) }}</p>
+                    <p class="text-xs text-ocean-200">{{ __('ui.track.coords') }} {{ number_format($shipment->current_latitude, 4) }}, {{ number_format($shipment->current_longitude, 4) }}</p>
 
                     <div class="mt-4 pt-3 border-t border-white/10 space-y-2 text-xs">
                         <div class="flex justify-between items-center">
-                            <span class="text-ocean-200">Jam di Posisi Kapal Saat Ini:</span>
+                            <span class="text-ocean-200">{{ __('ui.track.vessel_clock') }}</span>
                             <span class="font-mono text-gold-300 text-sm font-bold live-port-clock" data-tz="{{ $shipment->carrier->type === 'AIR' ? 'Asia/Singapore' : 'Asia/Singapore' }}">--:--:--</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-ocean-200">Status Operasional:</span>
+                            <span class="text-ocean-200">{{ __('ui.track.op_status') }}</span>
                             <span class="font-semibold text-white">{{ str_replace('_', ' ', $shipment->current_status) }}</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Weather at sea -->
                 @if($weather && $weather['available'])
                 <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs bg-black/30 p-2.5 rounded-xl border border-gold-500/20">
                     <div class="flex items-center gap-2">
                         <i class="ph ph-wind text-ocean-300 text-lg"></i>
                         <div>
-                            <span class="text-[10px] text-ocean-200 block leading-tight">Cuaca & Angin Maritim:</span>
-                            <span class="font-semibold text-white">{{ $weather['condition'] }} • Angin {{ $weather['wind_speed_kmh'] }} km/h</span>
+                            <span class="text-[10px] text-ocean-200 block leading-tight">{{ __('ui.track.sea_weather') }}</span>
+                            <span class="font-semibold text-white">{{ $weather['condition'] }} • {{ __('ui.track.wind_speed', ['speed' => $weather['wind_speed_kmh']]) }}</span>
                         </div>
                     </div>
                     <span class="text-base font-bold text-gold-400 font-mono">{{ $weather['temperature_c'] }}°C</span>
@@ -160,42 +158,40 @@
                 @endif
             </div>
 
-            <!-- 3. Destination & Live ETA Countdown (Berapa Jam Lagi Sampai?) -->
+            <!-- 3. Destination & Live ETA Countdown -->
             <div class="bg-white/5 border border-white/10 hover:border-emerald-400/40 transition rounded-2xl p-5 backdrop-blur-sm relative overflow-hidden flex flex-col justify-between">
                 <div>
                     <div class="flex items-center justify-between text-xs text-emerald-400 font-bold mb-2">
-                        <span class="flex items-center gap-1.5"><i class="ph ph-flag-checkered text-base"></i> 3. TUJUAN KEDATANGAN</span>
-                        <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px]">DESTINATION</span>
+                        <span class="flex items-center gap-1.5"><i class="ph ph-flag-checkered text-base"></i> {{ __('ui.track.phase3_title') }}</span>
+                        <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px]">{{ __('ui.track.phase3_badge') }}</span>
                     </div>
                     <h3 class="text-lg font-bold text-white">{{ $shipment->destination->name }}</h3>
                     <p class="text-xs text-ocean-200">{{ $shipment->destination->city }}, {{ $shipment->destination->country }}</p>
 
-                    <!-- LIVE COUNTDOWN BOX -->
                     <div class="mt-4 p-3.5 rounded-2xl bg-gradient-to-r from-emerald-950/70 to-slate-950 border border-emerald-500/40 text-center shadow-inner">
                         <span class="text-[10px] uppercase font-bold text-emerald-400 block tracking-wider">
-                            ⏱️ Estimasi Sampai (Hitung Mundur):
+                            {{ __('ui.track.eta_countdown_title') }}
                         </span>
                         <div id="eta-countdown" class="text-base sm:text-lg font-mono font-black text-white mt-1">
-                            Menghitung...
+                            {{ __('ui.countdown.calculating') }}
                         </div>
                         <span class="text-[10px] text-ocean-300/80 block mt-0.5">
-                            Target: {{ $shipment->estimated_arrival->format('d M Y, H:i') }} (Waktu Lokal)
+                            {{ __('ui.track.target_eta') }} {{ $shipment->estimated_arrival->format('d M Y, H:i') }} ({{ __('ui.countdown.local_time') }})
                         </span>
                     </div>
 
                     <div class="mt-3 pt-2 border-t border-white/10 flex justify-between text-xs">
-                        <span class="text-ocean-200/80">Jam di Kota Tujuan Sekarang:</span>
+                        <span class="text-ocean-200/80">{{ __('ui.track.dest_clock') }}</span>
                         <span class="font-mono text-emerald-400 font-bold live-port-clock" data-tz="{{ $shipment->destination->timezone }}">--:--:--</span>
                     </div>
                 </div>
 
-                <!-- Weather at destination -->
                 @if($destWeather && $destWeather['available'])
                 <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs bg-black/20 p-2.5 rounded-xl border border-white/5">
                     <div class="flex items-center gap-2">
                         <i class="ph ph-cloud-sun text-emerald-300 text-lg"></i>
                         <div>
-                            <span class="text-[10px] text-ocean-200 block leading-tight">Cuaca di Tujuan (Eropa/Global):</span>
+                            <span class="text-[10px] text-ocean-200 block leading-tight">{{ __('ui.track.dest_weather') }}</span>
                             <span class="font-semibold text-white">{{ $destWeather['condition'] }}</span>
                         </div>
                     </div>
@@ -208,28 +204,27 @@
 
     <!-- Map & Manifest Specs -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Interactive Leaflet Map with Layer Switcher -->
         <div class="lg:col-span-2 bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
             <div class="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                 <div class="flex items-center gap-2">
                     <i class="ph ph-navigation-arrow text-ocean-700 text-lg"></i>
-                    <h3 class="font-bold text-slate-800 text-sm">Peta Navigasi Spasial GIS (Rute Maritim & Udara Dunia)</h3>
+                    <h3 class="font-bold text-slate-800 text-sm">{{ __('ui.track.map_title') }}</h3>
                 </div>
                 <div class="flex items-center gap-2">
                     <span class="text-[11px] font-semibold text-ocean-800 bg-ocean-100 px-2 py-0.5 rounded-md border border-ocean-200">
-                        Multi-Layer Satelit & Radar Aktif
+                        {{ __('ui.shipments.map_active_badge') }}
                     </span>
                 </div>
             </div>
             <div id="shipmentMap" class="w-full h-[450px] bg-slate-900 z-10"></div>
             <div class="px-4 py-2.5 bg-slate-50 border-t border-slate-100 text-[11px] text-slate-500 flex flex-wrap items-center justify-between gap-2">
                 <span class="flex items-center gap-1.5">
-                    <span class="w-3 h-3 rounded-full bg-gold-500 inline-block"></span> <strong>Kuning Emas:</strong> Posisi Real-time Armada
+                    <span class="w-3 h-3 rounded-full bg-gold-500 inline-block"></span> <strong>{{ __('ui.map.legend_gold') }}</strong> {{ __('ui.map.legend_gold_desc') }}
                 </span>
                 <span class="flex items-center gap-1.5">
-                    <span class="w-3 h-0.5 bg-ocean-600 inline-block border-t border-dashed"></span> <strong>Garis Putus-Putus Teal:</strong> Jalur Pelayaran Terplot
+                    <span class="w-3 h-0.5 bg-ocean-600 inline-block border-t border-dashed"></span> <strong>{{ __('ui.map.legend_teal') }}</strong> {{ __('ui.map.legend_teal_desc') }}
                 </span>
-                <span class="text-slate-400">Kontrol lapisan di kanan atas</span>
+                <span class="text-slate-400">{{ __('ui.shipments.map_hint_short') }}</span>
             </div>
         </div>
 
@@ -238,33 +233,33 @@
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                 <h4 class="font-bold text-slate-900 text-sm flex items-center gap-1.5">
                     <i class="ph ph-package text-ocean-700"></i>
-                    <span>Spesifikasi Kargo & Kontainer</span>
+                    <span>{{ __('ui.shipments.specs_header') }}</span>
                 </h4>
                 <span class="font-mono text-[10px] text-slate-400">ISO 6346 COMPLIANT</span>
             </div>
 
             <div class="space-y-3">
                 <div class="flex justify-between items-center py-1 border-b border-slate-50">
-                    <span class="text-slate-500">Total Berat:</span>
+                    <span class="text-slate-500">{{ __('ui.shipments.specs_weight') }}</span>
                     <strong class="text-slate-900 font-mono text-sm">{{ number_format($shipment->total_weight_kg, 2) }} kg</strong>
                 </div>
                 <div class="flex justify-between items-center py-1 border-b border-slate-50">
-                    <span class="text-slate-500">Volume Kontainer (CBM):</span>
+                    <span class="text-slate-500">{{ __('ui.shipments.specs_volume') }}</span>
                     <strong class="text-slate-900 font-mono text-sm">{{ $shipment->total_volume_cbm ?? 'N/A' }} m³</strong>
                 </div>
                 <div class="flex justify-between items-center py-1 border-b border-slate-50">
-                    <span class="text-slate-500">Jenis Barang / Komoditas:</span>
+                    <span class="text-slate-500">{{ __('ui.shipments.specs_commodity') }}</span>
                     <strong class="text-slate-800">{{ $shipment->cargo_type }}</strong>
                 </div>
                 <div class="flex justify-between items-center py-1 border-b border-slate-50">
-                    <span class="text-slate-500">Armada / Carrier:</span>
+                    <span class="text-slate-500">{{ __('ui.track.carrier_col') }}</span>
                     <strong class="text-ocean-800 font-bold">{{ $shipment->carrier->name }}</strong>
                 </div>
             </div>
 
             @if($shipment->items->count() > 0)
             <div class="pt-3 border-t border-slate-100">
-                <span class="text-slate-500 block mb-2 font-semibold">Manifest Barang:</span>
+                <span class="text-slate-500 block mb-2 font-semibold">{{ __('ui.shipments.specs_items') }}</span>
                 <ul class="space-y-2 max-h-48 overflow-y-auto pr-1">
                     @foreach($shipment->items as $item)
                     <li class="bg-slate-50 hover:bg-ocean-50/50 transition p-2.5 rounded-xl border border-slate-100 flex justify-between items-center">
@@ -286,7 +281,7 @@
     <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
         <h3 class="font-bold text-slate-900 text-base mb-4 flex items-center gap-2">
             <i class="ph ph-warning-octagon text-rose-600 text-xl"></i>
-            <span>Catatan Gangguan Operasional & Pengecualian (Disruptions & Exceptions)</span>
+            <span>{{ __('ui.shipments.disruptions_title') }}</span>
         </h3>
         <div class="space-y-3">
             @foreach($shipment->exceptions as $ex)
@@ -300,7 +295,7 @@
                             @if($ex->severity === 'HIGH') bg-rose-200 text-rose-800 border border-rose-300
                             @elseif($ex->severity === 'MEDIUM') bg-gold-200 text-gold-800 border border-gold-300
                             @else bg-ocean-200 text-ocean-800 border border-ocean-300 @endif">
-                            Severity: {{ $ex->severity }}
+                            {{ __('ui.track.severity_label') }} {{ $ex->severity }}
                         </span>
                         <span class="px-2 py-0.5 text-[10px] font-bold rounded uppercase
                             @if($ex->status === 'RESOLVED') bg-emerald-200 text-emerald-800 border border-emerald-300
@@ -311,7 +306,7 @@
                     <p class="text-xs mt-1">{{ $ex->description }}</p>
                     @if($ex->resolution_notes)
                     <p class="text-xs text-emerald-700 font-medium mt-1">
-                        Resolved: {{ $ex->resolution_notes }} (oleh {{ $ex->resolver->name ?? 'Staff' }})
+                        {{ __('ui.shipments.resolved_by', ['notes' => $ex->resolution_notes, 'name' => $ex->resolver->name ?? 'Staff']) }}
                     </p>
                     @endif
                 </div>
@@ -320,10 +315,10 @@
                 <div>
                     <form method="POST" action="{{ route('exceptions.resolve', $ex->id) }}" class="flex items-center gap-2">
                         @csrf
-                        <input type="text" name="resolution_notes" placeholder="Catatan resolusi..." required
+                        <input type="text" name="resolution_notes" placeholder="{{ __('ui.shipments.resolution_ph') }}" required
                                class="px-3 py-1.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:border-ocean-500">
                         <button type="submit" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition shadow-xs">
-                            Resolve
+                            {{ __('ui.shipments.resolve_btn') }}
                         </button>
                     </form>
                 </div>
@@ -334,41 +329,41 @@
     </div>
     @endif
 
-    <!-- Operator Operational Actions Section (Slide 05 & 07) -->
+    <!-- Operator Operational Actions Section -->
     @if(!auth()->user()->isCustomer() && $shipment->current_status !== 'DELIVERED' && $shipment->current_status !== 'CANCELLED')
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Form 1: Add Tracking Event / Update Status -->
+        <!-- Form 1: Add Tracking Event -->
         <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
             <h3 class="font-bold text-slate-900 text-sm mb-3 flex items-center gap-2">
                 <i class="ph ph-map-pin-line text-ocean-700 text-lg"></i>
-                <span>Log Checkpoint Perjalanan Baru (GPS & Status)</span>
+                <span>{{ __('ui.shipments.checkpoint_title') }}</span>
             </h3>
 
             <!-- Quick Ocean/Route Simulation Presets -->
             <div class="mb-4 p-3 rounded-2xl bg-ocean-50/70 border border-ocean-200/70">
                 <span class="block text-[10px] font-extrabold uppercase text-ocean-900 mb-2">
-                    🧭 Simulasi Cepat Titik Posisi Kapal (Klik untuk Isi Koordinat):
+                    {{ __('ui.shipments.preset_title') }}
                 </span>
                 <div class="flex flex-wrap gap-1.5">
-                    <button type="button" onclick="fillWaypoint('Selat Malaka Waypoint', 2.4820, 101.2150, 'Kapal melintasi jalur pelayaran utama Selat Malaka menuju barat.')"
+                    <button type="button" onclick="fillWaypoint('Selat Malaka Waypoint', 2.4820, 101.2150, 'Vessel transiting the Malacca Strait corridor westbound.')"
                             class="px-2.5 py-1 bg-white hover:bg-ocean-100 text-ocean-900 border border-ocean-200 rounded-lg text-[10px] font-bold transition shadow-2xs">
                         ⚓ Selat Malaka
                     </button>
-                    <button type="button" onclick="fillWaypoint('Samudra Hindia (Indian Ocean)', 6.1500, 78.4000, 'Kapal berlayar stabil di Samudra Hindia selatan Sri Lanka.')"
+                    <button type="button" onclick="fillWaypoint('Samudra Hindia (Indian Ocean)', 6.1500, 78.4000, 'Vessel cruising steadily across the Indian Ocean south of Sri Lanka.')"
                             class="px-2.5 py-1 bg-white hover:bg-ocean-100 text-ocean-900 border border-ocean-200 rounded-lg text-[10px] font-bold transition shadow-2xs">
-                        🌊 Samudra Hindia
+                        🌊 Indian Ocean
                     </button>
-                    <button type="button" onclick="fillWaypoint('Terusan Suez (Suez Canal)', 30.5852, 32.2654, 'Armada memasuki antrean konvoi Terusan Suez menuju Laut Mediterania.')"
+                    <button type="button" onclick="fillWaypoint('Terusan Suez (Suez Canal)', 30.5852, 32.2654, 'Vessel joining Suez Canal convoy toward the Mediterranean Sea.')"
                             class="px-2.5 py-1 bg-white hover:bg-ocean-100 text-ocean-900 border border-ocean-200 rounded-lg text-[10px] font-bold transition shadow-2xs">
-                        🚢 Terusan Suez
+                        🚢 Suez Canal
                     </button>
-                    <button type="button" onclick="fillWaypoint('Selat Gibraltar (Mediterranean)', 35.9800, -5.5000, 'Kapal keluar dari Laut Mediterania melewati Selat Gibraltar menuju Atlantik Utara.')"
+                    <button type="button" onclick="fillWaypoint('Selat Gibraltar (Mediterranean)', 35.9800, -5.5000, 'Vessel clearing the Strait of Gibraltar into the North Atlantic.')"
                             class="px-2.5 py-1 bg-white hover:bg-ocean-100 text-ocean-900 border border-ocean-200 rounded-lg text-[10px] font-bold transition shadow-2xs">
-                        🧭 Selat Gibraltar
+                        🧭 Gibraltar
                     </button>
-                    <button type="button" onclick="fillWaypoint('Laut Timor (Timor Sea)', -11.2500, 127.8000, 'Kapal bergerak melintasi perairan Laut Timor menuju benua Australia.')"
+                    <button type="button" onclick="fillWaypoint('Laut Timor (Timor Sea)', -11.2500, 127.8000, 'Vessel crossing Timor Sea waters bound for Australia.')"
                             class="px-2.5 py-1 bg-white hover:bg-ocean-100 text-ocean-900 border border-ocean-200 rounded-lg text-[10px] font-bold transition shadow-2xs">
-                        🌊 Laut Timor
+                        🌊 Timor Sea
                     </button>
                 </div>
             </div>
@@ -377,14 +372,14 @@
                 @csrf
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Nama Lokasi Checkpoint *</label>
-                        <input id="cp-location-name" type="text" name="location_name" placeholder="misal: Selat Malaka Waypoint" required
+                        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">{{ __('ui.shipments.cp_name') }}</label>
+                        <input id="cp-location-name" type="text" name="location_name" placeholder="{{ __('ui.shipments.cp_name_ph') }}" required
                                class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:border-ocean-500">
                     </div>
                     <div>
-                        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Pilih Hub / Pelabuhan (Opsional)</label>
+                        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">{{ __('ui.shipments.cp_hub') }}</label>
                         <select id="cp-location-id" name="location_id" onchange="syncSelectedHub(this)" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-ocean-500">
-                            <option value="">Koordinat Bebas / Laut Lepas</option>
+                            <option value="">{{ __('ui.shipments.cp_hub_free') }}</option>
                             @foreach($allLocations as $loc)
                             <option value="{{ $loc->id }}" data-name="{{ $loc->name }}" data-lat="{{ $loc->latitude }}" data-lng="{{ $loc->longitude }}">{{ $loc->name }} ({{ $loc->city }})</option>
                             @endforeach
@@ -394,20 +389,20 @@
 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Latitude</label>
-                        <input id="cp-lat" type="number" step="0.0000001" name="latitude" placeholder="misal: 1.3521"
+                        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">{{ __('ui.shipments.cp_lat') }}</label>
+                        <input id="cp-lat" type="number" step="0.0000001" name="latitude" placeholder="e.g. 1.3521"
                                class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:border-ocean-500">
                     </div>
                     <div>
-                        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Longitude</label>
-                        <input id="cp-lng" type="number" step="0.0000001" name="longitude" placeholder="misal: 103.8198"
+                        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">{{ __('ui.shipments.cp_lng') }}</label>
+                        <input id="cp-lng" type="number" step="0.0000001" name="longitude" placeholder="e.g. 103.8198"
                                class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:border-ocean-500">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Tipe Milestone</label>
+                        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">{{ __('ui.shipments.cp_milestone') }}</label>
                         <select name="event_status" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-ocean-500">
                             <option value="CHECKPOINT">WAYPOINT_CHECKPOINT</option>
                             <option value="BERTH_ARRIVAL">PORT_ARRIVAL</option>
@@ -415,26 +410,26 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Perbarui Status (State Machine)</label>
+                        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">{{ __('ui.shipments.cp_status') }}</label>
                         <select name="new_status" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-ocean-500">
-                            <option value="">Pertahankan ({{ $shipment->current_status }})</option>
+                            <option value="">{{ __('ui.shipments.cp_keep', ['status' => $shipment->current_status]) }}</option>
                             <option value="BOOKED">BOOKED</option>
                             <option value="PICKED_UP">PICKED_UP</option>
                             <option value="IN_TRANSIT">IN_TRANSIT</option>
                             <option value="OUT_FOR_DELIVERY">OUT_FOR_DELIVERY</option>
-                            <option value="DELIVERED">DELIVERED (Terminal)</option>
+                            <option value="DELIVERED">DELIVERED</option>
                         </select>
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Keterangan Checkpoint *</label>
-                    <textarea id="cp-desc" name="description" rows="2" placeholder="Armada berlayar normal di perairan laut internasional." required
+                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">{{ __('ui.shipments.cp_desc') }}</label>
+                    <textarea id="cp-desc" name="description" rows="2" placeholder="{{ __('ui.shipments.cp_desc_ph') }}" required
                               class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:border-ocean-500"></textarea>
                 </div>
 
                 <button type="submit" class="w-full py-2.5 bg-ocean-700 hover:bg-ocean-800 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-sm transition">
-                    Simpan Checkpoint Perjalanan
+                    {{ __('ui.shipments.cp_submit') }}
                 </button>
             </form>
         </div>
@@ -443,14 +438,14 @@
         <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
             <h3 class="font-bold text-slate-900 text-sm mb-4 flex items-center gap-2">
                 <i class="ph ph-warning-diamond text-gold-600 text-lg"></i>
-                <span>Laporkan Kendala / Disruption (Hitung Ulang ETA)</span>
+                <span>{{ __('ui.shipments.exception_title') }}</span>
             </h3>
 
             <form method="POST" action="{{ route('exceptions.store', $shipment->id) }}" class="space-y-3">
                 @csrf
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Kategori Gangguan *</label>
+                        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">{{ __('ui.shipments.ex_category') }}</label>
                         <select name="exception_type" required class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-ocean-500">
                             <option value="PORT_CONGESTION">PORT_CONGESTION</option>
                             <option value="WEATHER_DELAY">WEATHER_DELAY</option>
@@ -461,29 +456,29 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Tingkat Keparahan *</label>
+                        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">{{ __('ui.shipments.ex_severity') }}</label>
                         <select name="severity" required class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-ocean-500">
-                            <option value="LOW">LOW (0 - 6 jam)</option>
-                            <option value="MEDIUM" selected>MEDIUM (6 - 24 jam)</option>
-                            <option value="HIGH">HIGH (> 24 jam)</option>
+                            <option value="LOW">LOW (0 - 6h)</option>
+                            <option value="MEDIUM" selected>MEDIUM (6 - 24h)</option>
+                            <option value="HIGH">HIGH (> 24h)</option>
                         </select>
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Dampak Keterlambatan (Jam)</label>
+                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">{{ __('ui.shipments.ex_impact') }}</label>
                     <input type="number" name="delay_hours_impact" value="12" min="1"
                            class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:border-ocean-500">
                 </div>
 
                 <div>
-                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Detail Kendala *</label>
-                    <textarea name="description" rows="2" placeholder="misal: Gelombang tinggi badai di perairan mengharuskan kapal buang jangkar." required
+                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">{{ __('ui.shipments.ex_detail') }}</label>
+                    <textarea name="description" rows="2" placeholder="{{ __('ui.shipments.ex_detail_ph') }}" required
                               class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:border-ocean-500"></textarea>
                 </div>
 
                 <button type="submit" class="w-full py-2.5 bg-gold-600 hover:bg-gold-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-sm transition">
-                    Laporkan Kendala & Kalkulasi Ulang ETA
+                    {{ __('ui.shipments.ex_submit') }}
                 </button>
             </form>
         </div>
@@ -494,13 +489,12 @@
     <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm">
         <h3 class="font-bold text-slate-900 text-base mb-6 flex items-center gap-2">
             <i class="ph ph-clock-counter-clockwise text-ocean-700 text-xl"></i>
-            <span>Riwayat Perjalanan Kronologis (Checkpoint Log & Waypoints)</span>
+            <span>{{ __('ui.track.timeline_title') }}</span>
         </h3>
 
         <div class="relative border-l-2 border-ocean-200 ml-4 space-y-6 pb-4">
             @forelse($shipment->trackingEvents as $event)
             <div class="relative pl-6">
-                <!-- Dot icon -->
                 <div class="absolute -left-[9px] top-1 w-4 h-4 rounded-full border-2 
                     @if($event->is_exception) bg-rose-500 border-rose-200 animate-pulse
                     @elseif($loop->last) bg-gold-500 border-gold-200 ring-4 ring-gold-100
@@ -523,7 +517,7 @@
                 </div>
             </div>
             @empty
-            <p class="text-slate-400 text-xs pl-4">Belum ada catatan checkpoint perjalanan.</p>
+            <p class="text-slate-400 text-xs pl-4">{{ __('ui.track.timeline_empty') }}</p>
             @endforelse
         </div>
     </div>
@@ -532,7 +526,15 @@
 
 @push('scripts')
 <script>
+    function copyTrackingNum(btn) {
+        navigator.clipboard.writeText(btn.getAttribute('data-num'));
+        alert(btn.getAttribute('data-msg'));
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
+        const uiUnits = @json(__('ui.countdown'));
+        const uiMap = @json(__('ui.map'));
+
         // 1. User Local Clock
         function updateUserClock() {
             const now = new Date();
@@ -581,7 +583,7 @@
             if (!el) return;
 
             if (distance < 0) {
-                el.innerHTML = '<span class="text-emerald-400 font-bold">✅ TELAH TIBA DI TUJUAN</span>';
+                el.innerHTML = `<span class="text-emerald-400 font-bold">✅ ${uiUnits.arrived}</span>`;
                 return;
             }
 
@@ -590,7 +592,7 @@
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            el.innerHTML = `${days} Hari ${hours} Jam ${minutes} Menit ${seconds} Detik`;
+            el.innerHTML = `${days} ${uiUnits.days} ${hours} ${uiUnits.hours} ${minutes} ${uiUnits.minutes} ${seconds} ${uiUnits.seconds}`;
         }
         updateCountdown();
         setInterval(updateCountdown, 1000);
@@ -603,7 +605,6 @@
         const currentLat = {{ $shipment->current_latitude ?? $shipment->origin->latitude }};
         const currentLng = {{ $shipment->current_longitude ?? $shipment->origin->longitude }};
 
-        // Base Tile Layers
         const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '&copy; OpenStreetMap contributors'
@@ -632,12 +633,12 @@
         });
 
         const baseMaps = {
-            "🛰️ Citra Satelit + Nama Wilayah": satelliteLayer,
-            "🌙 Radar Laut Malam (Dark)": darkRadarLayer,
-            "🗺️ Peta Navigasi Standar (OSM)": osmLayer
+            [uiMap.layer_satellite]: satelliteLayer,
+            [uiMap.layer_dark]: darkRadarLayer,
+            [uiMap.layer_osm]: osmLayer
         };
         const overlays = {
-            "🏷️ Label Negara, Kota & Batas": labelsOverlay
+            [uiMap.overlay_labels]: labelsOverlay
         };
         L.control.layers(baseMaps, overlays, { position: 'topright' }).addTo(map);
 
@@ -650,20 +651,20 @@
         });
 
         L.marker([originLat, originLng]).addTo(map)
-            .bindTooltip('🛫 Asal: {{ $shipment->origin->city }} ({{ $shipment->origin->code }})', {
+            .bindTooltip(`${uiMap.origin_prefix} {{ $shipment->origin->city }} ({{ $shipment->origin->code }})`, {
                 permanent: true,
                 direction: 'top',
                 offset: [0, -32]
             })
-            .bindPopup('<b>🛫 Origin:</b> {{ $shipment->origin->name }}<br>{{ $shipment->origin->city }}, {{ $shipment->origin->country }}');
+            .bindPopup(`<b>${uiMap.popup_origin}</b> {{ $shipment->origin->name }}<br>{{ $shipment->origin->city }}, {{ $shipment->origin->country }}`);
 
         L.marker([destLat, destLng]).addTo(map)
-            .bindTooltip('🛬 Tujuan: {{ $shipment->destination->city }} ({{ $shipment->destination->code }})', {
+            .bindTooltip(`${uiMap.dest_prefix} {{ $shipment->destination->city }} ({{ $shipment->destination->code }})`, {
                 permanent: true,
                 direction: 'bottom',
                 offset: [0, 6]
             })
-            .bindPopup('<b>🛬 Destination:</b> {{ $shipment->destination->name }}<br>{{ $shipment->destination->city }}, {{ $shipment->destination->country }}');
+            .bindPopup(`<b>${uiMap.popup_dest}</b> {{ $shipment->destination->name }}<br>{{ $shipment->destination->city }}, {{ $shipment->destination->country }}`);
 
         L.circleMarker([currentLat, currentLng], {
             color: '#f59e0b',
@@ -672,7 +673,7 @@
             weight: 3,
             radius: 9
         }).addTo(map)
-        .bindPopup('<b>🚢 Current Position:</b><br>{{ $shipment->current_location_name ?? "In Transit" }}<br>Status: {{ $shipment->current_status }}')
+        .bindPopup(`<b>${uiMap.popup_vessel}</b><br>{{ $shipment->current_location_name ?? "In Transit" }}<br>Status: {{ $shipment->current_status }}`)
         .openPopup();
 
         const pathCoords = [
@@ -711,7 +712,7 @@
         document.getElementById('cp-lat').value = option.getAttribute('data-lat') || '';
         document.getElementById('cp-lng').value = option.getAttribute('data-lng') || '';
         if (!document.getElementById('cp-desc').value) {
-            document.getElementById('cp-desc').value = 'Armada tiba di titik hub ' + (option.getAttribute('data-name') || '') + '.';
+            document.getElementById('cp-desc').value = 'Arrived at hub ' + (option.getAttribute('data-name') || '') + '.';
         }
     }
 </script>

@@ -7,11 +7,11 @@
         <div>
             <div class="flex items-center gap-2">
                 <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-wider bg-ocean-100 text-ocean-900 border border-ocean-200">
-                    Administrasi Akses
+                    {{ __('ui.users.badge') }}
                 </span>
             </div>
-            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1">Manajemen Pengguna & Hak Akses</h1>
-            <p class="text-xs sm:text-sm text-slate-500 mt-1">Kelola akun Administrator, Operator Logistik, dan Customer CargoTrace</p>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1">{{ __('ui.users.title') }}</h1>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1">{{ __('ui.users.subtitle') }}</p>
         </div>
     </div>
 
@@ -19,16 +19,16 @@
         <!-- Users Table -->
         <div class="lg:col-span-2 bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
             <div class="p-4 border-b border-slate-100 bg-slate-50/50">
-                <h3 class="font-bold text-slate-800 text-sm">Daftar Akun Terdaftar</h3>
+                <h3 class="font-bold text-slate-800 text-sm">{{ __('ui.users.list_title') }}</h3>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse text-xs">
                     <thead>
                         <tr class="bg-slate-50/80 border-b border-slate-200 text-slate-400 uppercase font-semibold">
-                            <th class="py-3 px-4">Nama & Perusahaan</th>
-                            <th class="py-3 px-4">Email</th>
-                            <th class="py-3 px-4">Role Saat Ini</th>
-                            <th class="py-3 px-4">Ubah Role</th>
+                            <th class="py-3 px-4">{{ __('ui.users.col_name') }}</th>
+                            <th class="py-3 px-4">{{ __('ui.users.col_email') }}</th>
+                            <th class="py-3 px-4">{{ __('ui.users.col_role') }}</th>
+                            <th class="py-3 px-4">{{ __('ui.users.col_change') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
@@ -36,7 +36,7 @@
                         <tr class="hover:bg-ocean-50/30 transition">
                             <td class="py-3.5 px-4">
                                 <span class="font-bold text-slate-800 block">{{ $u->name }}</span>
-                                <span class="text-[10px] text-slate-400">{{ $u->company ?? 'Personal / Internal' }} • {{ $u->shipments_count }} Pengiriman</span>
+                                <span class="text-[10px] text-slate-400">{{ $u->company ?? 'Personal / Internal' }} • {{ __('ui.users.shipments_count', ['count' => $u->shipments_count]) }}</span>
                             </td>
                             <td class="py-3.5 px-4 font-mono text-[11px] text-slate-600">
                                 {{ $u->email }}
@@ -60,11 +60,11 @@
                                         <option value="admin" {{ $u->role === 'admin' ? 'selected' : '' }}>Admin</option>
                                     </select>
                                     <button type="submit" class="px-2.5 py-1 bg-ocean-700 hover:bg-ocean-800 text-white rounded-lg text-[10px] font-bold transition">
-                                        Simpan
+                                        {{ __('ui.users.save_btn') }}
                                     </button>
                                 </form>
                                 @else
-                                <span class="text-[10px] font-semibold text-slate-400 italic">Akun Aktif Anda</span>
+                                <span class="text-[10px] font-semibold text-slate-400 italic">{{ __('ui.users.your_account') }}</span>
                                 @endif
                             </td>
                         </tr>
@@ -84,23 +84,23 @@
         <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm h-fit">
             <h3 class="font-bold text-slate-800 text-sm mb-4 flex items-center gap-2">
                 <i class="ph ph-user-plus text-ocean-700 text-lg"></i>
-                <span>Tambah Akun Pengguna Baru</span>
+                <span>{{ __('ui.users.add_title') }}</span>
             </h3>
             <form method="POST" action="{{ route('users.store') }}" class="space-y-3">
                 @csrf
                 <div>
-                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Nama Lengkap *</label>
-                    <input type="text" name="name" placeholder="misal: Andi Operator" required
+                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">{{ __('ui.users.name_label') }}</label>
+                    <input type="text" name="name" placeholder="e.g. Andi Operator" required
                            class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:border-ocean-500">
                 </div>
                 <div>
-                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Alamat Email *</label>
+                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">{{ __('ui.users.email_label') }}</label>
                     <input type="email" name="email" placeholder="andi@cargotrace.com" required
                            class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:border-ocean-500">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Role / Hak Akses *</label>
+                        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">{{ __('ui.users.role_label') }}</label>
                         <select name="role" required class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-ocean-500">
                             <option value="customer">Customer</option>
                             <option value="operator" selected>Operator</option>
@@ -108,27 +108,26 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Password Minimal 8 *</label>
+                        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">{{ __('ui.users.pass_label') }}</label>
                         <input type="password" name="password" placeholder="••••••••" required minlength="8"
                                class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:border-ocean-500">
                     </div>
                 </div>
                 <div>
-                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Nama Perusahaan</label>
+                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">{{ __('ui.users.company_label') }}</label>
                     <input type="text" name="company" placeholder="PT Logistik Nusantara"
                            class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:border-ocean-500">
                 </div>
                 <div>
-                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Nomor Telepon</label>
+                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">{{ __('ui.users.phone_label') }}</label>
                     <input type="text" name="phone" placeholder="+62 812..."
                            class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:border-ocean-500">
                 </div>
                 <button type="submit" class="w-full py-2.5 bg-ocean-700 hover:bg-ocean-800 text-white font-bold text-xs uppercase rounded-xl transition shadow-2xs">
-                    Simpan Pengguna Baru
+                    {{ __('ui.users.create_btn') }}
                 </button>
             </form>
         </div>
     </div>
 </div>
 @endsection
-

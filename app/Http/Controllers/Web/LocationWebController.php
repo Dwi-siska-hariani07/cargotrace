@@ -34,7 +34,7 @@ class LocationWebController extends Controller
 
         Location::create($validated);
 
-        return back()->with('success', 'Location created successfully.');
+        return back()->with('success', __('ui.flash.location_added'));
     }
 }
 
