@@ -3,7 +3,7 @@
 [![Laravel Version](https://img.shields.io/badge/Laravel-11.x-red.svg)](https://laravel.com)
 [![PHP Version](https://img.shields.io/badge/PHP-8.2%2B-blue.svg)](https://php.net)
 [![MySQL Version](https://img.shields.io/badge/MySQL-8.0%2B-orange.svg)](https://mysql.com)
-[![Tests Passing](https://img.shields.io/badge/Automated%20Tests-17%20Passed-brightgreen.svg)]()
+[![Tests Passing](https://img.shields.io/badge/Automated%20Tests-21%20Passed-brightgreen.svg)]()
 
 > Final Project (UAS) — Web Programming 2  
 > **CargoTrace** is a production-grade portfolio project delivering global cargo tracking, deterministic delay calculations, chronological spatial timelines, exception management, and REST APIs.
@@ -76,9 +76,9 @@ You can sign in with any of these pre-seeded accounts (or use the one-click demo
 
 | Role | Email Address | Password | Capabilities |
 | :--- | :--- | :--- | :--- |
-| **Administrator** | `admin@cargotrace.com` | `password123` | Master control, carriers & locations CRUD, audit log inspection |
-| **Logistics Operator** | `operator@cargotrace.com` | `password123` | Create shipments, record tracking checkpoints, log disruptions |
-| **Customer** | `customer@cargotrace.com` | `password123` | View own cargo, real-time map tracking, ETA notices |
+| **Administrator** | `admin@cargotrace.com` | `password123` | Master control, user & role management, carriers & locations CRUD, audit log inspection |
+| **Logistics Operator** | `operator@cargotrace.com` | `password123` | Create shipments, record tracking checkpoints with coordinates, log disruptions |
+| **Customer** | `customer@cargotrace.com` | `password123` | View own cargo, real-time map tracking, in-app notifications & ETA notices |
 | **Customer (US)** | `acme@corp.com` | `password123` | Multi-tenant customer scenario |
 
 ---

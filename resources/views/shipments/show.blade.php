@@ -339,25 +339,54 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Form 1: Add Tracking Event / Update Status -->
         <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
-            <h3 class="font-bold text-slate-900 text-sm mb-4 flex items-center gap-2">
+            <h3 class="font-bold text-slate-900 text-sm mb-3 flex items-center gap-2">
                 <i class="ph ph-map-pin-line text-ocean-700 text-lg"></i>
                 <span>Log Checkpoint Perjalanan Baru (GPS & Status)</span>
             </h3>
+
+            <!-- Quick Ocean/Route Simulation Presets -->
+            <div class="mb-4 p-3 rounded-2xl bg-ocean-50/70 border border-ocean-200/70">
+                <span class="block text-[10px] font-extrabold uppercase text-ocean-900 mb-2">
+                    🧭 Simulasi Cepat Titik Posisi Kapal (Klik untuk Isi Koordinat):
+                </span>
+                <div class="flex flex-wrap gap-1.5">
+                    <button type="button" onclick="fillWaypoint('Selat Malaka Waypoint', 2.4820, 101.2150, 'Kapal melintasi jalur pelayaran utama Selat Malaka menuju barat.')"
+                            class="px-2.5 py-1 bg-white hover:bg-ocean-100 text-ocean-900 border border-ocean-200 rounded-lg text-[10px] font-bold transition shadow-2xs">
+                        ⚓ Selat Malaka
+                    </button>
+                    <button type="button" onclick="fillWaypoint('Samudra Hindia (Indian Ocean)', 6.1500, 78.4000, 'Kapal berlayar stabil di Samudra Hindia selatan Sri Lanka.')"
+                            class="px-2.5 py-1 bg-white hover:bg-ocean-100 text-ocean-900 border border-ocean-200 rounded-lg text-[10px] font-bold transition shadow-2xs">
+                        🌊 Samudra Hindia
+                    </button>
+                    <button type="button" onclick="fillWaypoint('Terusan Suez (Suez Canal)', 30.5852, 32.2654, 'Armada memasuki antrean konvoi Terusan Suez menuju Laut Mediterania.')"
+                            class="px-2.5 py-1 bg-white hover:bg-ocean-100 text-ocean-900 border border-ocean-200 rounded-lg text-[10px] font-bold transition shadow-2xs">
+                        🚢 Terusan Suez
+                    </button>
+                    <button type="button" onclick="fillWaypoint('Selat Gibraltar (Mediterranean)', 35.9800, -5.5000, 'Kapal keluar dari Laut Mediterania melewati Selat Gibraltar menuju Atlantik Utara.')"
+                            class="px-2.5 py-1 bg-white hover:bg-ocean-100 text-ocean-900 border border-ocean-200 rounded-lg text-[10px] font-bold transition shadow-2xs">
+                        🧭 Selat Gibraltar
+                    </button>
+                    <button type="button" onclick="fillWaypoint('Laut Timor (Timor Sea)', -11.2500, 127.8000, 'Kapal bergerak melintasi perairan Laut Timor menuju benua Australia.')"
+                            class="px-2.5 py-1 bg-white hover:bg-ocean-100 text-ocean-900 border border-ocean-200 rounded-lg text-[10px] font-bold transition shadow-2xs">
+                        🌊 Laut Timor
+                    </button>
+                </div>
+            </div>
 
             <form method="POST" action="{{ route('tracking.store', $shipment->id) }}" class="space-y-3">
                 @csrf
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Nama Lokasi Checkpoint *</label>
-                        <input type="text" name="location_name" placeholder="misal: Selat Malaka Waypoint" required
+                        <input id="cp-location-name" type="text" name="location_name" placeholder="misal: Selat Malaka Waypoint" required
                                class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:border-ocean-500">
                     </div>
                     <div>
                         <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Pilih Hub / Pelabuhan (Opsional)</label>
-                        <select name="location_id" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-ocean-500">
-                            <option value="">Koordinat Bebas</option>
+                        <select id="cp-location-id" name="location_id" onchange="syncSelectedHub(this)" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-ocean-500">
+                            <option value="">Koordinat Bebas / Laut Lepas</option>
                             @foreach($allLocations as $loc)
-                            <option value="{{ $loc->id }}">{{ $loc->name }}</option>
+                            <option value="{{ $loc->id }}" data-name="{{ $loc->name }}" data-lat="{{ $loc->latitude }}" data-lng="{{ $loc->longitude }}">{{ $loc->name }} ({{ $loc->city }})</option>
                             @endforeach
                         </select>
                     </div>
@@ -366,12 +395,12 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Latitude</label>
-                        <input type="number" step="0.0000001" name="latitude" placeholder="misal: 1.3521"
+                        <input id="cp-lat" type="number" step="0.0000001" name="latitude" placeholder="misal: 1.3521"
                                class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:border-ocean-500">
                     </div>
                     <div>
                         <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Longitude</label>
-                        <input type="number" step="0.0000001" name="longitude" placeholder="misal: 103.8198"
+                        <input id="cp-lng" type="number" step="0.0000001" name="longitude" placeholder="misal: 103.8198"
                                class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:border-ocean-500">
                     </div>
                 </div>
@@ -400,7 +429,7 @@
 
                 <div>
                     <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Keterangan Checkpoint *</label>
-                    <textarea name="description" rows="2" placeholder="Armada berlayar normal di perairan laut internasional." required
+                    <textarea id="cp-desc" name="description" rows="2" placeholder="Armada berlayar normal di perairan laut internasional." required
                               class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:border-ocean-500"></textarea>
                 </div>
 
@@ -638,5 +667,25 @@
 
         map.fitBounds(L.latLngBounds(pathCoords), { padding: [50, 50] });
     });
+
+    function fillWaypoint(name, lat, lng, desc) {
+        const hubSelect = document.getElementById('cp-location-id');
+        if (hubSelect) hubSelect.value = '';
+        document.getElementById('cp-location-name').value = name;
+        document.getElementById('cp-lat').value = lat;
+        document.getElementById('cp-lng').value = lng;
+        document.getElementById('cp-desc').value = desc;
+    }
+
+    function syncSelectedHub(selectEl) {
+        const option = selectEl.options[selectEl.selectedIndex];
+        if (!option || !option.value) return;
+        document.getElementById('cp-location-name').value = option.getAttribute('data-name') || '';
+        document.getElementById('cp-lat').value = option.getAttribute('data-lat') || '';
+        document.getElementById('cp-lng').value = option.getAttribute('data-lng') || '';
+        if (!document.getElementById('cp-desc').value) {
+            document.getElementById('cp-desc').value = 'Armada tiba di titik hub ' + (option.getAttribute('data-name') || '') + '.';
+        }
+    }
 </script>
 @endpush

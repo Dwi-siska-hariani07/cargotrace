@@ -100,6 +100,9 @@
                         <a href="{{ route('locations.index') }}" class="px-3 py-2 rounded-xl text-sm font-semibold transition {{ request()->routeIs('locations.*') ? 'bg-ocean-900 text-gold-400 border border-ocean-700/60 shadow-sm' : 'text-ocean-100/80 hover:bg-ocean-900/60 hover:text-white' }}">
                             Ports & Hubs
                         </a>
+                        <a href="{{ route('users.index') }}" class="px-3 py-2 rounded-xl text-sm font-semibold transition {{ request()->routeIs('users.*') ? 'bg-ocean-900 text-gold-400 border border-ocean-700/60 shadow-sm' : 'text-ocean-100/80 hover:bg-ocean-900/60 hover:text-white' }}">
+                            Users
+                        </a>
                         <a href="{{ route('audit_logs.index') }}" class="px-3 py-2 rounded-xl text-sm font-semibold transition {{ request()->routeIs('audit_logs.*') ? 'bg-ocean-900 text-gold-400 border border-ocean-700/60 shadow-sm' : 'text-ocean-100/80 hover:bg-ocean-900/60 hover:text-white' }}">
                             Audit Logs
                         </a>
@@ -109,12 +112,24 @@
                 </div>
 
                 <!-- Right Actions -->
-                <div class="flex items-center gap-4">
+                <div class="flex items-center gap-3 sm:gap-4">
                     <a href="{{ route('home') }}" class="text-ocean-200 hover:text-gold-300 text-sm font-medium flex items-center gap-1.5 transition">
-                        <i class="ph ph-magnifying-glass text-gold-400"></i> Public Track
+                        <i class="ph ph-magnifying-glass text-gold-400"></i> <span class="hidden sm:inline">Lacak Publik</span>
                     </a>
 
                     @auth
+                    @php
+                        $unreadNotifCount = auth()->user()->notifications()->where('is_read', false)->count();
+                    @endphp
+                    <a href="{{ route('notifications.index') }}" title="Pusat Notifikasi" class="relative w-9 h-9 rounded-xl bg-ocean-900 border {{ request()->routeIs('notifications.*') ? 'border-gold-400 text-gold-400' : 'border-ocean-700 text-ocean-200 hover:text-gold-300' }} flex items-center justify-center transition shadow-xs">
+                        <i class="ph ph-bell text-lg"></i>
+                        @if($unreadNotifCount > 0)
+                        <span class="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-gold-500 text-slate-950 font-extrabold text-[10px] flex items-center justify-center shadow ring-2 ring-[#042f2e]">
+                            {{ $unreadNotifCount > 9 ? '9+' : $unreadNotifCount }}
+                        </span>
+                        @endif
+                    </a>
+
                     <div class="flex items-center gap-3">
                         <div class="hidden sm:flex flex-col text-right">
                             <span class="text-white text-sm font-medium leading-none">{{ auth()->user()->name }}</span>
@@ -140,6 +155,35 @@
                     @endauth
                 </div>
             </div>
+
+            @auth
+            <!-- Mobile Scrollable Navigation -->
+            <div class="md:hidden flex items-center gap-1.5 pb-3 pt-1 overflow-x-auto no-scrollbar border-t border-ocean-800/60">
+                <a href="{{ route('dashboard') }}" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap {{ request()->routeIs('dashboard') ? 'bg-ocean-900 text-gold-400 border border-ocean-700/60' : 'text-ocean-100/80' }}">
+                    Dashboard
+                </a>
+                <a href="{{ route('shipments.index') }}" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap {{ request()->routeIs('shipments.*') ? 'bg-ocean-900 text-gold-400 border border-ocean-700/60' : 'text-ocean-100/80' }}">
+                    Shipments
+                </a>
+                <a href="{{ route('notifications.index') }}" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap {{ request()->routeIs('notifications.*') ? 'bg-ocean-900 text-gold-400 border border-ocean-700/60' : 'text-ocean-100/80' }}">
+                    Notifikasi
+                </a>
+                @if(auth()->user()->isAdmin())
+                <a href="{{ route('carriers.index') }}" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap {{ request()->routeIs('carriers.*') ? 'bg-ocean-900 text-gold-400 border border-ocean-700/60' : 'text-ocean-100/80' }}">
+                    Carriers
+                </a>
+                <a href="{{ route('locations.index') }}" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap {{ request()->routeIs('locations.*') ? 'bg-ocean-900 text-gold-400 border border-ocean-700/60' : 'text-ocean-100/80' }}">
+                    Ports & Hubs
+                </a>
+                <a href="{{ route('users.index') }}" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap {{ request()->routeIs('users.*') ? 'bg-ocean-900 text-gold-400 border border-ocean-700/60' : 'text-ocean-100/80' }}">
+                    Users
+                </a>
+                <a href="{{ route('audit_logs.index') }}" class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap {{ request()->routeIs('audit_logs.*') ? 'bg-ocean-900 text-gold-400 border border-ocean-700/60' : 'text-ocean-100/80' }}">
+                    Audit Logs
+                </a>
+                @endif
+            </div>
+            @endauth
         </div>
     </nav>
 

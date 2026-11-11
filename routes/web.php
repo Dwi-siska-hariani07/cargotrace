@@ -9,6 +9,8 @@ use App\Http\Controllers\Web\ExceptionWebController;
 use App\Http\Controllers\Web\CarrierWebController;
 use App\Http\Controllers\Web\LocationWebController;
 use App\Http\Controllers\Web\AuditLogWebController;
+use App\Http\Controllers\Web\NotificationWebController;
+use App\Http\Controllers\Web\UserWebController;
 
 // Public Landing & Quick Tracking
 Route::get('/', function () {
@@ -51,6 +53,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/locations', [LocationWebController::class, 'index'])->name('locations.index');
     Route::post('/locations', [LocationWebController::class, 'store'])->name('locations.store');
 
-    // Audit Logs (Admin)
+    // Audit Logs & Users (Admin)
     Route::get('/audit-logs', [AuditLogWebController::class, 'index'])->name('audit_logs.index');
+    Route::get('/users', [UserWebController::class, 'index'])->name('users.index');
+    Route::post('/users', [UserWebController::class, 'store'])->name('users.store');
+    Route::patch('/users/{id}/role', [UserWebController::class, 'updateRole'])->name('users.updateRole');
+
+    // Notifications (In-App)
+    Route::get('/notifications', [NotificationWebController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{id}/read', [NotificationWebController::class, 'markRead'])->name('notifications.read');
+    Route::post('/notifications/read-all', [NotificationWebController::class, 'markAllRead'])->name('notifications.readAll');
 });
