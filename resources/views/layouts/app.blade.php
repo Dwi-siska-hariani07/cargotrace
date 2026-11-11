@@ -8,12 +8,21 @@
     <!-- Custom SVG Favicon: Oceanic Compass / Anchor -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%23042f2e'/><path d='M16 6 L19 14 L27 16 L19 18 L16 26 L13 18 L5 16 L13 14 Z' fill='%23f59e0b'/><circle cx='16' cy='16' r='3' fill='%230f766e'/></svg>">
 
+    <!-- Google Fonts: Poppins & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+                    },
                     colors: {
                         ocean: {
                             50: '#f0fdfa',
@@ -65,7 +74,7 @@
     <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
-<body class="h-full flex flex-col font-sans text-slate-800 antialiased bg-slate-50">
+<body class="h-full flex flex-col font-sans text-slate-800 antialiased bg-[#f4f7f6]">
     <!-- Navbar: Oceanic Teal & Nautical Gold Theme -->
     <nav class="bg-[#042f2e] border-b border-ocean-800/70 sticky top-0 z-50 shadow-md">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -224,20 +233,50 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200 py-6 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div class="flex items-center gap-2">
-                <div class="w-5 h-5 rounded-md bg-ocean-950 flex items-center justify-center text-gold-400 font-bold text-xs">
-                    <i class="ph ph-anchor text-gold-400"></i>
+    <footer class="bg-[#042f2e] text-ocean-200 border-t border-ocean-800/80 pt-10 pb-6 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 pb-8 border-b border-ocean-800/70">
+                <div>
+                    <div class="flex items-center gap-2.5 mb-3">
+                        <div class="w-8 h-8 rounded-lg bg-ocean-900 border border-gold-500/40 flex items-center justify-center text-gold-400">
+                            <i class="ph ph-compass text-lg"></i>
+                        </div>
+                        <span class="text-white font-extrabold text-base tracking-wide">Cargo<span class="text-gold-400">Trace</span></span>
+                    </div>
+                    <p class="text-xs text-ocean-200/80 leading-relaxed max-w-sm">
+                        Platform manajemen pengiriman & pelacakan kargo lintas samudra dan udara secara real-time. Dilengkapi pemetaan satelit, monitoring cuaca maritim, dan laporan operasional terpusat.
+                    </p>
                 </div>
-                <span><strong>CargoTrace Oceanic</strong> — Global Logistics & Ocean-Air Shipment Visibility Platform (Web Programming 2)</span>
+
+                <div>
+                    <h4 class="text-white font-bold text-xs uppercase tracking-wider mb-3">Koridor Pelabuhan & Hub Utama</h4>
+                    <div class="grid grid-cols-2 gap-1.5 text-xs text-ocean-200/80">
+                        <span>🇮🇩 Jakarta (IDJKT)</span>
+                        <span>🇳🇱 Rotterdam (NLRTM)</span>
+                        <span>🇸🇬 Singapore (SGSIN)</span>
+                        <span>🇦🇺 Sydney (AUSYD)</span>
+                        <span>🇦🇪 Dubai (AEDXB)</span>
+                        <span>🇺🇸 Los Angeles (USLAX)</span>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-bold text-xs uppercase tracking-wider mb-3">Akses Cepat Sistem</h4>
+                    <ul class="space-y-1.5 text-xs">
+                        <li><a href="{{ route('home') }}" class="hover:text-gold-300 transition flex items-center gap-1.5"><i class="ph ph-magnifying-glass"></i> Lacak Nomor Resi / Kontainer</a></li>
+                        <li><a href="{{ route('public.track', ['number' => 'CRG-2026-8802']) }}" class="hover:text-gold-300 transition flex items-center gap-1.5"><i class="ph ph-boat"></i> Pantau Armada Kapal Aktif</a></li>
+                        @auth
+                        <li><a href="{{ route('dashboard') }}" class="hover:text-gold-300 transition flex items-center gap-1.5"><i class="ph ph-squares-four"></i> Buka Dashboard Operasional</a></li>
+                        @else
+                        <li><a href="{{ route('login') }}" class="hover:text-gold-300 transition flex items-center gap-1.5"><i class="ph ph-sign-in"></i> Portal Login Staff & Customer</a></li>
+                        @endauth
+                    </ul>
+                </div>
             </div>
-            <div class="flex items-center gap-3 text-slate-400">
-                <span>Deterministic State Machine</span>
-                <span>•</span>
-                <span>Open-Meteo GIS Integration</span>
-                <span>•</span>
-                <span>REST API</span>
+
+            <div class="pt-5 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-ocean-300/70">
+                <span>&copy; {{ date('Y') }} <strong>CargoTrace Global Logistics</strong>. All rights reserved.</span>
+                <span>Satellite GIS Mapping • Real-Time Open-Meteo Marine Weather • ISO 6346 Tracking</span>
             </div>
         </div>
     </footer>

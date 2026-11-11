@@ -30,6 +30,55 @@ class ShipmentWebController extends Controller
         $this->weatherService = $weatherService;
     }
 
+    public function publicHome(Request $request)
+    {
+        $mode = $request->get('mode', 'ALL');
+        $search = trim((string) $request->get('q', ''));
+
+        $query = Shipment::with(['carrier', 'origin', 'destination'])
+            ->select([
+                'id',
+                'shipment_number',
+                'carrier_id',
+                'origin_id',
+                'destination_id',
+                'transport_type',
+                'cargo_type',
+                'total_weight_kg',
+                'estimated_arrival',
+                'current_status',
+                'is_delayed',
+                'delay_hours',
+                'current_location_name',
+            ]);
+
+        if ($search !== '') {
+            $query->where(function ($q) use ($search) {
+                $q->where('shipment_number', 'like', "%{$search}%")
+                  ->orWhere('cargo_type', 'like', "%{$search}%");
+            });
+        }
+
+        if (in_array($mode, ['SEA', 'AIR', 'LAND'], true)) {
+            $query->where('transport_type', $mode);
+        } elseif ($mode === 'DELAYED') {
+            $query->where('is_delayed', true);
+        }
+
+        $featuredShipments = $query->orderByDesc('id')->take(6)->get();
+
+        $networkStats = [
+            'totalShipments' => Shipment::count(),
+            'activeTransit' => Shipment::where('current_status', 'IN_TRANSIT')->count(),
+            'portsCount' => Location::count(),
+            'carriersCount' => Carrier::where('is_active', true)->count(),
+        ];
+
+        $globalPorts = Location::orderBy('id')->take(6)->get();
+
+        return view('public.home', compact('featuredShipments', 'networkStats', 'globalPorts', 'mode', 'search'));
+    }
+
     public function index(Request $request)
     {
         $user = Auth::user();

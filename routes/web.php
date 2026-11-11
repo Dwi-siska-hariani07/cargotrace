@@ -13,9 +13,7 @@ use App\Http\Controllers\Web\NotificationWebController;
 use App\Http\Controllers\Web\UserWebController;
 
 // Public Landing & Quick Tracking
-Route::get('/', function () {
-    return view('public.home');
-})->name('home');
+Route::get('/', [ShipmentWebController::class, 'publicHome'])->name('home');
 
 Route::get('/track', [ShipmentWebController::class, 'publicTrack'])->name('public.track');
 
