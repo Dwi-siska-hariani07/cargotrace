@@ -74,7 +74,7 @@
     <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
-<body class="min-h-screen flex flex-col font-sans text-slate-800 antialiased bg-gradient-to-br from-[#e6f0ef] via-[#ecf4f3] to-[#f4f7f6]">
+<body class="min-h-screen flex flex-col font-sans text-slate-800 antialiased bg-[#e8f1f0]" style="background: linear-gradient(135deg, #e6f0ef 0%, #ecf4f3 50%, #f4f7f6 100%);">
     <!-- Navbar: Oceanic Teal & Nautical Gold Theme -->
     <nav class="bg-[#042f2e] border-b border-ocean-800/70 sticky top-0 z-50 shadow-md">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

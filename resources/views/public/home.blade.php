@@ -10,15 +10,12 @@
             <div class="absolute inset-0 z-0">
                 <div class="hero-slide absolute inset-0 transition-opacity duration-500 ease-in-out opacity-100">
                     <img src="{{ asset('images/banner-ocean.jpg') }}" alt="Global Ocean Container Ship" class="w-full h-full object-cover object-center">
-                    <div class="absolute inset-0 bg-gradient-to-r from-[#021d1d]/95 via-[#042f2e]/80 to-[#042f2e]/35"></div>
                 </div>
                 <div class="hero-slide absolute inset-0 transition-opacity duration-500 ease-in-out opacity-0 pointer-events-none">
                     <img src="{{ asset('images/banner-aircargo.jpg') }}" alt="Priority Air Cargo Freighter" class="w-full h-full object-cover object-center">
-                    <div class="absolute inset-0 bg-gradient-to-r from-[#021d1d]/95 via-[#042f2e]/80 to-[#042f2e]/35"></div>
                 </div>
                 <div class="hero-slide absolute inset-0 transition-opacity duration-500 ease-in-out opacity-0 pointer-events-none">
                     <img src="{{ asset('images/banner-port.jpg') }}" alt="International Seaport Terminal" class="w-full h-full object-cover object-center">
-                    <div class="absolute inset-0 bg-gradient-to-r from-[#021d1d]/95 via-[#042f2e]/80 to-[#042f2e]/35"></div>
                 </div>
             </div>
 
@@ -37,7 +34,7 @@
             </div>
 
             <!-- Stacked Responsive Slide Headlines -->
-            <div class="relative z-10 px-6 sm:px-12 py-4 grid grid-cols-1 grid-rows-1 max-w-3xl">
+            <div class="relative z-10 px-6 sm:px-12 py-4 grid grid-cols-1 grid-rows-1 max-w-3xl drop-shadow-[0_2px_10px_rgba(2,29,29,0.75)]">
                 <div class="hero-caption col-start-1 row-start-1 transition-opacity duration-300 ease-out opacity-100 visible flex flex-col justify-center">
                     <span class="inline-flex items-center gap-2 self-start px-3.5 py-1.5 rounded-full bg-gold-500/20 border border-gold-400/40 text-gold-300 text-[11px] font-bold uppercase tracking-widest mb-4 backdrop-blur-xs">
                         <span class="w-2 h-2 rounded-full bg-gold-400 animate-pulse"></span>
