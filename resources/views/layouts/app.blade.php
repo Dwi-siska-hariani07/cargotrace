@@ -248,8 +248,8 @@
     <footer class="bg-[#042f2e] text-ocean-200 border-t border-ocean-800/80 pt-10 pb-6 mt-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 pb-8 border-b border-ocean-800/70">
-                <div>
-                    <div class="flex items-center gap-2.5 mb-3">
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2.5">
                         <div class="w-8 h-8 rounded-lg bg-ocean-900 border border-gold-500/40 flex items-center justify-center text-gold-400">
                             <i class="ph ph-compass text-lg"></i>
                         </div>
@@ -258,36 +258,57 @@
                     <p class="text-xs text-ocean-200/80 leading-relaxed max-w-sm">
                         {{ __('ui.footer.desc') }}
                     </p>
+                    <div>
+                        <span class="block text-[10px] uppercase tracking-wider text-ocean-300/80 font-bold mb-2">{{ __('ui.footer.badges_title') }}</span>
+                        <div class="flex flex-wrap gap-1.5 text-[10px] font-bold">
+                            <span class="px-2 py-1 rounded-md bg-white/10 text-gold-300 border border-white/15">ISO 9001:2015</span>
+                            <span class="px-2 py-1 rounded-md bg-white/10 text-ocean-100 border border-white/15">FIATA Member</span>
+                            <span class="px-2 py-1 rounded-md bg-white/10 text-ocean-100 border border-white/15">IATA Cargo</span>
+                            <span class="px-2 py-1 rounded-md bg-white/10 text-emerald-300 border border-emerald-400/30">AEO Customs</span>
+                        </div>
+                    </div>
                 </div>
 
-                <div>
-                    <h4 class="text-white font-bold text-xs uppercase tracking-wider mb-3">{{ __('ui.footer.corridors_title') }}</h4>
-                    <div class="grid grid-cols-2 gap-1.5 text-xs text-ocean-200/80">
-                        <span>🇮🇩 Jakarta (IDJKT)</span>
-                        <span>🇳🇱 Rotterdam (NLRTM)</span>
-                        <span>🇸🇬 Singapore (SGSIN)</span>
-                        <span>🇦🇺 Sydney (AUSYD)</span>
-                        <span>🇦🇪 Dubai (AEDXB)</span>
-                        <span>🇺🇸 Los Angeles (USLAX)</span>
+                <div class="space-y-3">
+                    <h4 class="text-white font-bold text-xs uppercase tracking-wider">{{ __('ui.footer.hq_title') }}</h4>
+                    <div class="space-y-2 text-xs text-ocean-200/85">
+                        <p class="flex items-start gap-2 leading-relaxed">
+                            <i class="ph ph-map-pin text-gold-400 text-base shrink-0 mt-0.5"></i>
+                            <span>{{ __('ui.footer.hq_address') }}</span>
+                        </p>
+                        <p class="flex items-center gap-2">
+                            <i class="ph ph-phone-call text-gold-400 text-base shrink-0"></i>
+                            <span>{{ __('ui.footer.hotline_label') }} <strong class="text-white font-mono">+62 21 5099 8800</strong></span>
+                        </p>
+                        <p class="flex items-center gap-2">
+                            <i class="ph ph-envelope-simple text-gold-400 text-base shrink-0"></i>
+                            <span>{{ __('ui.footer.email_label') }} <strong class="text-white">ops@cargotrace.co.id</strong></span>
+                        </p>
+                        <p class="flex items-center gap-2 text-emerald-300/90">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+                            <span>{{ __('ui.footer.hours_label') }}</span>
+                        </p>
                     </div>
                 </div>
 
                 <div>
                     <h4 class="text-white font-bold text-xs uppercase tracking-wider mb-3">{{ __('ui.footer.quick_access_title') }}</h4>
-                    <ul class="space-y-1.5 text-xs">
-                        <li><a href="{{ route('home') }}" class="hover:text-gold-300 transition flex items-center gap-1.5"><i class="ph ph-magnifying-glass"></i> {{ __('ui.footer.link_track') }}</a></li>
-                        <li><a href="{{ route('public.track', ['number' => 'CRG-2026-8802']) }}" class="hover:text-gold-300 transition flex items-center gap-1.5"><i class="ph ph-boat"></i> {{ __('ui.footer.link_vessel') }}</a></li>
+                    <ul class="space-y-2 text-xs">
+                        <li><a href="{{ route('home') }}" class="hover:text-gold-300 transition flex items-center gap-2"><i class="ph ph-magnifying-glass text-gold-400"></i> {{ __('ui.footer.link_track') }}</a></li>
+                        <li><a href="{{ route('home') }}#quote-calculator" class="hover:text-gold-300 transition flex items-center gap-2"><i class="ph ph-calculator text-gold-400"></i> {{ __('ui.footer.link_calculator') }}</a></li>
+                        <li><a href="{{ route('public.waybill', ['number' => 'CRG-2026-8801']) }}" class="hover:text-gold-300 transition flex items-center gap-2"><i class="ph ph-file-text text-gold-400"></i> {{ __('ui.footer.link_waybill') }}</a></li>
+                        <li><a href="{{ route('public.track', ['number' => 'CRG-2026-8802']) }}" class="hover:text-gold-300 transition flex items-center gap-2"><i class="ph ph-boat text-gold-400"></i> {{ __('ui.footer.link_vessel') }}</a></li>
                         @auth
-                        <li><a href="{{ route('dashboard') }}" class="hover:text-gold-300 transition flex items-center gap-1.5"><i class="ph ph-squares-four"></i> {{ __('ui.footer.link_dashboard') }}</a></li>
+                        <li><a href="{{ route('dashboard') }}" class="hover:text-gold-300 transition flex items-center gap-2"><i class="ph ph-squares-four text-gold-400"></i> {{ __('ui.footer.link_dashboard') }}</a></li>
                         @else
-                        <li><a href="{{ route('login') }}" class="hover:text-gold-300 transition flex items-center gap-1.5"><i class="ph ph-sign-in"></i> {{ __('ui.footer.link_login') }}</a></li>
+                        <li><a href="{{ route('login') }}" class="hover:text-gold-300 transition flex items-center gap-2"><i class="ph ph-sign-in text-gold-400"></i> {{ __('ui.footer.link_login') }}</a></li>
                         @endauth
                     </ul>
                 </div>
             </div>
 
-            <div class="pt-5 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-ocean-300/70">
-                <span>&copy; {{ date('Y') }} <strong>CargoTrace Global Logistics</strong>. {{ __('ui.footer.rights') }}</span>
+            <div class="pt-5 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-ocean-300/75">
+                <span>&copy; {{ date('Y') }} <strong>PT CargoTrace Global Logistik Tbk</strong>. {{ __('ui.footer.rights') }}</span>
                 <span>{{ __('ui.footer.tech_bar') }}</span>
             </div>
         </div>

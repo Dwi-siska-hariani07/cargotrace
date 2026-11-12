@@ -44,6 +44,8 @@ class ShipmentWebController extends Controller
                 'destination_id',
                 'transport_type',
                 'cargo_type',
+                'vessel_or_flight',
+                'container_or_awb',
                 'total_weight_kg',
                 'estimated_arrival',
                 'current_status',
@@ -55,7 +57,9 @@ class ShipmentWebController extends Controller
         if ($search !== '') {
             $query->where(function ($q) use ($search) {
                 $q->where('shipment_number', 'like', "%{$search}%")
-                  ->orWhere('cargo_type', 'like', "%{$search}%");
+                  ->orWhere('cargo_type', 'like', "%{$search}%")
+                  ->orWhere('vessel_or_flight', 'like', "%{$search}%")
+                  ->orWhere('container_or_awb', 'like', "%{$search}%");
             });
         }
 
@@ -65,7 +69,7 @@ class ShipmentWebController extends Controller
             $query->where('is_delayed', true);
         }
 
-        $featuredShipments = $query->orderByDesc('id')->take(6)->get();
+        $featuredShipments = $query->orderBy('id')->take(9)->get();
 
         $networkStats = [
             'totalShipments' => Shipment::count(),
@@ -74,9 +78,17 @@ class ShipmentWebController extends Controller
             'carriersCount' => Carrier::where('is_active', true)->count(),
         ];
 
-        $globalPorts = Location::orderBy('id')->take(6)->get();
+        $quoteLocations = Location::orderBy('country')->orderBy('city')->get();
+        $globalPorts = Location::orderBy('id')->take(9)->get();
 
-        return view('public.home', compact('featuredShipments', 'networkStats', 'globalPorts', 'mode', 'search'));
+        return view('public.home', compact(
+            'featuredShipments',
+            'networkStats',
+            'globalPorts',
+            'quoteLocations',
+            'mode',
+            'search'
+        ));
     }
 
     public function index(Request $request)
@@ -144,6 +156,9 @@ class ShipmentWebController extends Controller
             'destination_id' => 'required|exists:locations,id|different:origin_id',
             'transport_type' => 'required|in:SEA,AIR,LAND',
             'cargo_type' => 'required|string|max:255',
+            'vessel_or_flight' => 'nullable|string|max:120',
+            'container_or_awb' => 'nullable|string|max:100',
+            'receiver_name' => 'nullable|string|max:150',
             'total_weight_kg' => 'required|numeric|min:0.1',
             'total_volume_cbm' => 'nullable|numeric|min:0.01',
             'expected_departure' => 'required|date',
@@ -231,12 +246,48 @@ class ShipmentWebController extends Controller
 
     public function publicTrack(Request $request)
     {
-        $number = trim($request->input('number', ''));
-        if (empty($number)) {
+        $resolved = $this->resolvePublicShipment($request);
+        if (!$resolved instanceof Shipment) {
+            return $resolved;
+        }
+        $shipment = $resolved;
+
+        $weather = null;
+        if ($shipment->current_latitude && $shipment->current_longitude) {
+            $weather = $this->weatherService->getWeather($shipment->current_latitude, $shipment->current_longitude);
+        }
+
+        $originWeather = $this->weatherService->getWeather($shipment->origin->latitude, $shipment->origin->longitude);
+        $destWeather = $this->weatherService->getWeather($shipment->destination->latitude, $shipment->destination->longitude);
+
+        return view('public.track', compact('shipment', 'weather', 'originWeather', 'destWeather'));
+    }
+
+    /**
+     * Render a printable Electronic Bill of Lading / Official Waybill for any tracked shipment.
+     */
+    public function publicWaybill(Request $request)
+    {
+        $resolved = $this->resolvePublicShipment($request);
+        if (!$resolved instanceof Shipment) {
+            return $resolved;
+        }
+
+        return view('public.waybill', ['shipment' => $resolved]);
+    }
+
+    /**
+     * Resolve shipment by tracking number for public tracking or printable waybill views.
+     */
+    private function resolvePublicShipment(Request $request): Shipment|\Illuminate\Http\RedirectResponse
+    {
+        $number = trim((string) $request->input('number', ''));
+        if ($number === '') {
             return redirect()->route('home')->with('error', __('ui.flash.enter_number'));
         }
 
         $shipment = Shipment::with([
+            'customer',
             'carrier',
             'origin',
             'destination',
@@ -249,15 +300,7 @@ class ShipmentWebController extends Controller
             return redirect()->route('home')->with('error', __('ui.flash.not_found', ['number' => $number]));
         }
 
-        $weather = null;
-        if ($shipment->current_latitude && $shipment->current_longitude) {
-            $weather = $this->weatherService->getWeather($shipment->current_latitude, $shipment->current_longitude);
-        }
-
-        $originWeather = $this->weatherService->getWeather($shipment->origin->latitude, $shipment->origin->longitude);
-        $destWeather = $this->weatherService->getWeather($shipment->destination->latitude, $shipment->destination->longitude);
-
-        return view('public.track', compact('shipment', 'weather', 'originWeather', 'destWeather'));
+        return $shipment;
     }
 
     public function destroy($id)

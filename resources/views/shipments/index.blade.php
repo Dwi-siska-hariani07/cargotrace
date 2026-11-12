@@ -35,12 +35,9 @@
                 <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">{{ __('ui.shipments.filter_status') }}</label>
                 <select name="status" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-ocean-500">
                     <option value="">{{ __('ui.shipments.all_statuses') }}</option>
-                    <option value="CREATED" {{ request('status') === 'CREATED' ? 'selected' : '' }}>CREATED</option>
-                    <option value="BOOKED" {{ request('status') === 'BOOKED' ? 'selected' : '' }}>BOOKED</option>
-                    <option value="PICKED_UP" {{ request('status') === 'PICKED_UP' ? 'selected' : '' }}>PICKED UP</option>
-                    <option value="IN_TRANSIT" {{ request('status') === 'IN_TRANSIT' ? 'selected' : '' }}>IN TRANSIT</option>
-                    <option value="DELIVERED" {{ request('status') === 'DELIVERED' ? 'selected' : '' }}>DELIVERED</option>
-                    <option value="CANCELLED" {{ request('status') === 'CANCELLED' ? 'selected' : '' }}>CANCELLED</option>
+                    @foreach(['CREATED', 'BOOKED', 'PICKED_UP', 'IN_TRANSIT', 'OUT_FOR_DELIVERY', 'DELIVERED', 'CANCELLED'] as $st)
+                    <option value="{{ $st }}" {{ request('status') === $st ? 'selected' : '' }}>{{ __('ui.status.' . $st) }}</option>
+                    @endforeach
                 </select>
             </div>
 
@@ -104,7 +101,7 @@
                                 @elseif($s->current_status === 'IN_TRANSIT') bg-ocean-100 text-ocean-900 border border-ocean-300
                                 @elseif($s->current_status === 'CANCELLED') bg-rose-100 text-rose-800 border border-rose-300
                                 @else bg-gold-100 text-gold-900 border border-gold-300 @endif">
-                                {{ str_replace('_', ' ', $s->current_status) }}
+                                {{ $s->statusLabel() }}
                             </span>
                             @if($s->is_delayed)
                             <span class="block mt-1 text-[9px] font-bold text-gold-900 bg-gold-100 border border-gold-300 px-1.5 py-0.5 rounded w-max">

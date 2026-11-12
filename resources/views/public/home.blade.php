@@ -217,6 +217,7 @@
                     'ALL' => ['label' => __('ui.home.pill_all'), 'icon' => 'ph-globe'],
                     'SEA' => ['label' => __('ui.home.pill_sea'), 'icon' => 'ph-boat'],
                     'AIR' => ['label' => __('ui.home.pill_air'), 'icon' => 'ph-airplane-tilt'],
+                    'LAND' => ['label' => __('ui.home.pill_land'), 'icon' => 'ph-truck'],
                     'DELAYED' => ['label' => __('ui.home.pill_delayed'), 'icon' => 'ph-warning-circle'],
                 ];
             @endphp
@@ -278,15 +279,18 @@
                                 @else
                                     <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/95 text-ocean-900 text-[11px] font-bold shadow">
                                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                        {{ str_replace('_', ' ', $shipment->current_status) }}
+                                        {{ $shipment->statusLabel() }}
                                     </span>
                                 @endif
                             </div>
 
                             <div class="absolute bottom-3.5 left-4 right-4 flex items-end justify-between gap-2 text-white">
-                                <div>
+                                <div class="min-w-0">
                                     <p class="text-[11px] text-gold-300 font-semibold truncate">
                                         {{ $shipment->carrier->name ?? 'Global Maritime Line' }}
+                                        @if($shipment->vessel_or_flight)
+                                            <span class="text-white/75 font-normal">• {{ $shipment->vessel_or_flight }}</span>
+                                        @endif
                                     </p>
                                     <h3 class="font-mono font-bold text-base sm:text-lg tracking-tight leading-tight">
                                         {{ $shipment->shipment_number }}
@@ -386,56 +390,188 @@
             <p class="text-xs sm:text-sm text-slate-500">{{ __('ui.home.services_subtitle') }}</p>
         </div>
 
+        @php
+            $divisions = [
+                ['mode' => 'SEA', 'img' => 'images/card-sea.jpg', 'alt' => 'Ocean Container Freight', 'icon' => 'ph-anchor', 'badge' => __('ui.home.srv1_badge'), 'title' => __('ui.home.srv1_title'), 'desc' => __('ui.home.srv1_desc')],
+                ['mode' => 'AIR', 'img' => 'images/card-air.jpg', 'alt' => 'Air Cargo Operations', 'icon' => 'ph-airplane-takeoff', 'badge' => __('ui.home.srv2_badge'), 'title' => __('ui.home.srv2_title'), 'desc' => __('ui.home.srv2_desc')],
+                ['mode' => 'SEA', 'img' => 'images/card-customs.jpg', 'alt' => 'Customs Clearance Hub', 'icon' => 'ph-clipboard-text', 'badge' => __('ui.home.srv3_badge'), 'title' => __('ui.home.srv3_title'), 'desc' => __('ui.home.srv3_desc')],
+            ];
+        @endphp
+
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white rounded-3xl border border-ocean-200/75 overflow-hidden shadow-sm shadow-ocean-950/5 hover:shadow-lg hover:border-ocean-300 transition group">
-                <div class="h-44 overflow-hidden relative">
-                    <img src="{{ asset('images/card-sea.jpg') }}" alt="Ocean Container Freight" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-[#021d1d]/70 to-transparent"></div>
-                    <span class="absolute bottom-3 left-4 inline-flex items-center gap-1.5 text-white text-xs font-bold">
-                        <i class="ph ph-anchor text-gold-400 text-base"></i> {{ __('ui.home.srv1_badge') }}
-                    </span>
+            @foreach($divisions as $div)
+            <a href="#quote-calculator" onclick="window.presetQuoteMode && window.presetQuoteMode('{{ $div['mode'] }}')"
+               class="bg-white rounded-3xl border border-ocean-200/75 overflow-hidden shadow-sm shadow-ocean-950/5 hover:shadow-lg hover:border-ocean-400 transition group flex flex-col justify-between">
+                <div>
+                    <div class="h-44 overflow-hidden relative">
+                        <img src="{{ asset($div['img']) }}" alt="{{ $div['alt'] }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#021d1d]/70 to-transparent"></div>
+                        <span class="absolute bottom-3 left-4 inline-flex items-center gap-1.5 text-white text-xs font-bold">
+                            <i class="ph {{ $div['icon'] }} text-gold-400 text-base"></i> {{ $div['badge'] }}
+                        </span>
+                    </div>
+                    <div class="p-6 pb-3">
+                        <h3 class="font-bold text-slate-900 text-lg mb-2 group-hover:text-ocean-800 transition">{{ $div['title'] }}</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            {{ $div['desc'] }}
+                        </p>
+                    </div>
                 </div>
-                <div class="p-6">
-                    <h3 class="font-bold text-slate-900 text-lg mb-2">{{ __('ui.home.srv1_title') }}</h3>
-                    <p class="text-slate-600 text-sm leading-relaxed">
-                        {{ __('ui.home.srv1_desc') }}
-                    </p>
+                <div class="px-6 pb-5 pt-2 text-xs font-bold text-ocean-700 group-hover:text-gold-600 transition flex items-center gap-1">
+                    <span>{{ __('ui.home.srv_cta') }}</span>
                 </div>
-            </div>
+            </a>
+            @endforeach
+        </div>
+    </section>
 
-            <div class="bg-white rounded-3xl border border-ocean-200/75 overflow-hidden shadow-sm shadow-ocean-950/5 hover:shadow-lg hover:border-ocean-300 transition group">
-                <div class="h-44 overflow-hidden relative">
-                    <img src="{{ asset('images/card-air.jpg') }}" alt="Air Cargo Operations" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-[#021d1d]/70 to-transparent"></div>
-                    <span class="absolute bottom-3 left-4 inline-flex items-center gap-1.5 text-white text-xs font-bold">
-                        <i class="ph ph-airplane-takeoff text-gold-400 text-base"></i> {{ __('ui.home.srv2_badge') }}
-                    </span>
-                </div>
-                <div class="p-6">
-                    <h3 class="font-bold text-slate-900 text-lg mb-2">{{ __('ui.home.srv2_title') }}</h3>
-                    <p class="text-slate-600 text-sm leading-relaxed">
-                        {{ __('ui.home.srv2_desc') }}
-                    </p>
-                </div>
+    <!-- 4b. Interactive Freight Quote & Transit Time Estimator -->
+    @php $calcLocs = $quoteLocations ?? $globalPorts ?? collect(); @endphp
+    @if($calcLocs->count() >= 2)
+    <section id="quote-calculator" class="bg-white rounded-3xl border border-ocean-200/75 p-6 sm:p-8 shadow-sm shadow-ocean-950/5">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-2 mb-6 pb-4 border-b border-slate-100">
+            <div>
+                <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-ocean-700">
+                    <i class="ph ph-calculator text-base text-gold-600"></i>
+                    {{ __('ui.home.quote_kicker') }}
+                </span>
+                <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 mt-0.5">{{ __('ui.home.quote_title') }}</h2>
+                <p class="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl">{{ __('ui.home.quote_subtitle') }}</p>
             </div>
+        </div>
 
-            <div class="bg-white rounded-3xl border border-ocean-200/75 overflow-hidden shadow-sm shadow-ocean-950/5 hover:shadow-lg hover:border-ocean-300 transition group">
-                <div class="h-44 overflow-hidden relative">
-                    <img src="{{ asset('images/card-customs.jpg') }}" alt="Customs Clearance Hub" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-[#021d1d]/70 to-transparent"></div>
-                    <span class="absolute bottom-3 left-4 inline-flex items-center gap-1.5 text-white text-xs font-bold">
-                        <i class="ph ph-clipboard-text text-gold-400 text-base"></i> {{ __('ui.home.srv3_badge') }}
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+            <!-- Form Controls -->
+            <form id="quote-form" class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                <div>
+                    <label for="quote-origin" class="block font-bold uppercase text-slate-600 mb-1.5">{{ __('ui.home.quote_origin') }}</label>
+                    <select id="quote-origin" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50/70 focus:bg-white focus:outline-none focus:border-ocean-600 text-sm font-medium text-slate-800">
+                        @foreach($calcLocs as $loc)
+                            <option value="{{ $loc->id }}"
+                                    data-lat="{{ $loc->latitude }}"
+                                    data-lng="{{ $loc->longitude }}"
+                                    data-code="{{ $loc->code }}"
+                                    data-name="{{ $loc->city }}"
+                                    {{ $loc->code === 'IDJKT' ? 'selected' : '' }}>
+                                {{ $loc->city }} — {{ $loc->name }} ({{ $loc->code }})
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
+                    <label for="quote-dest" class="block font-bold uppercase text-slate-600 mb-1.5">{{ __('ui.home.quote_dest') }}</label>
+                    <select id="quote-dest" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50/70 focus:bg-white focus:outline-none focus:border-ocean-600 text-sm font-medium text-slate-800">
+                        @foreach($calcLocs as $loc)
+                            <option value="{{ $loc->id }}"
+                                    data-lat="{{ $loc->latitude }}"
+                                    data-lng="{{ $loc->longitude }}"
+                                    data-code="{{ $loc->code }}"
+                                    data-name="{{ $loc->city }}"
+                                    {{ $loc->code === 'NLRTM' ? 'selected' : '' }}>
+                                {{ $loc->city }} — {{ $loc->name }} ({{ $loc->code }})
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
+                    <label for="quote-mode" class="block font-bold uppercase text-slate-600 mb-1.5">{{ __('ui.home.quote_mode') }}</label>
+                    <select id="quote-mode" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50/70 focus:bg-white focus:outline-none focus:border-ocean-600 text-sm font-medium text-slate-800">
+                        <option value="SEA">{{ __('ui.home.mode_sea') }} (FCL / LCL)</option>
+                        <option value="AIR">{{ __('ui.home.mode_air') }} (Priority)</option>
+                        <option value="LAND">{{ __('ui.home.mode_land') }} (Fleet)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="quote-tier" class="block font-bold uppercase text-slate-600 mb-1.5">{{ __('ui.home.quote_tier') }}</label>
+                    <select id="quote-tier" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50/70 focus:bg-white focus:outline-none focus:border-ocean-600 text-sm font-medium text-slate-800">
+                        <option value="STD">{{ __('ui.home.quote_tier_std') }}</option>
+                        <option value="EXP">{{ __('ui.home.quote_tier_exp') }}</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="quote-weight" class="block font-bold uppercase text-slate-600 mb-1.5">{{ __('ui.home.quote_weight') }}</label>
+                    <input type="number" id="quote-weight" min="1" step="10" value="5000"
+                           class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50/70 focus:bg-white focus:outline-none focus:border-ocean-600 text-sm font-mono font-semibold text-slate-800">
+                </div>
+
+                <div>
+                    <label for="quote-cbm" class="block font-bold uppercase text-slate-600 mb-1.5">{{ __('ui.home.quote_cbm') }}</label>
+                    <input type="number" id="quote-cbm" min="0.1" step="0.5" value="25"
+                           class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50/70 focus:bg-white focus:outline-none focus:border-ocean-600 text-sm font-mono font-semibold text-slate-800">
+                </div>
+
+                <div class="sm:col-span-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+                    <button type="submit" class="px-6 py-3 rounded-xl bg-[#042f2e] hover:bg-ocean-900 text-white font-bold text-xs sm:text-sm shadow-md transition flex items-center justify-center gap-2">
+                        <i class="ph ph-currency-circle-dollar text-lg text-gold-400"></i>
+                        <span>{{ __('ui.home.quote_calc_btn') }}</span>
+                    </button>
+                    <span id="quote-error" class="hidden text-rose-600 font-semibold text-xs">
+                        {{ __('ui.home.quote_same_err') }}
                     </span>
                 </div>
-                <div class="p-6">
-                    <h3 class="font-bold text-slate-900 text-lg mb-2">{{ __('ui.home.srv3_title') }}</h3>
-                    <p class="text-slate-600 text-sm leading-relaxed">
-                        {{ __('ui.home.srv3_desc') }}
-                    </p>
+            </form>
+
+            <!-- Live Quotation Output Panel -->
+            <div class="lg:col-span-5 bg-gradient-to-br from-[#042f2e] via-[#093f3d] to-[#042f2e] text-white rounded-3xl p-5 sm:p-6 flex flex-col justify-between shadow-lg border border-ocean-800/70">
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between border-b border-white/15 pb-3">
+                        <div>
+                            <span class="text-[10px] uppercase tracking-widest text-gold-400 font-bold block">{{ __('ui.home.quote_res_title') }}</span>
+                            <span id="quote-route-summary" class="font-mono text-sm font-extrabold text-white">IDJKT → NLRTM</span>
+                        </div>
+                        <span id="quote-mode-badge" class="px-2.5 py-1 rounded-lg bg-white/10 border border-white/20 text-[10px] font-bold text-gold-300">SEA</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 text-xs">
+                        <div class="bg-white/5 border border-white/10 rounded-2xl p-3">
+                            <span class="text-[10px] text-ocean-200 block">{{ __('ui.home.quote_dist') }}</span>
+                            <strong id="quote-distance" class="font-mono text-base font-extrabold text-white mt-0.5 block">-- km</strong>
+                        </div>
+                        <div class="bg-white/5 border border-white/10 rounded-2xl p-3">
+                            <span class="text-[10px] text-ocean-200 block">{{ __('ui.home.quote_duration') }}</span>
+                            <strong id="quote-duration" class="font-mono text-base font-extrabold text-gold-300 mt-0.5 block">-- {{ __('ui.home.quote_days_unit') }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2 text-xs pt-1">
+                        <div class="flex justify-between text-ocean-100">
+                            <span>{{ __('ui.home.quote_base') }}</span>
+                            <span id="quote-base" class="font-mono font-semibold text-white">$--</span>
+                        </div>
+                        <div class="flex justify-between text-ocean-100">
+                            <span>{{ __('ui.home.quote_surcharge') }}</span>
+                            <span id="quote-surcharge" class="font-mono font-semibold text-white">$--</span>
+                        </div>
+                        <div class="flex justify-between text-ocean-100">
+                            <span>{{ __('ui.home.quote_customs') }}</span>
+                            <span id="quote-customs" class="font-mono font-semibold text-white">$--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-5 pt-4 border-t border-white/15 space-y-3">
+                    <div class="flex items-end justify-between gap-2">
+                        <span class="text-xs font-bold text-ocean-200 uppercase">{{ __('ui.home.quote_total') }}</span>
+                        <div class="text-right">
+                            <div id="quote-total-usd" class="text-2xl font-black font-mono text-gold-400 leading-none">$--</div>
+                            <div id="quote-total-idr" class="text-[11px] font-mono text-ocean-200 mt-1">~ Rp --</div>
+                        </div>
+                    </div>
+                    <a href="{{ auth()->check() ? route('shipments.create') : route('login') }}"
+                       class="w-full py-2.5 px-4 rounded-xl bg-gold-500 hover:bg-gold-400 text-[#021d1d] font-bold text-xs flex items-center justify-center gap-2 transition shadow">
+                        <i class="ph ph-paper-plane-tilt text-base"></i>
+                        <span>{{ __('ui.home.quote_cta_book') }}</span>
+                    </a>
+                    <p class="text-[10px] text-ocean-200/75 leading-relaxed">{{ __('ui.home.quote_note') }}</p>
                 </div>
             </div>
         </div>
     </section>
+    @endif
 
     <!-- 5. Connected International Port & Airport Hubs -->
     @if(isset($globalPorts) && $globalPorts->count() > 0)
@@ -538,6 +674,93 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     restartAuto();
+
+    // Freight Quote & Transit Time Estimator
+    const quoteForm = document.getElementById('quote-form');
+    const originSel = document.getElementById('quote-origin');
+    const destSel = document.getElementById('quote-dest');
+    const modeSel = document.getElementById('quote-mode');
+    const tierSel = document.getElementById('quote-tier');
+    const weightInp = document.getElementById('quote-weight');
+    const cbmInp = document.getElementById('quote-cbm');
+    const errEl = document.getElementById('quote-error');
+
+    const modeSpec = {
+        SEA:  { factor: 1.28, speedKmPerDay: 760,   baseDays: 3, basePerKg: 0.08, perKmKg: 0.000018, minUsd: 280, docUsd: 165, volFactor: 333 },
+        AIR:  { factor: 1.05, speedKmPerDay: 12000, baseDays: 1, basePerKg: 1.45, perKmKg: 0.000280, minUsd: 350, docUsd: 210, volFactor: 167 },
+        LAND: { factor: 1.24, speedKmPerDay: 650,   baseDays: 1, basePerKg: 0.04, perKmKg: 0.000045, minUsd: 120, docUsd: 65,  volFactor: 333 },
+    };
+
+    function haversineKm(lat1, lon1, lat2, lon2) {
+        const toRad = (deg) => (deg * Math.PI) / 180;
+        const R = 6371;
+        const dLat = toRad(lat2 - lat1);
+        const dLon = toRad(lon2 - lon1);
+        const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
+    function computeFreightQuote() {
+        if (!originSel || !destSel || !modeSel) return;
+        const origOpt = originSel.options[originSel.selectedIndex];
+        const destOpt = destSel.options[destSel.selectedIndex];
+        if (!origOpt || !destOpt) return;
+
+        if (origOpt.value === destOpt.value) {
+            errEl?.classList.remove('hidden');
+            return;
+        }
+        errEl?.classList.add('hidden');
+
+        const spec = modeSpec[modeSel.value] || modeSpec.SEA;
+        const rawKm = haversineKm(
+            Number(origOpt.dataset.lat), Number(origOpt.dataset.lng),
+            Number(destOpt.dataset.lat), Number(destOpt.dataset.lng)
+        );
+        const routeKm = Math.max(50, Math.round(rawKm * spec.factor));
+
+        const isExp = tierSel?.value === 'EXP';
+        const daysBase = Math.max(1, Math.ceil(routeKm / spec.speedKmPerDay) + spec.baseDays);
+        const daysMin = Math.max(1, isExp ? Math.max(1, daysBase - 2) : daysBase);
+        const daysMax = daysMin + (modeSel.value === 'AIR' ? 1 : 3);
+
+        const weight = Math.max(1, Number(weightInp?.value || 1000));
+        const cbm = Math.max(0.1, Number(cbmInp?.value || 1));
+        const chargeableKg = Math.max(weight, cbm * spec.volFactor);
+
+        const tierMultiplier = isExp ? 1.32 : 1.0;
+        const baseCharge = Math.max(spec.minUsd, Math.round(chargeableKg * (spec.basePerKg + routeKm * spec.perKmKg) * tierMultiplier));
+        const surcharge = Math.round(baseCharge * 0.15);
+        const customs = spec.docUsd;
+        const totalUsd = baseCharge + surcharge + customs;
+        const totalIdr = totalUsd * 15850;
+
+        document.getElementById('quote-route-summary').textContent = `${origOpt.dataset.code} → ${destOpt.dataset.code}`;
+        document.getElementById('quote-mode-badge').textContent = `${modeSel.value} · ${tierSel?.value || 'STD'}`;
+        document.getElementById('quote-distance').textContent = `${routeKm.toLocaleString('en-US')} km`;
+        document.getElementById('quote-duration').textContent = `${daysMin}–${daysMax} ` + @json(__('ui.home.quote_days_unit'));
+        document.getElementById('quote-base').textContent = `$${baseCharge.toLocaleString('en-US')}`;
+        document.getElementById('quote-surcharge').textContent = `$${surcharge.toLocaleString('en-US')}`;
+        document.getElementById('quote-customs').textContent = `$${customs.toLocaleString('en-US')}`;
+        document.getElementById('quote-total-usd').textContent = `$${totalUsd.toLocaleString('en-US')}`;
+        document.getElementById('quote-total-idr').textContent = `~ Rp ${Math.round(totalIdr).toLocaleString('id-ID')}`;
+    }
+
+    window.presetQuoteMode = function (mode) {
+        if (modeSel && modeSpec[mode]) {
+            modeSel.value = mode;
+            computeFreightQuote();
+        }
+    };
+
+    quoteForm?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        computeFreightQuote();
+    });
+    [originSel, destSel, modeSel, tierSel].forEach(el => el?.addEventListener('change', computeFreightQuote));
+    [weightInp, cbmInp].forEach(el => el?.addEventListener('input', computeFreightQuote));
+
+    computeFreightQuote();
 });
 </script>
 @endsection

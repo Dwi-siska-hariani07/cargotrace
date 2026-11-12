@@ -96,6 +96,24 @@
                 </div>
             </div>
 
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-600 mb-1">{{ __('ui.shipments.vessel_input') }}</label>
+                    <input type="text" name="vessel_or_flight" value="{{ old('vessel_or_flight') }}" placeholder="MV Maersk / SQ715 / B 9421"
+                           class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-ocean-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-600 mb-1">{{ __('ui.shipments.container_input') }}</label>
+                    <input type="text" name="container_or_awb" value="{{ old('container_or_awb') }}" placeholder="MSKU 904281-4 / AWB 618-..."
+                           class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm font-mono focus:outline-none focus:border-ocean-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-600 mb-1">{{ __('ui.shipments.receiver_input') }}</label>
+                    <input type="text" name="receiver_name" value="{{ old('receiver_name') }}" placeholder="Consignee Company / Name"
+                           class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-ocean-500">
+                </div>
+            </div>
+
             <div class="p-5 bg-ocean-50/50 rounded-2xl border border-ocean-100 space-y-4">
                 <span class="text-xs font-bold text-ocean-950 uppercase tracking-wider block flex items-center gap-1.5">
                     <i class="ph ph-package text-ocean-700"></i>
@@ -146,7 +164,7 @@
                     {{ __('ui.shipments.cancel_btn') }}
                 </a>
                 <button type="submit" class="px-6 py-2.5 bg-ocean-700 hover:bg-ocean-800 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition flex items-center gap-2">
-                    <i class="ph ph-check-bold text-gold-400"></i>
+                    <i class="ph ph-check text-gold-400"></i>
                     <span>{{ __('ui.shipments.submit_create') }}</span>
                 </button>
             </div>

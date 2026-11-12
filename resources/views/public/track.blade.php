@@ -20,7 +20,7 @@
                     @elseif($shipment->current_status === 'IN_TRANSIT') bg-ocean-100 text-ocean-900 border border-ocean-300
                     @elseif($shipment->current_status === 'CANCELLED') bg-rose-100 text-rose-800 border border-rose-300
                     @else bg-gold-100 text-gold-900 border border-gold-300 @endif">
-                    {{ str_replace('_', ' ', $shipment->current_status) }}
+                    {{ $shipment->statusLabel() }}
                 </span>
             </div>
             <p class="text-slate-500 text-xs sm:text-sm mt-1">
@@ -28,13 +28,17 @@
             </p>
         </div>
 
-        <div class="flex items-center gap-2">
-            <span class="text-xs text-slate-400">{{ __('ui.track.transport_mode') }}</span>
+        <div class="flex flex-wrap items-center gap-2">
             <span class="px-3 py-1.5 rounded-xl text-xs font-bold bg-ocean-50 text-ocean-900 border border-ocean-200/80 flex items-center gap-1.5 shadow-2xs">
                 @if($shipment->transport_type === 'SEA') {{ __('ui.track.mode_sea') }}
                 @elseif($shipment->transport_type === 'AIR') {{ __('ui.track.mode_air') }}
                 @else {{ __('ui.track.mode_land') }} @endif
             </span>
+            <a href="{{ route('public.waybill', ['number' => $shipment->shipment_number]) }}"
+               class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#042f2e] hover:bg-ocean-900 text-white border border-ocean-900/20 flex items-center gap-1.5 shadow-sm transition">
+                <i class="ph ph-printer text-sm text-gold-400"></i>
+                <span>{{ __('ui.track.print_waybill_btn') }}</span>
+            </a>
         </div>
     </div>
 
@@ -55,6 +59,8 @@
         </div>
     </div>
     @endif
+
+    @include('partials.shipment_progress', ['shipment' => $shipment])
 
     <!-- LIVE JOURNEY TIME, MID-ROUTE POSITION & ETA COUNTDOWN BOARD -->
     <div class="bg-gradient-to-br from-[#042f2e] via-[#093f3d] to-[#042f2e] text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-ocean-700/60 relative overflow-hidden">
@@ -138,7 +144,7 @@
                         </div>
                         <div class="flex justify-between">
                             <span class="text-ocean-200">{{ __('ui.track.op_status') }}</span>
-                            <span class="font-semibold text-white">{{ str_replace('_', ' ', $shipment->current_status) }}</span>
+                            <span class="font-semibold text-white">{{ $shipment->statusLabel() }}</span>
                         </div>
                     </div>
                 </div>

@@ -24,6 +24,7 @@ Route::get('/locale/{locale}', function (string $locale) {
 Route::get('/', [ShipmentWebController::class, 'publicHome'])->name('home');
 
 Route::get('/track', [ShipmentWebController::class, 'publicTrack'])->name('public.track');
+Route::get('/track/waybill', [ShipmentWebController::class, 'publicWaybill'])->name('public.waybill');
 
 // Guest Authentication Routes
 Route::middleware('guest')->group(function () {

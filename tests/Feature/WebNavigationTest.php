@@ -141,5 +141,32 @@ class WebNavigationTest extends TestCase
         $this->get('/locale/id')->assertRedirect();
         $this->get('/')->assertStatus(200)->assertSee('Pantau Pergerakan Kapal');
     }
+
+    public function test_public_waybill_and_realistic_tracking_features_render(): void
+    {
+        $this->get('/locale/id')->assertRedirect();
+
+        $home = $this->get('/');
+        $home->assertStatus(200)
+            ->assertSee('quote-calculator')
+            ->assertSee('CRG-2026-8809')
+            ->assertSee('PT CargoTrace Global Logistik Tbk');
+
+        $track = $this->get('/track?number=CRG-2026-8801');
+        $track->assertStatus(200)
+            ->assertSee('MV Maersk Mc-Kinney Moller V.2608')
+            ->assertSee('MSKU 904281-4')
+            ->assertSee('Progres Tahapan Pengiriman')
+            ->assertSee('Dalam Perjalanan');
+
+        $waybill = $this->get('/track/waybill?number=CRG-2026-8803');
+        $waybill->assertStatus(200)
+            ->assertSee('CRG-2026-8803')
+            ->assertSee('e-POD SIGNED')
+            ->assertSee('AWB 618-44901284');
+
+        $missingWaybill = $this->get('/track/waybill?number=NONEXISTENT-999');
+        $missingWaybill->assertRedirect('/');
+    }
 }
 

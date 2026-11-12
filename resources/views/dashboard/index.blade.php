@@ -165,7 +165,7 @@
                                 @elseif($s->current_status === 'IN_TRANSIT') bg-ocean-100 text-ocean-900 border border-ocean-300
                                 @elseif($s->current_status === 'CANCELLED') bg-rose-100 text-rose-800 border border-rose-300
                                 @else bg-gold-100 text-gold-900 border border-gold-300 @endif">
-                                {{ str_replace('_', ' ', $s->current_status) }}
+                                {{ $s->statusLabel() }}
                             </span>
                             @if($s->is_delayed)
                             <span class="ml-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-gold-200 text-gold-900 border border-gold-300">
@@ -199,10 +199,11 @@
     document.addEventListener('DOMContentLoaded', function () {
         const uiMap = @json(__('ui.map'));
         const uiDash = @json(__('ui.dashboard'));
+        const statusDict = @json(__('ui.status'));
 
         // 1. Chart.js Status Doughnut
         const statusData = @json($statusCounts);
-        const labels = Object.keys(statusData);
+        const labels = Object.keys(statusData).map(k => statusDict[k] || k.replace(/_/g, ' '));
         const data = Object.values(statusData);
 
         const ctx = document.getElementById('statusChart').getContext('2d');
@@ -285,7 +286,7 @@
                     radius: 8
                 }).addTo(map)
                 .bindTooltip(`${s.shipment_number}`, { direction: 'top' })
-                .bindPopup(`<b>${s.shipment_number}</b><br>${uiDash.popup_carrier} ${s.carrier}<br>${uiDash.popup_status} ${s.current_status}`);
+                .bindPopup(`<b>${s.shipment_number}</b><br>${uiDash.popup_carrier} ${s.carrier}<br>${uiDash.popup_status} ${statusDict[s.current_status] || s.current_status}`);
                 markers.push([s.latitude, s.longitude]);
             });
 

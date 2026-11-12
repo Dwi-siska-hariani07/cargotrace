@@ -18,6 +18,9 @@ class Shipment extends Model
         'destination_id',
         'transport_type',
         'cargo_type',
+        'vessel_or_flight',
+        'container_or_awb',
+        'receiver_name',
         'total_weight_kg',
         'total_volume_cbm',
         'expected_departure',
@@ -49,6 +52,37 @@ class Shipment extends Model
         'current_latitude' => 'float',
         'current_longitude' => 'float',
     ];
+
+    /**
+     * Return localized human-readable label for the current shipment status.
+     */
+    public function statusLabel(): string
+    {
+        $key = 'ui.status.' . $this->current_status;
+        $translated = __($key);
+
+        if ($translated !== $key) {
+            return $translated;
+        }
+
+        return str_replace('_', ' ', (string) $this->current_status);
+    }
+
+    /**
+     * Map current_status to 1..5 visual progress step (0 when cancelled).
+     */
+    public function progressStep(): int
+    {
+        return match ($this->current_status) {
+            'CREATED', 'BOOKED' => 1,
+            'PICKED_UP' => 2,
+            'IN_TRANSIT' => 3,
+            'OUT_FOR_DELIVERY' => 4,
+            'DELIVERED' => 5,
+            'CANCELLED' => 0,
+            default => 1,
+        };
+    }
 
     public function customer()
     {
