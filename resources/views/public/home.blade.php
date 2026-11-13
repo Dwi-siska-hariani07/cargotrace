@@ -228,33 +228,17 @@
 
     <!-- 3. Filter Pills & Featured Live Shipments Showcase Grid -->
     <section id="shipments" class="space-y-6">
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
-            <div>
-                <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-ocean-700 mb-1">
-                    <i class="ph ph-broadcast text-base text-gold-600"></i>
-                    {{ __('ui.home.feed_kicker') }}
-                </span>
-                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                    {{ __('ui.home.feed_title') }}
-                </h2>
-                <p class="text-sm text-slate-500 mt-1">
-                    {{ __('ui.home.feed_subtitle') }}
-                </p>
-            </div>
-
-            <form method="GET" action="{{ route('home') }}#shipments" class="flex items-center gap-2 w-full md:w-auto">
-                @if(!empty($mode) && $mode !== 'ALL')
-                    <input type="hidden" name="mode" value="{{ $mode }}">
-                @endif
-                <div class="relative flex-1 md:w-72">
-                    <i class="ph ph-magnifying-glass text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
-                    <input type="text" name="q" value="{{ $search }}" placeholder="{{ __('ui.home.filter_placeholder') }}"
-                           class="w-full pl-9 pr-3 py-2.5 rounded-xl bg-white border border-slate-200 text-sm focus:outline-none focus:border-ocean-600 shadow-2xs">
-                </div>
-                <button type="submit" class="px-4 py-2.5 rounded-xl bg-ocean-800 hover:bg-ocean-900 text-white text-xs sm:text-sm font-bold transition shadow-2xs">
-                    {{ __('ui.home.filter_btn') }}
-                </button>
-            </form>
+        <div>
+            <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-ocean-700 mb-1">
+                <i class="ph ph-broadcast text-base text-gold-600"></i>
+                {{ __('ui.home.feed_kicker') }}
+            </span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                {{ __('ui.home.feed_title') }}
+            </h2>
+            <p class="text-sm text-slate-500 mt-1">
+                {{ __('ui.home.feed_subtitle') }}
+            </p>
         </div>
 
         <!-- Horizontal Quick Filter Pills -->
@@ -270,7 +254,7 @@
             @endphp
             @foreach($pills as $key => $pill)
                 @php $isActive = ($mode ?? 'ALL') === $key; @endphp
-                <a href="{{ route('home', array_filter(['mode' => $key === 'ALL' ? null : $key, 'q' => $search !== '' ? $search : null])) }}#shipments"
+                <a href="{{ route('home', array_filter(['mode' => $key === 'ALL' ? null : $key])) }}#shipments"
                    class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold border transition shadow-2xs
                    {{ $isActive
                         ? 'bg-[#042f2e] text-gold-300 border-[#042f2e]'
