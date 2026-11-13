@@ -42,14 +42,28 @@
 
             <div>
                 <label for="password" class="block text-xs font-bold uppercase text-slate-600 mb-1">{{ __('ui.auth.password_label') }}</label>
-                <input id="password" type="password" name="password" required
-                       class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-ocean-500">
+                <div class="relative">
+                    <input id="password" type="password" name="password" required
+                           class="w-full px-4 py-2.5 pr-11 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-ocean-500">
+                    <button type="button" onclick="togglePasswordVisibility('password', this)"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-ocean-700 transition p-1 focus:outline-none"
+                            title="Lihat / Sembunyikan Kata Sandi">
+                        <i class="ph ph-eye text-lg"></i>
+                    </button>
+                </div>
             </div>
 
             <div>
                 <label for="password_confirmation" class="block text-xs font-bold uppercase text-slate-600 mb-1">{{ __('ui.auth.confirm_password') }}</label>
-                <input id="password_confirmation" type="password" name="password_confirmation" required
-                       class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-ocean-500">
+                <div class="relative">
+                    <input id="password_confirmation" type="password" name="password_confirmation" required
+                           class="w-full px-4 py-2.5 pr-11 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-ocean-500">
+                    <button type="button" onclick="togglePasswordVisibility('password_confirmation', this)"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-ocean-700 transition p-1 focus:outline-none"
+                            title="Lihat / Sembunyikan Kata Sandi">
+                        <i class="ph ph-eye text-lg"></i>
+                    </button>
+                </div>
             </div>
 
             <button type="submit" class="w-full py-3 bg-gradient-to-r from-ocean-700 to-ocean-800 hover:from-ocean-800 hover:to-ocean-900 text-white font-bold text-sm rounded-xl shadow-md transition flex items-center justify-center gap-2">
@@ -64,4 +78,20 @@
         </div>
     </div>
 </div>
+
+<script>
+    function togglePasswordVisibility(inputId, btn) {
+        const input = document.getElementById(inputId);
+        const icon = btn.querySelector('i');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.className = 'ph ph-eye-slash text-lg text-ocean-700';
+            btn.classList.add('text-ocean-700');
+        } else {
+            input.type = 'password';
+            icon.className = 'ph ph-eye text-lg';
+            btn.classList.remove('text-ocean-700');
+        }
+    }
+</script>
 @endsection
