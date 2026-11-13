@@ -4,10 +4,10 @@
 <div class="space-y-10 pb-6">
 
     <!-- 1. Hero Visual Carousel & Integrated Shipment Tracker -->
-    <section class="relative rounded-3xl overflow-hidden shadow-2xl border border-ocean-900/20 bg-[#042f2e]">
-        <div id="hero-carousel" class="relative min-h-[480px] sm:min-h-[520px] w-full flex flex-col justify-between overflow-hidden">
+    <section class="relative rounded-3xl shadow-2xl border border-ocean-900/20 bg-[#042f2e]">
+        <div id="hero-carousel" class="relative min-h-[480px] sm:min-h-[520px] w-full flex flex-col justify-between">
             <!-- Background Photography Slides -->
-            <div class="absolute inset-0 z-0">
+            <div class="absolute inset-0 z-0 rounded-3xl overflow-hidden">
                 <div class="hero-slide absolute inset-0 transition-opacity duration-500 ease-in-out opacity-100">
                     <img src="{{ asset('images/banner-ocean.jpg') }}" alt="Global Ocean Container Ship" class="w-full h-full object-cover object-center">
                 </div>
@@ -75,14 +75,18 @@
                 </div>
             </div>
 
-            <!-- Tracking Search Bar & Quick Chips Docked at Bottom of Hero -->
-            <div class="relative z-20 p-5 sm:p-8 bg-gradient-to-t from-[#021d1d] via-[#021d1d]/85 to-transparent">
-                <div class="max-w-4xl">
-                    <form action="{{ route('public.track') }}" method="GET" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 bg-white p-2 rounded-2xl shadow-2xl border border-gold-400/30">
-                        <div class="flex items-center flex-1 px-3 py-1">
+            <!-- Tracking Search Bar with Interactive Auto-Complete Dropdown -->
+            <div class="relative z-20 p-5 sm:p-8 bg-gradient-to-t from-[#021d1d] via-[#021d1d]/85 to-transparent rounded-b-3xl">
+                <div class="max-w-4xl relative" id="heroSearchWrapper">
+                    <form id="heroTrackForm" action="{{ route('public.track') }}" method="GET" class="relative z-30 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 bg-white p-2 rounded-2xl shadow-2xl border border-gold-400/30">
+                        <div class="flex items-center flex-1 px-3 py-1 relative">
                             <i class="ph ph-magnifying-glass text-xl text-ocean-700 mr-3 shrink-0"></i>
-                            <input type="text" name="number" placeholder="{{ __('ui.home.track_placeholder') }}"
+                            <input id="heroSearchInput" type="text" name="number" autocomplete="off"
+                                   placeholder="{{ __('ui.home.track_placeholder') }}"
                                    class="w-full py-2 text-slate-800 placeholder-slate-400 focus:outline-none text-sm sm:text-base font-mono font-medium bg-transparent" required>
+                            <button type="button" id="toggleSearchDropdownBtn" class="p-1.5 text-slate-400 hover:text-ocean-700 transition" title="{{ __('ui.home.dropdown_hint') }}">
+                                <i class="ph ph-caret-down text-base transition-transform duration-200" id="searchDropdownCaret"></i>
+                            </button>
                         </div>
                         <button type="submit" class="px-6 py-3 bg-gradient-to-r from-ocean-700 to-ocean-900 hover:from-ocean-800 hover:to-[#021d1d] text-white font-bold rounded-xl transition shadow-md flex items-center justify-center gap-2 shrink-0 text-sm">
                             <span>{{ __('ui.home.track_button') }}</span>
@@ -90,24 +94,67 @@
                         </button>
                     </form>
 
-                    <div class="mt-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                        <div class="flex flex-wrap items-center gap-2 text-xs">
-                            <span class="text-slate-300 font-semibold">{{ __('ui.home.sample_label') }}</span>
-                            <a href="{{ route('public.track', ['number' => 'CRG-2026-8801']) }}"
-                               class="px-2.5 py-1 rounded-lg bg-gold-500/20 hover:bg-gold-500/35 text-gold-200 border border-gold-400/40 font-mono font-semibold transition">
-                                🚢 CRG-2026-8801 ({{ __('ui.home.sample_hold') }})
-                            </a>
-                            <a href="{{ route('public.track', ['number' => 'CRG-2026-8802']) }}"
-                               class="px-2.5 py-1 rounded-lg bg-ocean-500/25 hover:bg-ocean-500/45 text-ocean-100 border border-ocean-300/40 font-mono font-semibold transition">
-                                🚢 CRG-2026-8802 ({{ __('ui.home.sample_transit') }})
-                            </a>
-                            <a href="{{ route('public.track', ['number' => 'CRG-2026-8803']) }}"
-                               class="px-2.5 py-1 rounded-lg bg-emerald-500/25 hover:bg-emerald-500/45 text-emerald-100 border border-emerald-300/40 font-mono font-semibold transition">
-                                ✈️ CRG-2026-8803 ({{ __('ui.home.sample_delivered') }})
-                            </a>
+                    <!-- Interactive Dynamic Dropdown of All Registered Shipments -->
+                    @if(isset($searchableShipments) && $searchableShipments->count() > 0)
+                    <div id="searchSuggestionsDropdown" class="hidden absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl shadow-2xl border border-slate-200 z-50 max-h-80 overflow-y-auto divide-y divide-slate-100 text-slate-800">
+                        <div class="p-3 bg-slate-50/95 border-b border-slate-100 flex items-center justify-between text-xs text-slate-500 sticky top-0 backdrop-blur-xs z-10">
+                            <span class="font-bold uppercase tracking-wider flex items-center gap-1.5 text-ocean-950">
+                                <i class="ph ph-list-dashes text-ocean-700 text-sm"></i>
+                                <span>{{ __('ui.home.dropdown_title', ['count' => $searchableShipments->count()]) }}</span>
+                            </span>
+                            <span class="text-[11px] text-slate-400">{{ __('ui.home.dropdown_hint') }}</span>
                         </div>
+                        <div id="searchSuggestionsList">
+                            @foreach($searchableShipments as $item)
+                            <div class="search-option-item flex items-center justify-between p-3.5 hover:bg-ocean-50/70 transition group cursor-pointer"
+                                 onclick="selectTrackItem('{{ $item->shipment_number }}')"
+                                 data-search="{{ strtolower($item->shipment_number . ' ' . $item->cargo_type . ' ' . ($item->vessel_or_flight ?? '') . ' ' . ($item->carrier->name ?? '') . ' ' . ($item->origin->city ?? '') . ' ' . ($item->destination->city ?? '')) }}">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <div class="w-9 h-9 rounded-xl flex items-center justify-center text-lg shrink-0
+                                        @if($item->transport_type === 'SEA') bg-ocean-100 text-ocean-800
+                                        @elseif($item->transport_type === 'AIR') bg-amber-100 text-amber-900
+                                        @else bg-emerald-100 text-emerald-800 @endif">
+                                        @if($item->transport_type === 'SEA') <i class="ph ph-boat"></i>
+                                        @elseif($item->transport_type === 'AIR') <i class="ph ph-airplane-tilt"></i>
+                                        @else <i class="ph ph-truck"></i> @endif
+                                    </div>
+                                    <div class="min-w-0">
+                                        <div class="flex items-center gap-2">
+                                            <span class="font-mono font-bold text-sm text-slate-900 group-hover:text-ocean-700 transition">{{ $item->shipment_number }}</span>
+                                            @if($item->vessel_or_flight)
+                                            <span class="text-xs text-slate-500 truncate hidden sm:inline">• {{ $item->vessel_or_flight }}</span>
+                                            @endif
+                                        </div>
+                                        <div class="text-xs text-slate-500 flex items-center gap-1.5 mt-0.5 truncate">
+                                            <span>{{ $item->origin->city ?? 'Origin' }}</span>
+                                            <i class="ph ph-arrow-right text-[10px] text-slate-400"></i>
+                                            <span>{{ $item->destination->city ?? 'Destination' }}</span>
+                                            <span class="text-slate-300">•</span>
+                                            <span class="text-slate-600 font-medium truncate">{{ $item->cargo_type }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-right shrink-0 ml-3">
+                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider
+                                        @if($item->current_status === 'DELIVERED') bg-emerald-100 text-emerald-800 border border-emerald-200
+                                        @elseif($item->is_delayed) bg-gold-100 text-gold-900 border border-gold-300
+                                        @else bg-ocean-100 text-ocean-900 border border-ocean-200 @endif">
+                                        {{ $item->statusLabel() }}
+                                    </span>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                        <div id="searchNoResults" class="hidden p-6 text-center text-xs text-slate-400">
+                            <i class="ph ph-magnifying-glass text-2xl text-slate-300 mb-1 block"></i>
+                            {{ __('ui.home.dropdown_empty') }}
+                        </div>
+                    </div>
+                    @endif
 
-                        <div class="flex items-center gap-2 self-end sm:self-center">
+                    <!-- Slide Dots (Clean without chips underneath) -->
+                    <div class="mt-4 flex items-center justify-end">
+                        <div class="flex items-center gap-2">
                             <button type="button" class="hero-dot w-7 h-2 rounded-full bg-gold-400 transition-all" data-slide="0" aria-label="Slide 1"></button>
                             <button type="button" class="hero-dot w-2.5 h-2 rounded-full bg-white/40 hover:bg-white/70 transition-all" data-slide="1" aria-label="Slide 2"></button>
                             <button type="button" class="hero-dot w-2.5 h-2 rounded-full bg-white/40 hover:bg-white/70 transition-all" data-slide="2" aria-label="Slide 3"></button>
@@ -761,6 +808,91 @@ document.addEventListener('DOMContentLoaded', () => {
     [weightInp, cbmInp].forEach(el => el?.addEventListener('input', computeFreightQuote));
 
     computeFreightQuote();
+
+    // Auto-Complete & Dropdown for Hero Tracking Search
+    const searchInput = document.getElementById('heroSearchInput');
+    const searchDropdown = document.getElementById('searchSuggestionsDropdown');
+    const toggleDropdownBtn = document.getElementById('toggleSearchDropdownBtn');
+    const caretIcon = document.getElementById('searchDropdownCaret');
+    const searchList = document.getElementById('searchSuggestionsList');
+    const noResultsEl = document.getElementById('searchNoResults');
+    const searchWrapper = document.getElementById('heroSearchWrapper');
+
+    function openSearchDropdown() {
+        if (!searchDropdown) return;
+        searchDropdown.classList.remove('hidden');
+        caretIcon?.classList.add('rotate-180');
+    }
+
+    function closeSearchDropdown() {
+        if (!searchDropdown) return;
+        searchDropdown.classList.add('hidden');
+        caretIcon?.classList.remove('rotate-180');
+    }
+
+    function filterSearchItems(query) {
+        const items = searchList?.querySelectorAll('.search-option-item');
+        if (!items) return;
+        const q = (query || '').trim().toLowerCase();
+        let visibleCount = 0;
+
+        items.forEach(item => {
+            const searchData = item.getAttribute('data-search') || '';
+            if (q === '' || searchData.includes(q)) {
+                item.classList.remove('hidden');
+                visibleCount++;
+            } else {
+                item.classList.add('hidden');
+            }
+        });
+
+        if (visibleCount === 0) {
+            noResultsEl?.classList.remove('hidden');
+        } else {
+            noResultsEl?.classList.add('hidden');
+        }
+    }
+
+    searchInput?.addEventListener('focus', () => {
+        openSearchDropdown();
+        filterSearchItems(searchInput.value);
+    });
+
+    searchInput?.addEventListener('input', (e) => {
+        openSearchDropdown();
+        filterSearchItems(e.target.value);
+    });
+
+    toggleDropdownBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (searchDropdown?.classList.contains('hidden')) {
+            searchInput?.focus();
+            openSearchDropdown();
+            filterSearchItems(searchInput.value);
+        } else {
+            closeSearchDropdown();
+        }
+    });
+
+    window.selectTrackItem = function(trackingNumber) {
+        if (searchInput) {
+            searchInput.value = trackingNumber;
+            closeSearchDropdown();
+            document.getElementById('heroTrackForm')?.submit();
+        }
+    };
+
+    document.addEventListener('click', (e) => {
+        if (searchWrapper && !searchWrapper.contains(e.target)) {
+            closeSearchDropdown();
+        }
+    });
+
+    if (new URLSearchParams(window.location.search).has('focus_search')) {
+        searchInput?.focus();
+        openSearchDropdown();
+        filterSearchItems(searchInput.value);
+    }
 });
 </script>
 @endsection

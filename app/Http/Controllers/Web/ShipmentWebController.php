@@ -71,6 +71,22 @@ class ShipmentWebController extends Controller
 
         $featuredShipments = $query->orderBy('id')->take(9)->get();
 
+        $searchableShipments = Shipment::with(['origin', 'destination', 'carrier'])
+            ->select([
+                'id',
+                'shipment_number',
+                'transport_type',
+                'cargo_type',
+                'vessel_or_flight',
+                'current_status',
+                'is_delayed',
+                'origin_id',
+                'destination_id',
+                'carrier_id',
+            ])
+            ->latest('id')
+            ->get();
+
         $networkStats = [
             'totalShipments' => Shipment::count(),
             'activeTransit' => Shipment::where('current_status', 'IN_TRANSIT')->count(),
@@ -83,6 +99,7 @@ class ShipmentWebController extends Controller
 
         return view('public.home', compact(
             'featuredShipments',
+            'searchableShipments',
             'networkStats',
             'globalPorts',
             'quoteLocations',
