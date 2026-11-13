@@ -50,27 +50,6 @@
                 <p class="text-xs text-slate-500 mt-1">{{ __('ui.auth.login_subtitle') }}</p>
             </div>
 
-            <!-- Quick One-Click Demo Buttons -->
-            <div class="mb-6 p-4 bg-ocean-50/60 rounded-2xl border border-ocean-100">
-                <span class="text-[11px] font-extrabold text-ocean-950 uppercase tracking-wider block mb-2.5 text-center">
-                    ⚡ {{ __('ui.auth.quick_demo') }}
-                </span>
-                <div class="grid grid-cols-3 gap-2">
-                    <button type="button" onclick="fillCredentials('admin@cargotrace.com', 'password123')"
-                            class="px-2 py-2 bg-white hover:bg-gold-50 text-gold-900 border border-gold-300 rounded-xl text-xs font-bold shadow-2xs transition text-center">
-                        👑 {{ __('ui.auth.role_admin') }}
-                    </button>
-                    <button type="button" onclick="fillCredentials('operator@cargotrace.com', 'password123')"
-                            class="px-2 py-2 bg-white hover:bg-emerald-50 text-emerald-800 border border-emerald-300 rounded-xl text-xs font-bold shadow-2xs transition text-center">
-                        🛠️ {{ __('ui.auth.role_operator') }}
-                    </button>
-                    <button type="button" onclick="fillCredentials('customer@cargotrace.com', 'password123')"
-                            class="px-2 py-2 bg-white hover:bg-ocean-100 text-ocean-900 border border-ocean-300 rounded-xl text-xs font-bold shadow-2xs transition text-center">
-                        📦 {{ __('ui.auth.role_customer') }}
-                    </button>
-                </div>
-            </div>
-
             <!-- Form -->
             <form method="POST" action="{{ route('login') }}" class="space-y-4">
                 @csrf
@@ -116,11 +95,6 @@
 </div>
 
 <script>
-    function fillCredentials(email, password) {
-        document.getElementById('email').value = email;
-        document.getElementById('password').value = password;
-    }
-
     function togglePasswordVisibility(inputId, btn) {
         const input = document.getElementById(inputId);
         const icon = btn.querySelector('i');
