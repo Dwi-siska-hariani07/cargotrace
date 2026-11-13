@@ -296,7 +296,11 @@
                     <ul class="space-y-2 text-xs">
                         <li><a href="{{ route('home') }}" class="hover:text-gold-300 transition flex items-center gap-2"><i class="ph ph-magnifying-glass text-gold-400"></i> {{ __('ui.footer.link_track') }}</a></li>
                         <li><a href="{{ route('home') }}#quote-calculator" class="hover:text-gold-300 transition flex items-center gap-2"><i class="ph ph-calculator text-gold-400"></i> {{ __('ui.footer.link_calculator') }}</a></li>
-                        <li><a href="{{ route('public.waybill', ['number' => 'CRG-2026-8801']) }}" class="hover:text-gold-300 transition flex items-center gap-2"><i class="ph ph-file-text text-gold-400"></i> {{ __('ui.footer.link_waybill') }}</a></li>
+                        @auth
+                        <li><a href="{{ route('public.waybill', ['number' => 'CRG-2026-8801']) }}" class="hover:text-gold-300 transition flex items-center gap-2"><i class="ph ph-shield-check text-gold-400"></i> {{ __('ui.footer.link_waybill') }}</a></li>
+                        @else
+                        <li><a href="{{ route('login') }}" class="hover:text-gold-300 transition flex items-center gap-2"><i class="ph ph-lock-key text-gold-400"></i> {{ __('ui.footer.link_waybill') }}</a></li>
+                        @endauth
                         <li><a href="{{ route('public.track', ['number' => 'CRG-2026-8802']) }}" class="hover:text-gold-300 transition flex items-center gap-2"><i class="ph ph-boat text-gold-400"></i> {{ __('ui.footer.link_vessel') }}</a></li>
                         @auth
                         <li><a href="{{ route('dashboard') }}" class="hover:text-gold-300 transition flex items-center gap-2"><i class="ph ph-squares-four text-gold-400"></i> {{ __('ui.footer.link_dashboard') }}</a></li>

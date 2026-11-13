@@ -43,7 +43,7 @@ return [
         'quick_access_title' => 'Services & Portal Access',
         'link_track' => 'Track Cargo / Container Number',
         'link_calculator' => 'Freight Quote & Transit Estimator',
-        'link_waybill' => 'Sample Printable Waybill / B/L',
+        'link_waybill' => 'Official Freight Document Portal (E-B/L)',
         'link_vessel' => 'Inspect Active Sea Vessel',
         'link_dashboard' => 'Open Operations Dashboard',
         'link_login' => 'Staff & Customer Portal Login',
@@ -259,6 +259,11 @@ return [
         'epod_badge' => 'Verified Electronic Proof of Delivery (e-POD)',
         'epod_verified' => 'Signed & delivered intact at destination on',
         'print_waybill_btn' => 'Print Official Waybill',
+        'waybill_guest_btn' => 'Official Document (Client Only)',
+        'waybill_guest_tooltip' => 'Official Bill of Lading (E-B/L) is a legally binding title document restricted to verified cargo owners.',
+        'waybill_guest_banner_title' => 'Open Fleet Tracking vs Legal Document Protection',
+        'waybill_guest_banner_desc' => 'As a public guest, you can track vessel/flight movement, GIS positions, marine weather, and ETA. The Official Electronic Bill of Lading (E-B/L / e-POD) contains legal commercial ownership and can only be downloaded by authenticated cargo owners.',
+        'login_to_view_doc' => 'Sign In to Client Portal',
     ],
 
     'waybill' => [
@@ -284,6 +289,8 @@ return [
         'scan_verify' => 'Scan QR for Live Status Verification',
         'print_now' => 'Print / Save PDF',
         'back_track' => '← Back to Live Tracking',
+        'auth_required' => 'The Official Electronic Bill of Lading is a legally binding title document. Please log in to your Client Account to view or print this document.',
+        'unauthorized_customer' => 'Access denied. You are only authorized to print Official Bills of Lading for your own company shipments.',
     ],
 
     'dashboard' => [

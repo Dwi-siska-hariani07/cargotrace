@@ -34,11 +34,22 @@
                 @elseif($shipment->transport_type === 'AIR') {{ __('ui.track.mode_air') }}
                 @else {{ __('ui.track.mode_land') }} @endif
             </span>
-            <a href="{{ route('public.waybill', ['number' => $shipment->shipment_number]) }}"
+            @php
+                $canPrintWaybill = auth()->check() && (!auth()->user()->isCustomer() || auth()->user()->id === $shipment->customer_id);
+            @endphp
+            @if($canPrintWaybill)
+            <a href="{{ route('public.waybill', ['number' => $shipment->shipment_number]) }}" target="_blank"
                class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#042f2e] hover:bg-ocean-900 text-white border border-ocean-900/20 flex items-center gap-1.5 shadow-sm transition">
                 <i class="ph ph-printer text-sm text-gold-400"></i>
                 <span>{{ __('ui.track.print_waybill_btn') }}</span>
             </a>
+            @else
+            <a href="{{ route('login') }}" title="{{ __('ui.track.waybill_guest_tooltip') }}"
+               class="group px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-amber-50 text-slate-600 hover:text-amber-900 border border-slate-200 hover:border-amber-300 flex items-center gap-1.5 shadow-2xs transition">
+                <i class="ph ph-lock-key text-sm text-amber-600 group-hover:scale-110 transition-transform"></i>
+                <span>{{ __('ui.track.waybill_guest_btn') }}</span>
+            </a>
+            @endif
         </div>
     </div>
 
@@ -55,6 +66,29 @@
             </div>
             <p class="text-xs text-gold-800 mt-1">
                 {{ $shipment->delay_reason ?? __('ui.track.delay_default') }}
+            </p>
+        </div>
+    </div>
+    @endif
+
+    <!-- Open Fleet Tracking vs Verified Customer Legal Document Protection -->
+    @if(!$canPrintWaybill)
+    <div class="p-4 rounded-2xl bg-white border border-slate-200 text-slate-700 flex items-start gap-3 shadow-2xs">
+        <div class="w-8 h-8 rounded-xl bg-ocean-50 border border-ocean-200 text-ocean-700 flex items-center justify-center shrink-0 mt-0.5">
+            <i class="ph ph-shield-check text-lg text-ocean-700"></i>
+        </div>
+        <div class="flex-1 text-xs">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                <h4 class="font-bold text-slate-900 text-xs sm:text-sm flex items-center gap-1.5">
+                    <span>{{ __('ui.track.waybill_guest_banner_title') }}</span>
+                </h4>
+                <a href="{{ route('login') }}" class="inline-flex items-center gap-1 font-bold text-ocean-700 hover:text-ocean-900 underline underline-offset-2">
+                    <span>{{ __('ui.track.login_to_view_doc') }}</span>
+                    <i class="ph ph-arrow-right text-xs"></i>
+                </a>
+            </div>
+            <p class="text-slate-500 mt-1 leading-relaxed">
+                {{ __('ui.track.waybill_guest_banner_desc') }}
             </p>
         </div>
     </div>

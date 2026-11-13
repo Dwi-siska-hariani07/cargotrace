@@ -152,21 +152,44 @@ class WebNavigationTest extends TestCase
             ->assertSee('CRG-2026-8809')
             ->assertSee('PT CargoTrace Global Logistik Tbk');
 
+        // 1. Guest can track vessel & telemetry, but waybill print is protected
         $track = $this->get('/track?number=CRG-2026-8801');
         $track->assertStatus(200)
             ->assertSee('MV Maersk Mc-Kinney Moller V.2608')
             ->assertSee('MSKU 904281-4')
             ->assertSee('Progres Tahapan Pengiriman')
-            ->assertSee('Dalam Perjalanan');
+            ->assertSee('Dalam Perjalanan')
+            ->assertSee('Dokumen Resmi (Khusus Pemilik)')
+            ->assertSee('Akses Pelacakan Terbuka vs Perlindungan Dokumen Hukum');
 
-        $waybill = $this->get('/track/waybill?number=CRG-2026-8803');
-        $waybill->assertStatus(200)
+        // 2. Unauthenticated guest attempting to print waybill is redirected to login
+        $guestWaybill = $this->get('/track/waybill?number=CRG-2026-8803');
+        $guestWaybill->assertRedirect('/login');
+
+        // 3. Customer owning the shipment can view and print the waybill
+        $customer2 = User::where('email', 'acme@corp.com')->first();
+        $this->assertNotNull($customer2);
+
+        $authWaybill = $this->actingAs($customer2)->get('/track/waybill?number=CRG-2026-8803');
+        $authWaybill->assertStatus(200)
             ->assertSee('CRG-2026-8803')
             ->assertSee('e-POD SIGNED')
             ->assertSee('AWB 618-44901284');
 
-        $missingWaybill = $this->get('/track/waybill?number=NONEXISTENT-999');
-        $missingWaybill->assertRedirect('/');
+        // 4. Customer attempting to access another customer's waybill is rejected (403)
+        $customer1 = User::where('email', 'customer@cargotrace.com')->first();
+        $this->assertNotNull($customer1);
+
+        $forbiddenWaybill = $this->actingAs($customer1)->get('/track/waybill?number=CRG-2026-8803');
+        $forbiddenWaybill->assertStatus(403);
+
+        // 5. Operator or Admin can access waybill for any shipment
+        $admin = User::where('role', 'admin')->first();
+        $this->assertNotNull($admin);
+
+        $adminWaybill = $this->actingAs($admin)->get('/track/waybill?number=CRG-2026-8803');
+        $adminWaybill->assertStatus(200)
+            ->assertSee('CRG-2026-8803');
     }
 }
 

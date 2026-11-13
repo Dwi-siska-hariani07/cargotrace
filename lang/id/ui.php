@@ -43,7 +43,7 @@ return [
         'quick_access_title' => 'Layanan & Akses Sistem',
         'link_track' => 'Lacak Nomor Resi / Kontainer',
         'link_calculator' => 'Cek Estimasi Tarif & Durasi',
-        'link_waybill' => 'Cetak Contoh Surat Muatan / B/L',
+        'link_waybill' => 'Portal Dokumen Muatan Resmi (E-B/L)',
         'link_vessel' => 'Pantau Armada Kapal Aktif',
         'link_dashboard' => 'Buka Dashboard Operasional',
         'link_login' => 'Portal Login Staf & Pelanggan',
@@ -259,6 +259,11 @@ return [
         'epod_badge' => 'Bukti Terima Elektronik (e-POD) Terverifikasi',
         'epod_verified' => 'Diterima lengkap di tujuan pada',
         'print_waybill_btn' => 'Cetak Resi / Waybill',
+        'waybill_guest_btn' => 'Dokumen Resmi (Khusus Pemilik)',
+        'waybill_guest_tooltip' => 'Surat Muatan Resmi (E-B/L) merupakan dokumen legal berbadan hukum khusus pemilik kargo terdaftar.',
+        'waybill_guest_banner_title' => 'Akses Pelacakan Terbuka vs Perlindungan Dokumen Hukum',
+        'waybill_guest_banner_desc' => 'Sebagai pengunjung umum, Anda dapat memantau pergerakan kapal/pesawat, posisi GIS, cuaca maritim, dan estimasi tiba. Surat Muatan Resmi (Electronic Bill of Lading / e-POD) memuat hak kepemilikan komersial dan hanya dapat diunduh oleh Pelanggan pemilik muatan.',
+        'login_to_view_doc' => 'Masuk ke Akun Pelanggan',
     ],
 
     'waybill' => [
@@ -284,6 +289,8 @@ return [
         'scan_verify' => 'Pindai QR untuk Verifikasi Status Live',
         'print_now' => 'Cetak / Simpan PDF',
         'back_track' => '← Kembali ke Halaman Lacak',
+        'auth_required' => 'Surat Muatan Resmi (Electronic Bill of Lading) adalah dokumen berbadan hukum. Silakan masuk ke akun Pelanggan Anda untuk mencetak atau mengunduh dokumen.',
+        'unauthorized_customer' => 'Akses ditolak. Anda hanya diizinkan mencetak Surat Muatan Resmi untuk kargo milik perusahaan Anda sendiri.',
     ],
 
     'dashboard' => [

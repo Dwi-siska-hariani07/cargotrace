@@ -264,13 +264,24 @@ class ShipmentWebController extends Controller
     }
 
     /**
-     * Render a printable Electronic Bill of Lading / Official Waybill for any tracked shipment.
+     * Render a printable Electronic Bill of Lading / Official Waybill for an authorized customer or staff.
+     * Public guests are redirected to login because a Bill of Lading is a legally binding title document.
      */
     public function publicWaybill(Request $request)
     {
+        if (!Auth::check()) {
+            return redirect()->guest(route('login'))
+                ->with('warning', __('ui.waybill.auth_required'));
+        }
+
         $resolved = $this->resolvePublicShipment($request);
         if (!$resolved instanceof Shipment) {
             return $resolved;
+        }
+
+        $user = Auth::user();
+        if ($user->isCustomer() && $resolved->customer_id !== $user->id) {
+            abort(403, __('ui.waybill.unauthorized_customer'));
         }
 
         return view('public.waybill', ['shipment' => $resolved]);
