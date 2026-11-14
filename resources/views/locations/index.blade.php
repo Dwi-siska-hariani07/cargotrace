@@ -61,7 +61,7 @@
                 <i class="ph ph-plus-circle text-ocean-700"></i>
                 <span>{{ __('ui.locations.add_title') }}</span>
             </h3>
-            <form method="POST" action="{{ route('locations.store') }}" class="space-y-3">
+            <form method="POST" action="{{ route('locations.store') }}" autocomplete="off" class="space-y-3">
                 @csrf
                 <div class="grid grid-cols-2 gap-3">
                     <div>

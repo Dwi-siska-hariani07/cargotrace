@@ -191,5 +191,18 @@ class WebNavigationTest extends TestCase
         $adminWaybill->assertStatus(200)
             ->assertSee('CRG-2026-8803');
     }
+
+    public function test_shipments_index_renders_autocomplete_disabled_and_search_dropdown(): void
+    {
+        $operator = User::where('role', 'operator')->first();
+        $this->assertNotNull($operator);
+
+        $response = $this->actingAs($operator)->get('/shipments');
+        $response->assertStatus(200)
+            ->assertSee('autocomplete="off"', false)
+            ->assertSee('id="shipmentSearchInput"', false)
+            ->assertSee('id="shipmentSearchDropdown"', false)
+            ->assertSee('CRG-2026-8801');
+    }
 }
 

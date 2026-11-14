@@ -3,7 +3,7 @@
 [![Laravel Version](https://img.shields.io/badge/Laravel-11.x-red.svg)](https://laravel.com)
 [![PHP Version](https://img.shields.io/badge/PHP-8.2%2B-blue.svg)](https://php.net)
 [![MySQL Version](https://img.shields.io/badge/MySQL-8.0%2B-orange.svg)](https://mysql.com)
-[![Automated Tests](https://img.shields.io/badge/PHPUnit-24%20Tests%20%7C%2085%20Assertions%20Passed-brightgreen.svg)]()
+[![Automated Tests](https://img.shields.io/badge/PHPUnit-25%20Tests%20%7C%2091%20Assertions%20Passed-brightgreen.svg)]()
 [![Bilingual UI](https://img.shields.io/badge/Language-ID%20%7C%20EN%20Bilingual-teal.svg)]()
 
 > **Final Project (UAS) — Web Programming 2**  
@@ -166,10 +166,10 @@ PHPUnit 10.5.66 by Sebastian Bergmann and contributors.
 Runtime:       PHP 8.2.12
 Configuration: D:\cargotrace\phpunit.xml
 
-........................                                          24 / 24 (100%)
+.........................                                         25 / 25 (100%)
 
-Time: 00:22.632, Memory: 42.00 MB
-OK (24 tests, 85 assertions)
+Time: 00:15.336, Memory: 42.00 MB
+OK (25 tests, 91 assertions)
 ```
 
 ### Test Coverage Highlights:

@@ -24,11 +24,60 @@
 
     <!-- Filter & Search Toolbar -->
     <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-2xs">
-        <form method="GET" action="{{ route('shipments.index') }}" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-            <div>
+        <form method="GET" action="{{ route('shipments.index') }}" autocomplete="off" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+            <div class="relative" id="shipmentSearchWrapper">
                 <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">{{ __('ui.shipments.filter_search') }}</label>
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('ui.shipments.filter_search_ph') }}"
-                       class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:border-ocean-500">
+                <div class="relative">
+                    <input type="text" id="shipmentSearchInput" name="search" value="{{ request('search') }}" autocomplete="off"
+                           placeholder="{{ __('ui.shipments.filter_search_ph') }}"
+                           class="w-full pl-3 pr-8 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:border-ocean-500 font-mono">
+                    <button type="button" id="toggleShipmentSearchDropdown" class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-ocean-700 transition p-1" title="{{ __('ui.shipments.dropdown_click_to_select') }}">
+                        <i class="ph ph-caret-down text-xs transition-transform duration-200" id="shipmentSearchCaret"></i>
+                    </button>
+                </div>
+
+                @if(isset($searchOptions) && $searchOptions->count() > 0)
+                <div id="shipmentSearchDropdown" class="hidden absolute left-0 right-0 top-full mt-1 bg-white rounded-2xl shadow-xl border border-slate-200 z-50 max-h-64 overflow-y-auto divide-y divide-slate-100 text-slate-800 text-xs">
+                    <div class="p-2.5 bg-slate-50/90 border-b border-slate-100 flex items-center justify-between text-[11px] text-slate-500 sticky top-0 backdrop-blur-xs z-10">
+                        <span class="font-bold uppercase tracking-wider flex items-center gap-1 text-ocean-950">
+                            <i class="ph ph-package text-ocean-700"></i>
+                            <span>{{ __('ui.shipments.dropdown_registered', ['count' => $searchOptions->count()]) }}</span>
+                        </span>
+                        <span class="text-[10px] text-slate-400">{{ __('ui.shipments.dropdown_click_to_select') }}</span>
+                    </div>
+                    <div id="shipmentSearchOptionsList">
+                        @foreach($searchOptions as $opt)
+                        <div class="shipment-opt-item p-2.5 hover:bg-ocean-50/70 transition cursor-pointer flex items-center justify-between gap-2"
+                             onclick="selectShipmentSearch('{{ $opt->shipment_number }}')"
+                             data-search="{{ strtolower($opt->shipment_number . ' ' . $opt->cargo_type . ' ' . ($opt->vessel_or_flight ?? '') . ' ' . ($opt->carrier->name ?? '')) }}">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <span class="w-6 h-6 rounded-lg flex items-center justify-center shrink-0
+                                    @if($opt->transport_type === 'SEA') bg-ocean-100 text-ocean-800
+                                    @elseif($opt->transport_type === 'AIR') bg-amber-100 text-amber-900
+                                    @else bg-emerald-100 text-emerald-800 @endif">
+                                    @if($opt->transport_type === 'SEA') <i class="ph ph-boat text-xs"></i>
+                                    @elseif($opt->transport_type === 'AIR') <i class="ph ph-airplane-tilt text-xs"></i>
+                                    @else <i class="ph ph-truck text-xs"></i> @endif
+                                </span>
+                                <div class="min-w-0">
+                                    <div class="font-mono font-bold text-slate-900 text-xs truncate">{{ $opt->shipment_number }}</div>
+                                    <div class="text-[10px] text-slate-500 truncate">{{ $opt->cargo_type }} @if($opt->vessel_or_flight) • {{ $opt->vessel_or_flight }} @endif</div>
+                                </div>
+                            </div>
+                            <span class="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider shrink-0
+                                @if($opt->current_status === 'DELIVERED') bg-emerald-100 text-emerald-800
+                                @elseif($opt->current_status === 'IN_TRANSIT') bg-ocean-100 text-ocean-900
+                                @else bg-gold-100 text-gold-900 @endif">
+                                {{ $opt->statusLabel() }}
+                            </span>
+                        </div>
+                        @endforeach
+                    </div>
+                    <div id="shipmentSearchNoResults" class="hidden p-4 text-center text-xs text-slate-400">
+                        {{ __('ui.shipments.dropdown_no_match') }}
+                    </div>
+                </div>
+                @endif
             </div>
 
             <div>
@@ -145,4 +194,86 @@
         @endif
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const searchInp = document.getElementById('shipmentSearchInput');
+    const dropdown = document.getElementById('shipmentSearchDropdown');
+    const toggleBtn = document.getElementById('toggleShipmentSearchDropdown');
+    const caret = document.getElementById('shipmentSearchCaret');
+    const list = document.getElementById('shipmentSearchOptionsList');
+    const noResults = document.getElementById('shipmentSearchNoResults');
+    const wrapper = document.getElementById('shipmentSearchWrapper');
+
+    function openDropdown() {
+        if (!dropdown) return;
+        dropdown.classList.remove('hidden');
+        caret?.classList.add('rotate-180');
+    }
+
+    function closeDropdown() {
+        if (!dropdown) return;
+        dropdown.classList.add('hidden');
+        caret?.classList.remove('rotate-180');
+    }
+
+    function filterOptions(query) {
+        const items = list?.querySelectorAll('.shipment-opt-item');
+        if (!items) return;
+        const q = (query || '').trim().toLowerCase();
+        let visibleCount = 0;
+
+        items.forEach(item => {
+            const data = item.getAttribute('data-search') || '';
+            if (q === '' || data.includes(q)) {
+                item.classList.remove('hidden');
+                visibleCount++;
+            } else {
+                item.classList.add('hidden');
+            }
+        });
+
+        if (visibleCount === 0) {
+            noResults?.classList.remove('hidden');
+        } else {
+            noResults?.classList.add('hidden');
+        }
+    }
+
+    searchInp?.addEventListener('focus', () => {
+        openDropdown();
+        filterOptions(searchInp.value);
+    });
+
+    searchInp?.addEventListener('input', (e) => {
+        openDropdown();
+        filterOptions(e.target.value);
+    });
+
+    toggleBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (dropdown?.classList.contains('hidden')) {
+            searchInp?.focus();
+            openDropdown();
+            filterOptions(searchInp.value);
+        } else {
+            closeDropdown();
+        }
+    });
+
+    window.selectShipmentSearch = function(num) {
+        if (searchInp) {
+            searchInp.value = num;
+            closeDropdown();
+            searchInp.form?.submit();
+        }
+    };
+
+    document.addEventListener('click', (e) => {
+        if (wrapper && !wrapper.contains(e.target)) {
+            closeDropdown();
+        }
+    });
+});
+</script>
 @endsection

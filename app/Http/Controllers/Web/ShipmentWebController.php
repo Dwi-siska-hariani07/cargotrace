@@ -141,7 +141,15 @@ class ShipmentWebController extends Controller
         $shipments = $query->latest()->paginate(10)->withQueryString();
         $carriers = Carrier::where('is_active', true)->get();
 
-        return view('shipments.index', compact('shipments', 'carriers'));
+        $searchOptions = Shipment::query()
+            ->when($user && $user->isCustomer(), fn($q) => $q->where('customer_id', $user->id))
+            ->with(['origin', 'destination', 'carrier'])
+            ->select(['id', 'shipment_number', 'cargo_type', 'vessel_or_flight', 'current_status', 'transport_type', 'origin_id', 'destination_id', 'carrier_id'])
+            ->latest('id')
+            ->take(30)
+            ->get();
+
+        return view('shipments.index', compact('shipments', 'carriers', 'searchOptions'));
     }
 
     public function create()

@@ -62,7 +62,7 @@
                 <i class="ph ph-plus-circle text-ocean-700"></i>
                 <span>{{ __('ui.carriers.add_title') }}</span>
             </h3>
-            <form method="POST" action="{{ route('carriers.store') }}" class="space-y-3">
+            <form method="POST" action="{{ route('carriers.store') }}" autocomplete="off" class="space-y-3">
                 @csrf
                 <div>
                     <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">{{ __('ui.carriers.code_label') }}</label>
