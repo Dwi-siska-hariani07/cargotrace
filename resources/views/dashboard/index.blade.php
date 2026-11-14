@@ -96,7 +96,7 @@
                     {{ __('ui.dashboard.map_badge') }}
                 </span>
             </div>
-            <div id="overviewMap" class="w-full h-84 bg-slate-900 z-10"></div>
+            <div id="overviewMap" class="w-full flex-1 min-h-[380px] bg-slate-900 z-10" style="min-height: 380px; height: 380px;"></div>
             <div class="px-4 py-2 bg-slate-50 border-t border-slate-100 text-[11px] text-slate-400 flex items-center justify-between">
                 <span>{{ __('ui.dashboard.map_hint') }}</span>
                 <span class="text-ocean-700 font-medium">{{ __('ui.dashboard.map_engine') }}</span>
@@ -277,16 +277,72 @@
 
         if (mapShipments.length > 0) {
             const markers = [];
+            const iconByMode = {
+                'SEA': '<i class="ph ph-boat text-xs"></i>',
+                'AIR': '<i class="ph ph-airplane-tilt text-xs"></i>',
+                'LAND': '<i class="ph ph-truck text-xs"></i>'
+            };
+
             mapShipments.forEach(s => {
-                L.circleMarker([s.latitude, s.longitude], {
-                    color: s.is_delayed ? '#f59e0b' : '#2dd4bf',
-                    fillColor: s.is_delayed ? '#f59e0b' : '#0d9488',
-                    fillOpacity: 0.9,
-                    weight: 2,
-                    radius: 8
-                }).addTo(map)
-                .bindTooltip(`${s.shipment_number}`, { direction: 'top' })
-                .bindPopup(`<b>${s.shipment_number}</b><br>${uiDash.popup_carrier} ${s.carrier}<br>${uiDash.popup_status} ${statusDict[s.current_status] || s.current_status}`);
+                // Corridor dashed line if origin & destination are available
+                if (s.origin_lat && s.origin_lng && s.dest_lat && s.dest_lng) {
+                    const corridor = [
+                        [s.origin_lat, s.origin_lng],
+                        [s.latitude, s.longitude],
+                        [s.dest_lat, s.dest_lng]
+                    ];
+                    L.polyline(corridor, {
+                        color: s.is_delayed ? '#f59e0b' : '#14b8a6',
+                        weight: 2,
+                        dashArray: '6, 6',
+                        opacity: 0.55
+                    }).addTo(map);
+                }
+
+                // Custom pulsating radar icon
+                const pulseBg = s.is_delayed ? 'bg-amber-400' : 'bg-teal-400';
+                const markerBg = s.is_delayed ? 'bg-amber-500' : 'bg-teal-600';
+                const modeIcon = iconByMode[s.transport_type] || '<i class="ph ph-package text-xs"></i>';
+
+                const radarIcon = L.divIcon({
+                    className: 'relative flex items-center justify-center',
+                    html: `
+                        <div style="position: relative; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;">
+                            <span class="animate-ping" style="position: absolute; width: 100%; height: 100%; border-radius: 9999px; ${s.is_delayed ? 'background: #f59e0b;' : 'background: #2dd4bf;'} opacity: 0.75;"></span>
+                            <div style="position: relative; width: 24px; height: 24px; border-radius: 9999px; ${s.is_delayed ? 'background: #d97706;' : 'background: #0f766e;'} color: #ffffff; border: 2px solid #ffffff; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: 11px;">
+                                ${modeIcon}
+                            </div>
+                        </div>
+                    `,
+                    iconSize: [28, 28],
+                    iconAnchor: [14, 14],
+                    popupAnchor: [0, -14]
+                });
+
+                const popupHtml = `
+                    <div style="font-family: inherit; min-width: 210px; padding: 4px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; margin-bottom: 6px;">
+                            <span style="font-family: monospace; font-weight: 700; color: #0f172a; font-size: 13px;">${s.shipment_number}</span>
+                            <span style="font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 9999px; ${s.is_delayed ? 'background: #fef3c7; color: #92400e;' : 'background: #ccfbf1; color: #115e59;'}">
+                                ${s.is_delayed ? 'TERLAMBAT' : (statusDict[s.current_status] || s.current_status)}
+                            </span>
+                        </div>
+                        <div style="font-size: 11px; color: #475569; line-height: 1.5; margin-bottom: 8px;">
+                            <div><b>${uiDash.popup_carrier || 'Armada'}:</b> ${s.carrier} (${s.transport_type})</div>
+                            <div><b>Rute:</b> ${s.origin_city} &rarr; ${s.destination_city}</div>
+                            <div><b>Posisi:</b> ${s.location_name}</div>
+                        </div>
+                        <a href="${s.show_url}" style="display: block; width: 100%; text-align: center; background: #0f766e; color: #ffffff; font-weight: 700; font-size: 11px; padding: 6px 0; border-radius: 8px; text-decoration: none;">
+                            Lihat Detail Pengiriman &rarr;
+                        </a>
+                    </div>
+                `;
+
+                L.marker([s.latitude, s.longitude], { icon: radarIcon })
+                    .addTo(map)
+                    .bindTooltip(`${s.shipment_number} &bull; ${s.carrier}`, { direction: 'top', offset: [0, -14] })
+                    .bindPopup(popupHtml);
+
                 markers.push([s.latitude, s.longitude]);
             });
 
@@ -294,6 +350,14 @@
                 map.fitBounds(markers, { padding: [40, 40] });
             }
         }
+
+        // Force resize recalculation for Leaflet inside CSS grid / flex
+        setTimeout(function() {
+            map.invalidateSize();
+        }, 250);
+        window.addEventListener('resize', function() {
+            map.invalidateSize();
+        });
     });
 </script>
 @endpush

@@ -62,14 +62,22 @@ class DashboardController extends Controller
                 return [
                     'id' => $s->id,
                     'shipment_number' => $s->shipment_number,
+                    'transport_type' => $s->transport_type,
                     'current_status' => $s->current_status,
                     'is_delayed' => $s->is_delayed,
                     'carrier' => $s->carrier->name ?? 'N/A',
                     'location_name' => $s->current_location_name ?? 'In Transit',
-                    'latitude' => $s->current_latitude,
-                    'longitude' => $s->current_longitude,
-                    'origin' => $s->origin->name ?? '',
-                    'destination' => $s->destination->name ?? '',
+                    'latitude' => (float) $s->current_latitude,
+                    'longitude' => (float) $s->current_longitude,
+                    'origin' => $s->origin->name ?? ($s->origin->city ?? ''),
+                    'destination' => $s->destination->name ?? ($s->destination->city ?? ''),
+                    'origin_city' => $s->origin->city ?? ($s->origin->name ?? ''),
+                    'destination_city' => $s->destination->city ?? ($s->destination->name ?? ''),
+                    'origin_lat' => $s->origin ? (float) $s->origin->latitude : null,
+                    'origin_lng' => $s->origin ? (float) $s->origin->longitude : null,
+                    'dest_lat' => $s->destination ? (float) $s->destination->latitude : null,
+                    'dest_lng' => $s->destination ? (float) $s->destination->longitude : null,
+                    'show_url' => route('shipments.show', $s->id),
                 ];
             });
 
