@@ -152,6 +152,103 @@ class ShipmentWebController extends Controller
         return view('shipments.index', compact('shipments', 'carriers', 'searchOptions'));
     }
 
+    public function exportCsv(Request $request)
+    {
+        $user = Auth::user();
+        $query = Shipment::query()->with(['carrier', 'origin', 'destination', 'customer']);
+
+        if ($user && $user->isCustomer()) {
+            $query->where('customer_id', $user->id);
+        }
+
+        if ($request->filled('carrier_id')) {
+            $query->where('carrier_id', $request->carrier_id);
+        }
+
+        if ($request->filled('status')) {
+            $query->where('current_status', $request->status);
+        }
+
+        if ($request->filled('transport_type')) {
+            $query->where('transport_type', $request->transport_type);
+        }
+
+        if ($request->filled('delayed') && $request->delayed == '1') {
+            $query->where('is_delayed', true);
+        }
+
+        if ($request->filled('search')) {
+            $term = $request->search;
+            $query->where(function ($q) use ($term) {
+                $q->where('shipment_number', 'like', "%{$term}%")
+                  ->orWhere('cargo_type', 'like', "%{$term}%")
+                  ->orWhere('vessel_or_flight', 'like', "%{$term}%")
+                  ->orWhere('container_or_awb', 'like', "%{$term}%");
+            });
+        }
+
+        $shipments = $query->latest('id')->get();
+        $filename = 'cargotrace-manifest-' . date('Ymd-His') . '.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
+        ];
+
+        $callback = function () use ($shipments) {
+            $file = fopen('php://output', 'w');
+            // Write UTF-8 BOM so Microsoft Excel correctly renders accents & symbols
+            fputs($file, "\xEF\xBB\xBF");
+
+            fputcsv($file, [
+                'No. Resi (Shipment No)',
+                'Pelanggan (Shipper)',
+                'Armada (Carrier)',
+                'Moda (Mode)',
+                'Nama Kapal / Penerbangan (Vessel / Flight)',
+                'No. Kontainer / AWB',
+                'Pelabuhan Asal (Origin)',
+                'Pelabuhan Tujuan (Destination)',
+                'Komoditas (Cargo Type)',
+                'Berat Kotor (Total Weight kg)',
+                'Volume (CBM)',
+                'Jadwal Keberangkatan (ETD)',
+                'Jadwal Tiba (ETA)',
+                'Status Terkini (Current Status)',
+                'Keterlambatan (Delayed)',
+                'Penerima (Consignee)',
+            ]);
+
+            foreach ($shipments as $s) {
+                fputcsv($file, [
+                    $s->shipment_number,
+                    $s->customer->name ?? ($s->customer->company ?? 'N/A'),
+                    $s->carrier->name ?? 'N/A',
+                    $s->transport_type,
+                    $s->vessel_or_flight ?? '-',
+                    $s->container_or_awb ?? '-',
+                    ($s->origin->name ?? '') . ' (' . ($s->origin->code ?? '') . ')',
+                    ($s->destination->name ?? '') . ' (' . ($s->destination->code ?? '') . ')',
+                    $s->cargo_type ?? 'General Cargo',
+                    $s->total_weight_kg ?? 0,
+                    $s->total_volume_cbm ?? 0,
+                    $s->expected_departure ? $s->expected_departure->format('Y-m-d H:i') : '-',
+                    $s->estimated_arrival ? $s->estimated_arrival->format('Y-m-d H:i') : '-',
+                    $s->statusLabel(),
+                    $s->is_delayed ? 'Ya (' . $s->delay_hours . ' Jam)' : 'Tidak',
+                    $s->receiver_name ?? '-',
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
     public function create()
     {
         $user = Auth::user();

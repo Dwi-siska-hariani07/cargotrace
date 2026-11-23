@@ -337,6 +337,7 @@ return [
         'title' => 'Shipment Registry',
         'subtitle' => 'Manage and track multimodal cargo shipments across global networks',
         'new_btn' => 'Register New Shipment',
+        'export_csv' => 'Export Manifest (CSV)',
         'filter_search' => 'Search Number / Cargo',
         'filter_search_ph' => 'Tracking # or Commodity...',
         'filter_status' => 'Filter Status',

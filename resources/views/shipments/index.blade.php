@@ -14,12 +14,18 @@
             <p class="text-xs sm:text-sm text-slate-500 mt-1">{{ __('ui.shipments.subtitle') }}</p>
         </div>
 
-        @if(!auth()->user()->isCustomer())
-        <a href="{{ route('shipments.create') }}" class="px-4 py-2.5 bg-ocean-700 hover:bg-ocean-800 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-sm transition flex items-center gap-2">
-            <i class="ph ph-plus-circle text-lg text-gold-300"></i>
-            <span>{{ __('ui.shipments.new_btn') }}</span>
-        </a>
-        @endif
+        <div class="flex items-center gap-2">
+            <a href="{{ route('shipments.export.csv', request()->query()) }}" class="px-4 py-2.5 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs uppercase tracking-wider rounded-xl border border-slate-200 shadow-2xs transition flex items-center gap-2">
+                <i class="ph ph-download-simple text-base text-ocean-700"></i>
+                <span>{{ __('ui.shipments.export_csv') }}</span>
+            </a>
+            @if(!auth()->user()->isCustomer())
+            <a href="{{ route('shipments.create') }}" class="px-4 py-2.5 bg-ocean-700 hover:bg-ocean-800 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-sm transition flex items-center gap-2">
+                <i class="ph ph-plus-circle text-lg text-gold-300"></i>
+                <span>{{ __('ui.shipments.new_btn') }}</span>
+            </a>
+            @endif
+        </div>
     </div>
 
     <!-- Filter & Search Toolbar -->

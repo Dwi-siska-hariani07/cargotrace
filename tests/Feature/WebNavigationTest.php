@@ -204,5 +204,31 @@ class WebNavigationTest extends TestCase
             ->assertSee('id="shipmentSearchDropdown"', false)
             ->assertSee('CRG-2026-8801');
     }
+
+    public function test_authenticated_user_can_export_shipments_csv(): void
+    {
+        $operator = User::where('role', 'operator')->first();
+        $this->assertNotNull($operator);
+
+        $response = $this->actingAs($operator)->get('/shipments/export/csv');
+        $response->assertStatus(200);
+        $response->assertHeader('Content-Type', 'text/csv; charset=UTF-8');
+        
+        $content = $response->streamedContent();
+        $this->assertStringContainsString('No. Resi (Shipment No)', $content);
+        $this->assertStringContainsString('CRG-2026-8801', $content);
+    }
+
+    public function test_waybill_renders_code128_barcode_container(): void
+    {
+        $admin = User::where('role', 'admin')->first();
+        $this->assertNotNull($admin);
+
+        $response = $this->actingAs($admin)->get('/track/waybill?number=CRG-2026-8801');
+        $response->assertStatus(200)
+            ->assertSee('id="waybill-barcode"', false)
+            ->assertSee('STANDARD CODE 128 CARGO BARCODE')
+            ->assertSee('JsBarcode');
+    }
 }
 

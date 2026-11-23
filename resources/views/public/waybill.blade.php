@@ -26,6 +26,7 @@
     </script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
     <style>
         @media print {
             body { background: #ffffff !important; padding: 0 !important; }
@@ -95,6 +96,21 @@
             <div class="text-left sm:text-right text-[11px]">
                 <span class="text-slate-400 block">{{ __('ui.waybill.issued_at') }}</span>
                 <span class="font-mono font-bold text-slate-800">{{ ($shipment->created_at ?? now())->format('d M Y, H:i') }} UTC</span>
+            </div>
+        </div>
+
+        <!-- Commercial Barcode Code 128 Strip (Physical Scanner Ready) -->
+        <div class="px-6 sm:px-8 py-3 bg-white border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="flex items-center gap-4">
+                <svg id="waybill-barcode" class="h-9"></svg>
+                <div class="text-[10px] text-slate-400 font-mono leading-tight">
+                    <span class="font-bold text-slate-700 block">STANDARD CODE 128 CARGO BARCODE</span>
+                    <span>ISO/IEC 15417 • CARRIER LASER SCANNER COMPLIANT</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 text-xs font-mono font-bold text-ocean-950 bg-ocean-50 px-3.5 py-1.5 rounded-xl border border-ocean-200 self-start sm:self-auto">
+                <i class="ph ph-barcode text-base text-ocean-700"></i>
+                <span>{{ $shipment->shipment_number }}</span>
             </div>
         </div>
 
@@ -255,6 +271,25 @@
                 }
             } else {
                 container.innerHTML = '<span class="font-mono text-[9px] font-bold text-slate-700 text-center">' + @json($shipment->shipment_number) + '</span>';
+            }
+
+            // Render Code 128 Barcode
+            const barcodeSvg = document.getElementById('waybill-barcode');
+            if (barcodeSvg) {
+                if (typeof JsBarcode === 'function') {
+                    try {
+                        JsBarcode("#waybill-barcode", @json($shipment->shipment_number), {
+                            format: "CODE128",
+                            lineColor: "#042f2e",
+                            width: 1.5,
+                            height: 36,
+                            displayValue: false,
+                            margin: 0
+                        });
+                    } catch (e) {
+                        console.warn("JsBarcode error:", e);
+                    }
+                }
             }
         });
     </script>

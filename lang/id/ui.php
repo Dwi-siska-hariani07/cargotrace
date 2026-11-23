@@ -337,6 +337,7 @@ return [
         'title' => 'Daftar Pengiriman Kargo',
         'subtitle' => 'Kelola dan pantau pengiriman multimoda lintas jaringan global',
         'new_btn' => 'Daftarkan Pengiriman Baru',
+        'export_csv' => 'Ekspor Manifes (CSV)',
         'filter_search' => 'Pencarian Nomor / Kargo',
         'filter_search_ph' => 'Nomor Resi atau Barang...',
         'filter_status' => 'Filter Status',

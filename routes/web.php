@@ -43,6 +43,7 @@ Route::middleware('auth')->group(function () {
 
     // Shipments
     Route::get('/shipments', [ShipmentWebController::class, 'index'])->name('shipments.index');
+    Route::get('/shipments/export/csv', [ShipmentWebController::class, 'exportCsv'])->name('shipments.export.csv');
     Route::get('/shipments/create', [ShipmentWebController::class, 'create'])->name('shipments.create');
     Route::post('/shipments', [ShipmentWebController::class, 'store'])->name('shipments.store');
     Route::get('/shipments/{id}', [ShipmentWebController::class, 'show'])->name('shipments.show');
