@@ -4,7 +4,7 @@
 <div class="space-y-10 pb-6">
 
     <!-- 1. Hero Visual Carousel & Integrated Shipment Tracker -->
-    <section class="relative rounded-3xl shadow-2xl border border-ocean-900/20 bg-[#042f2e]">
+    <section class="relative rounded-3xl shadow-2xl border border-ocean-900/20 bg-[#042f2e] overflow-hidden">
         <div id="hero-carousel" class="relative min-h-[480px] sm:min-h-[520px] w-full flex flex-col justify-between">
             <!-- Background Photography Slides -->
             <div class="absolute inset-0 z-0 rounded-3xl overflow-hidden">

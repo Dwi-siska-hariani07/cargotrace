@@ -1,12 +1,13 @@
 # CargoTrace — Global Shipment Visibility & Tracking Platform
 
+[![Live Deployment](https://img.shields.io/badge/Vercel-Live%20Demo-success?logo=vercel&logoColor=white)](https://cargotrace-pink.vercel.app/)
 [![Laravel Version](https://img.shields.io/badge/Laravel-11.x-red.svg)](https://laravel.com)
 [![PHP Version](https://img.shields.io/badge/PHP-8.2%2B-blue.svg)](https://php.net)
-[![MySQL Version](https://img.shields.io/badge/MySQL-8.0%2B-orange.svg)](https://mysql.com)
 [![Automated Tests](https://img.shields.io/badge/PHPUnit-27%20Tests%20%7C%20102%20Assertions%20Passed-brightgreen.svg)]()
 [![Bilingual UI](https://img.shields.io/badge/Language-ID%20%7C%20EN%20Bilingual-teal.svg)]()
 
 > **Final Project (UAS) — Web Programming 2**  
+> 🌐 **Live Production URL:** [https://cargotrace-pink.vercel.app/](https://cargotrace-pink.vercel.app/)  
 > **CargoTrace** is an enterprise-grade global freight visibility and multimodal tracking platform built with Laravel 11, Tailwind CSS, Leaflet.js, and the Open-Meteo Marine Weather API. It provides real-time geospatial tracking, deterministic delay calculations, official electronic bills of lading (E-B/L) with QR verification, commercial freight quoting, and multi-tenant role-based access control.
 
 ---

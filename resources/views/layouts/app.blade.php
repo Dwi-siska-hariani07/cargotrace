@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-[#e8f1f0]">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-[#e8f1f0] overflow-x-hidden">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -74,23 +74,23 @@
     <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
-<body class="min-h-screen flex flex-col font-sans text-slate-800 antialiased bg-[#e8f1f0]" style="background: linear-gradient(135deg, #e6f0ef 0%, #ecf4f3 50%, #f4f7f6 100%);">
+<body class="min-h-screen flex flex-col font-sans text-slate-800 antialiased bg-[#e8f1f0] overflow-x-hidden" style="background: linear-gradient(135deg, #e6f0ef 0%, #ecf4f3 50%, #f4f7f6 100%);">
     <!-- Navbar: Oceanic Teal & Nautical Gold Theme -->
     <nav class="bg-[#042f2e] border-b border-ocean-800/70 sticky top-0 z-50 shadow-md">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 gap-2">
                 <!-- Brand & Main Nav -->
-                <div class="flex items-center gap-8">
-                    <a href="{{ auth()->check() ? route('dashboard') : route('home') }}" class="flex items-center gap-3 group">
-                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-ocean-800 to-[#021d1d] border border-gold-500/40 flex items-center justify-center text-gold-400 font-bold text-xl shadow-inner group-hover:border-gold-400 transition">
-                            <i class="ph ph-compass text-2xl text-gold-400"></i>
+                <div class="flex items-center gap-2 sm:gap-8 min-w-0">
+                    <a href="{{ auth()->check() ? route('dashboard') : route('home') }}" class="flex items-center gap-2 sm:gap-3 group shrink-0">
+                        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-ocean-800 to-[#021d1d] border border-gold-500/40 flex items-center justify-center text-gold-400 font-bold text-lg sm:text-xl shadow-inner group-hover:border-gold-400 transition shrink-0">
+                            <i class="ph ph-compass text-xl sm:text-2xl text-gold-400"></i>
                         </div>
-                        <div class="flex flex-col">
-                            <div class="flex items-center gap-1.5">
-                                <span class="text-white font-extrabold text-lg tracking-wide leading-none">Cargo<span class="text-gold-400">Trace</span></span>
-                                <span class="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-gold-500/20 text-gold-300 border border-gold-500/30">OCEANIC</span>
+                        <div class="flex flex-col min-w-0">
+                            <div class="flex items-center gap-1 sm:gap-1.5">
+                                <span class="text-white font-extrabold text-base sm:text-lg tracking-wide leading-none">Cargo<span class="text-gold-400">Trace</span></span>
+                                <span class="hidden sm:inline-block px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-gold-500/20 text-gold-300 border border-gold-500/30">OCEANIC</span>
                             </div>
-                            <span class="text-ocean-300 text-[10px] tracking-wider uppercase font-medium">{{ __('ui.nav.tagline') }}</span>
+                            <span class="text-ocean-300 text-[10px] tracking-wider uppercase font-medium hidden sm:block">{{ __('ui.nav.tagline') }}</span>
                         </div>
                     </a>
 
@@ -121,37 +121,37 @@
                 </div>
 
                 <!-- Right Actions -->
-                <div class="flex items-center gap-2 sm:gap-3.5">
+                <div class="flex items-center gap-1.5 sm:gap-3.5 shrink-0">
                     <!-- Bilingual Language Switcher (ID / EN) -->
-                    <div class="inline-flex items-center p-0.5 rounded-xl bg-ocean-900/90 border border-ocean-700/80 text-[11px] font-bold shadow-xs" role="group" aria-label="Language Switcher">
+                    <div class="inline-flex items-center p-0.5 rounded-xl bg-ocean-900/90 border border-ocean-700/80 text-[10px] sm:text-[11px] font-bold shadow-xs" role="group" aria-label="Language Switcher">
                         <a href="{{ route('locale.switch', 'id') }}"
-                           class="px-2 py-1 rounded-lg transition {{ app()->getLocale() === 'id' ? 'bg-gold-500 text-slate-950 shadow-2xs' : 'text-ocean-200 hover:text-white' }}">
-                            🇮🇩 ID
+                           class="px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-lg transition {{ app()->getLocale() === 'id' ? 'bg-gold-500 text-slate-950 shadow-2xs' : 'text-ocean-200 hover:text-white' }}">
+                            ID
                         </a>
                         <a href="{{ route('locale.switch', 'en') }}"
-                           class="px-2 py-1 rounded-lg transition {{ app()->getLocale() === 'en' ? 'bg-gold-500 text-slate-950 shadow-2xs' : 'text-ocean-200 hover:text-white' }}">
-                            🇬🇧 EN
+                           class="px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-lg transition {{ app()->getLocale() === 'en' ? 'bg-gold-500 text-slate-950 shadow-2xs' : 'text-ocean-200 hover:text-white' }}">
+                            EN
                         </a>
                     </div>
 
-                    <a href="{{ route('home') }}" class="text-ocean-200 hover:text-gold-300 text-sm font-medium flex items-center gap-1.5 transition">
-                        <i class="ph ph-magnifying-glass text-gold-400"></i> <span class="hidden sm:inline">{{ __('ui.nav.public_track') }}</span>
+                    <a href="{{ route('home') }}" class="text-ocean-200 hover:text-gold-300 text-sm font-medium flex items-center gap-1 transition">
+                        <i class="ph ph-magnifying-glass text-gold-400 text-base"></i> <span class="hidden sm:inline">{{ __('ui.nav.public_track') }}</span>
                     </a>
 
                     @auth
                     @php
                         $unreadNotifCount = auth()->user()->notifications()->where('is_read', false)->count();
                     @endphp
-                    <a href="{{ route('notifications.index') }}" title="{{ __('ui.nav.notification_center') }}" class="relative w-9 h-9 rounded-xl bg-ocean-900 border {{ request()->routeIs('notifications.*') ? 'border-gold-400 text-gold-400' : 'border-ocean-700 text-ocean-200 hover:text-gold-300' }} flex items-center justify-center transition shadow-xs">
-                        <i class="ph ph-bell text-lg"></i>
+                    <a href="{{ route('notifications.index') }}" title="{{ __('ui.nav.notification_center') }}" class="relative w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-ocean-900 border {{ request()->routeIs('notifications.*') ? 'border-gold-400 text-gold-400' : 'border-ocean-700 text-ocean-200 hover:text-gold-300' }} flex items-center justify-center transition shadow-xs">
+                        <i class="ph ph-bell text-base sm:text-lg"></i>
                         @if($unreadNotifCount > 0)
-                        <span class="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-gold-500 text-slate-950 font-extrabold text-[10px] flex items-center justify-center shadow ring-2 ring-[#042f2e]">
+                        <span class="absolute -top-1.5 -right-1.5 min-w-[16px] sm:min-w-[18px] h-[16px] sm:h-[18px] px-1 rounded-full bg-gold-500 text-slate-950 font-extrabold text-[9px] sm:text-[10px] flex items-center justify-center shadow ring-2 ring-[#042f2e]">
                             {{ $unreadNotifCount > 9 ? '9+' : $unreadNotifCount }}
                         </span>
                         @endif
                     </a>
 
-                    <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-2 sm:gap-3">
                         <div class="hidden sm:flex flex-col text-right">
                             <span class="text-white text-sm font-medium leading-none">{{ auth()->user()->name }}</span>
                             <span class="text-[10px] uppercase font-bold mt-1 px-2 py-0.5 rounded-full inline-block
@@ -163,14 +163,14 @@
                         </div>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" title="{{ __('ui.nav.logout') }}" class="w-9 h-9 rounded-xl bg-ocean-900 border border-ocean-700 text-ocean-200 hover:bg-rose-950/60 hover:border-rose-700 hover:text-rose-300 flex items-center justify-center transition shadow-xs">
-                                <i class="ph ph-sign-out text-lg"></i>
+                            <button type="submit" title="{{ __('ui.nav.logout') }}" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-ocean-900 border border-ocean-700 text-ocean-200 hover:bg-rose-950/60 hover:border-rose-700 hover:text-rose-300 flex items-center justify-center transition shadow-xs">
+                                <i class="ph ph-sign-out text-base sm:text-lg"></i>
                             </button>
                         </form>
                     </div>
                     @else
-                    <a href="{{ route('login') }}" class="px-4 py-2 text-sm font-bold text-slate-950 bg-gradient-to-r from-gold-400 to-gold-500 hover:from-gold-500 hover:to-gold-600 rounded-xl shadow-md transition flex items-center gap-1.5">
-                        <i class="ph ph-sign-in font-bold"></i>
+                    <a href="{{ route('login') }}" class="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-bold text-slate-950 bg-gradient-to-r from-gold-400 to-gold-500 hover:from-gold-500 hover:to-gold-600 rounded-xl shadow-md transition flex items-center gap-1">
+                        <i class="ph ph-sign-in font-bold text-sm"></i>
                         <span>{{ __('ui.nav.sign_in') }}</span>
                     </a>
                     @endauth
