@@ -166,10 +166,10 @@ PHPUnit 10.5.66 by Sebastian Bergmann and contributors.
 Runtime:       PHP 8.2.12
 Configuration: D:\cargotrace\phpunit.xml
 
-.........................                                         25 / 25 (100%)
+...........................                                       27 / 27 (100%)
 
 Time: 00:15.336, Memory: 42.00 MB
-OK (25 tests, 91 assertions)
+OK (27 tests, 102 assertions)
 ```
 
 ### Test Coverage Highlights:
