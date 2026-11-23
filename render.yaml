@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: cargotrace
+    runtime: php
+    plan: free
+    branch: main
+    buildCommand: "composer install --no-dev --optimize-autoloader"
+    startCommand: "php artisan migrate --force && php artisan db:seed --force && php artisan serve --host=0.0.0.0 --port=$PORT"
+    envVars:
+      - key: APP_NAME
+        value: CargoTrace
+      - key: APP_ENV
+        value: production
+      - key: APP_KEY
+        generateValue: true
+      - key: APP_DEBUG
+        value: "false"
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_URL
+        fromDatabase:
+          name: cargotrace-db
+          property: connectionString
+
+databases:
+  - name: cargotrace-db
+    plan: free
+    databaseName: cargotrace
