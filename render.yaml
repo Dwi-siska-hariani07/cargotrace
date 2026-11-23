@@ -1,11 +1,10 @@
 services:
   - type: web
     name: cargotrace
-    runtime: php
+    runtime: docker
     plan: free
     branch: main
-    buildCommand: "composer install --no-dev --optimize-autoloader"
-    startCommand: "php artisan migrate --force && php artisan db:seed --force && php artisan serve --host=0.0.0.0 --port=$PORT"
+    dockerfilePath: ./Dockerfile
     envVars:
       - key: APP_NAME
         value: CargoTrace
@@ -20,6 +19,10 @@ services:
       - key: DB_CONNECTION
         value: pgsql
       - key: DB_URL
+        fromDatabase:
+          name: cargotrace-db
+          property: connectionString
+      - key: DATABASE_URL
         fromDatabase:
           name: cargotrace-db
           property: connectionString
