@@ -1,6 +1,13 @@
 #!/usr/bin/env sh
 set -e
 
+# Ensure SQLite file exists if using SQLite
+if [ -z "$DB_CONNECTION" ] || [ "$DB_CONNECTION" = "sqlite" ]; then
+    mkdir -p /app/database
+    touch /app/database/database.sqlite
+    chmod -R 777 /app/database
+fi
+
 echo "=== Running Laravel Database Migrations ==="
 php artisan migrate --force
 
