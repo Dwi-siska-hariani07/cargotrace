@@ -51,14 +51,13 @@ class AuthController extends Controller
             'password' => 'required|string|min:8|confirmed',
             'company' => 'nullable|string|max:255',
             'phone' => 'nullable|string|max:50',
-            'role' => 'required|in:customer,operator',
         ]);
 
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'role' => $validated['role'],
+            'role' => 'customer',
             'company' => $validated['company'] ?? null,
             'phone' => $validated['phone'] ?? null,
         ]);

@@ -230,5 +230,22 @@ class WebNavigationTest extends TestCase
             ->assertSee('STANDARD CODE 128 CARGO BARCODE')
             ->assertSee('JsBarcode');
     }
+
+    public function test_public_registration_creates_customer_role_only(): void
+    {
+        $response = $this->post('/register', [
+            'name' => 'Budi Client',
+            'email' => 'budi.client@test.com',
+            'password' => 'secret1234',
+            'password_confirmation' => 'secret1234',
+            'company' => 'PT Test Logistik',
+        ]);
+
+        $response->assertRedirect('/dashboard');
+        
+        $newUser = User::where('email', 'budi.client@test.com')->first();
+        $this->assertNotNull($newUser);
+        $this->assertEquals('customer', $newUser->role);
+    }
 }
 

@@ -103,34 +103,19 @@
                            class="w-full px-4 py-2.5 rounded-xl border border-[#bed8d2] bg-white/90 text-sm text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-ocean-600 focus:ring-4 focus:ring-ocean-600/15 shadow-xs transition">
                 </div>
 
-                <!-- Peran / Role Interactive Selector Cards -->
-                <div>
-                    <label class="block text-xs font-bold uppercase text-slate-700 mb-1.5 flex items-center gap-1.5">
-                        <i class="ph ph-identification-badge text-ocean-700 text-sm"></i>
-                        <span>{{ __('ui.auth.role_label') }}</span>
-                    </label>
-                    <div class="grid grid-cols-2 gap-2.5 mb-2">
-                        <label class="relative flex flex-col p-3 rounded-2xl border cursor-pointer transition select-none bg-white/90 hover:bg-white has-[:checked]:bg-ocean-50 has-[:checked]:border-ocean-600 has-[:checked]:shadow-sm border-[#bed8d2]">
-                            <div class="flex items-center justify-between mb-1">
-                                <div class="flex items-center gap-1.5 font-bold text-xs text-slate-800 has-[:checked]:text-ocean-950">
-                                    <i class="ph ph-user text-ocean-700"></i>
-                                    <span>{{ __('ui.auth.role_customer') }}</span>
-                                </div>
-                                <input type="radio" name="role" value="customer" class="text-ocean-700 focus:ring-ocean-500" {{ old('role', 'customer') === 'customer' ? 'checked' : '' }}>
-                            </div>
-                            <span class="text-[10px] text-slate-500 leading-tight">Pemilik kargo, lacak resi & unduh surat jalan</span>
-                        </label>
-
-                        <label class="relative flex flex-col p-3 rounded-2xl border cursor-pointer transition select-none bg-white/90 hover:bg-white has-[:checked]:bg-ocean-50 has-[:checked]:border-ocean-600 has-[:checked]:shadow-sm border-[#bed8d2]">
-                            <div class="flex items-center justify-between mb-1">
-                                <div class="flex items-center gap-1.5 font-bold text-xs text-slate-800 has-[:checked]:text-ocean-950">
-                                    <i class="ph ph-compass text-ocean-700"></i>
-                                    <span>{{ __('ui.auth.role_operator') }}</span>
-                                </div>
-                                <input type="radio" name="role" value="operator" class="text-ocean-700 focus:ring-ocean-500" {{ old('role') === 'operator' ? 'checked' : '' }}>
-                            </div>
-                            <span class="text-[10px] text-slate-500 leading-tight">Operasional pelabuhan, kargo & armada</span>
-                        </label>
+                <!-- Tipe Akun: Khusus Pelanggan Kargo (Customer) -->
+                <div class="p-3.5 rounded-2xl bg-ocean-50/90 border border-[#b8d6ce] flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-ocean-100 border border-ocean-300 flex items-center justify-center text-ocean-800 shrink-0">
+                        <i class="ph ph-user-circle text-2xl text-ocean-700"></i>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-xs text-ocean-950">Akun Pelanggan Kargo (Customer)</span>
+                            <span class="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-gold-500/20 text-gold-800 border border-gold-400/50">TERVERIFIKASI</span>
+                        </div>
+                        <p class="text-[11px] text-slate-600 leading-snug mt-0.5">
+                            Pendaftaran publik untuk pemilik kargo & klien bisnis. Akses langsung pelacakan pengiriman, riwayat kargo, dan unduh dokumen resmi (e-Waybill).
+                        </p>
                     </div>
                 </div>
 
@@ -187,6 +172,10 @@
                         <span>{{ __('ui.auth.register_btn') }}</span>
                         <i class="ph ph-arrow-right font-bold text-gold-400 group-hover:translate-x-1 transition-transform"></i>
                     </button>
+                    <p class="text-[11px] text-slate-500 text-center mt-2.5 flex items-center justify-center gap-1.5">
+                        <i class="ph ph-shield-check text-ocean-700 text-sm"></i>
+                        <span>Akun staf operasional & admin diterbitkan secara internal oleh Administrator Sistem.</span>
+                    </p>
                 </div>
             </form>
 
